@@ -1,6 +1,3 @@
-以下是为该项目撰写的简单README示例：
-
-```markdown
 # HandChainrity - 基于区块链的手链筹应用
 
 ## 项目概述
