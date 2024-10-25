@@ -9,9 +9,11 @@ HandChain是一个基于Web3和区块链技术的手链筹应用，允许用户�
 ```
 HandChain/
 │
-├── contracts/        # 包含智能合约代码
-│   ├── UserManagement.sol  # 用户管理合约
-│   └── Chain筹.sol         # 手链筹合约
+├── contracts/        # 包含hardhat初始化的项目
+│   ├──contracts/     # 包含智能合约代码
+│   │    ├── UserManagement.sol  # 用户管理合约
+│   │    └── HandChainrity.sol         # 手链筹合约
+│   └── ...
 │
 └── frontend/        # React前端应用
     └── ...          # React应用文件
@@ -28,8 +30,8 @@ HandChain/
 ### 克隆项目
 
 ```bash
-git clone https://github.com/yourusername/HandChain.git
-cd HandChain
+git clone https://github.com/LeChatelier-Lenz/hand-chainrity-demo.git
+cd hand-chainrity-demo
 ```
 
 ### 智能合约部分
