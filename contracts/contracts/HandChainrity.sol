@@ -30,7 +30,7 @@ contract HandChainrity is ERC721Enumerable, Ownable {
     }
 
     constructor() ERC721("HandChainNFT", "HCNFT") Ownable(msg.sender) {
-        // 
+        // 初始化
     }
 
     modifier onlyThirdPartyTrusted {
@@ -94,6 +94,9 @@ contract HandChainrity is ERC721Enumerable, Ownable {
         // 假如已经到达目标金额或超过截止时间，则直接更新状态，不再存入
         if (campaigns[campaignId].currentAmount >= campaigns[campaignId].targetAmount || block.timestamp >= campaigns[campaignId].deadline)
         {
+            // 超过目标金额的部分退回给参与者
+            payable(msg.sender).transfer(campaigns[campaignId].currentAmount - campaigns[campaignId].targetAmount);
+            // 更新状态
             campaigns[campaignId].status = Status.LimitReached;
             removingCampign(campaignId);
             emit CampaignLimitReached(campaignId);
@@ -178,5 +181,4 @@ contract HandChainrity is ERC721Enumerable, Ownable {
     function setNewThirdParty(address new_tp) public onlyOwner {
         thirdPartyTrusted[new_tp] = true;
     }   
-
 }
