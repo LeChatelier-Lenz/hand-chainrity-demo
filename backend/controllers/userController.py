@@ -45,23 +45,22 @@ def get_user_by_id(user_id: int, db: Session):
 def update_user_profile(user_update: UserUpdate, db: Session, current_user: User = Depends(get_current_user)):
     current_user.name = user_update.name or current_user.name
     current_user.email = user_update.email or current_user.email
-    current_user.biography = user_update.biography or current_user.biography
     db.commit()
     db.refresh(current_user)
     return current_user
 
 # 注册新用户
 def register_user(user: UserCreate, db: Session):
-    user_exists = db.query(User).filter(User.email == user.email).first()
+    user_exists = db.query(User).filter(User.address == user.address).first()
     if user_exists:
         raise HTTPException(status_code=400, detail="用户已存在")
     new_user = User(**user.dict())
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    token = create_access_token(data={"user_id": new_user.id})
+    token = create_access_token(data={"user_id": new_user.address})
     return {
-        "id": new_user.id,
+        "address": new_user.address,
         "name": new_user.name,
         "email": new_user.email,
         "token": token
