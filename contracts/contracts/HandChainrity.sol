@@ -1,76 +1,182 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./UserManagement.sol"; // 引入用户管理合约
 
-contract HandChainrity is ERC721, ERC721Burnable, Ownable {
+/// @title HandChainrity 手链筹核心业务合约
+/// @author lechatelierlenz
+/// @notice 
+contract HandChainrity is ERC721Enumerable, Ownable {
+    enum Status {
+        Launched,
+        //运行中
+        Fundraising,
+        Rejected,
+        LimitReached, //金额或者是时间
+        Completed,
+        Revoked
+    }
     struct Campaign {
         string description;
         uint256 targetAmount;
         uint256 currentAmount;
-        uint256 deadline;
-        address creator;
-        bool isCompleted;
+        uint256 createdAt; //创建日期
+        uint256 deadline; //截止日期
+        address payable beneficiary; //受益人
+        address launcher; //发起人
         uint256 nftId; // 对应的NFT ID
+        Status status; // 状态
     }
 
-    mapping(uint256 => Campaign) public campaigns;
-    mapping(uint256 => mapping(address => uint256)) public contributions;
-    uint256 public campaignCount;
+    constructor() ERC721("HandChainNFT", "HCNFT") Ownable(msg.sender) {
+        // 
+    }
 
-    UserManagement public userManagement;
+    modifier onlyThirdPartyTrusted {
+        // msg.sender需要在第三方可信列表中
+        require(thirdPartyTrusted[msg.sender],"Not A Trusted Third Party");
+        _;
+    }
 
-    event CampaignCreated(uint256 campaignId, string description, uint256 targetAmount, uint256 deadline);
+    mapping(address => bool) public thirdPartyTrusted; //可信任第三方地址映射
+
+    uint256[] public raisingCampaigns; // 筹款中的活动（id）
+    // 活动id-活动信息映射表
+    mapping(uint256 => Campaign) public campaigns; // 活动id => 活动信息
+    mapping(uint256 => mapping(address => uint256)) public contributions; // 活动id => 参与者 => 参与金额
+    mapping(uint256 => uint256) public childId;
+    uint256 public campaignCount = 0; // 不会减少的活动计数器
+    mapping(uint256 => address[]) public participants; // 活动id => 参与者列表
+
+    // event
+    event CampaignCreated(uint256 campaignId, string description, uint256 targetAmount, address beneficiary);
+    event CampaignApproved(uint256 campaignId);
+    event CampaignRejected(uint256 campaignId);
     event ContributionMade(uint256 campaignId, address indexed contributor, uint256 amount);
+    event CampaignLimitReached(uint256 campaignId);
     event CampaignFinalized(uint256 campaignId);
-
-    constructor(address userManagementAddress) ERC721("HandChainNFT", "HCNFT") {
-        userManagement = UserManagement(userManagementAddress);
-    }
+    event campaignRevoked(uint256 campaignId);
 
     // 创建手链筹
-    function createCampaign(string memory description, uint256 targetAmount, uint256 deadline) public {
-        require(userManagement.isUserRegistered(msg.sender), "User must be registered");
+    function createCampaign(string memory description, uint256 targetAmount, uint256 deadline ,address payable beneficiary) public returns (uint256) {
+        require(targetAmount > 0, "Target amount must be greater than 0"); // 初始化时要保证筹款目标金额大于0
+        require(beneficiary != address(0), "Beneficiary address must be valid"); // 受益人必须是有效地址
         campaignCount++;
-        campaigns[campaignCount] = Campaign(description, targetAmount, 0, deadline, msg.sender, false, 0);
-        emit CampaignCreated(campaignCount, description, targetAmount, deadline);
+        campaigns[campaignCount] = Campaign(description, targetAmount, 0, block.timestamp,deadline, beneficiary ,msg.sender, campaignCount,Status.Launched);
+        
+        emit CampaignCreated(campaignCount, description, targetAmount, beneficiary);
+        return campaignCount;
+    }
+
+    // 第三方可信平台审核手链筹
+    function approveCampaign(uint256 campaignId, bool ifApproved) public onlyThirdPartyTrusted {
+        require(campaignId > 0 && campaignId <= campaignCount, "Invalid campaign ID"); // 
+        require(campaigns[campaignId].status == Status.Launched, "Campaign is not Launched"); //审核只能对已发起状态的手链筹单元进行
+        if(ifApproved == false){
+            campaigns[campaignId].status = Status.Rejected;
+            emit CampaignRejected(campaignId);
+            return;
+        }
+        campaigns[campaignId].status = Status.Fundraising;
+        raisingCampaigns.push(campaignId);
+        emit CampaignApproved(campaignId);
     }
 
     // 参与手链筹
-    function participateInCampaign(uint256 campaignId) public payable {
+    function participateInCampaign(uint256 campaignId) public payable returns(bool) {
         require(campaignId > 0 && campaignId <= campaignCount, "Invalid campaign ID");
         require(msg.value > 0, "Contribution must be greater than 0");
-        require(!campaigns[campaignId].isCompleted, "Campaign is already completed");
-
+        require(msg.sender != campaigns[campaignId].beneficiary, "Shouldn't Donate for yourself");
+        // 当且仅当手链筹单元处于筹款状态时可参与
+        require(campaigns[campaignId].status == Status.Fundraising,"Campaign is not in Fundraising State");
         campaigns[campaignId].currentAmount += msg.value;
+        // 假如已经到达目标金额或超过截止时间，则直接更新状态，不再存入
+        if (campaigns[campaignId].currentAmount >= campaigns[campaignId].targetAmount || block.timestamp >= campaigns[campaignId].deadline)
+        {
+            campaigns[campaignId].status = Status.LimitReached;
+            removingCampign(campaignId);
+            emit CampaignLimitReached(campaignId);
+            return false;
+        }
         contributions[campaignId][msg.sender] += msg.value;
-
-        // Mint NFT作为参与凭证
-        uint256 nftId = campaignId * 1000 + contributions[campaignId][msg.sender]; // 简单的ID生成逻辑
-        _mint(msg.sender, nftId); // 发行NFT
-        campaigns[campaignId].nftId = nftId;
-
+        // Mint NFT作为参与凭证（ERC721的作用）
+        childId[campaignId]++; // 对应的campaign中nftid更新
+        uint256 nftId = campaignId * 10000 + childId[campaignId];
+        //更新参与者列表
+        participants[campaignId].push(msg.sender);
+        _mint(msg.sender, nftId); // 给参与者发行NFT作为凭证
         emit ContributionMade(campaignId, msg.sender, msg.value);
-    }
-
-    // 获取手链筹信息
-    function getCampaignInfo(uint256 campaignId) public view returns (string memory description, uint256 currentAmount, uint256 targetAmount, uint256 deadline) {
-        Campaign memory campaign = campaigns[campaignId];
-        return (campaign.description, campaign.currentAmount, campaign.targetAmount, campaign.deadline);
+        return true;
     }
 
     // 完成手链筹
-    function finalizeCampaign(uint256 campaignId) public {
+    function finalizeCampaign(uint256 campaignId) public payable {
         require(campaignId > 0 && campaignId <= campaignCount, "Invalid campaign ID");
-        require(block.timestamp >= campaigns[campaignId].deadline, "Campaign deadline not reached");
-        require(!campaigns[campaignId].isCompleted, "Campaign already completed");
+        require(msg.sender == campaigns[campaignId].beneficiary,"Not From Beneficiary");
+        // 完成手链筹没有严格要求，可以在受益人觉得合适的情况下提前结束
+        require(campaigns[campaignId].status == Status.LimitReached || campaigns[campaignId].status == Status.Fundraising, "Not Valid State to Finish");
+        // 将目前筹款全部转移给受益人
+        campaigns[campaignId].beneficiary.transfer(campaigns[campaignId].currentAmount);
 
-        campaigns[campaignId].isCompleted = true;
-        emit CampaignFinalized(campaignId);
+        removingCampign(campaignId);
+        campaigns[campaignId].status = Status.Completed;
         
+        emit CampaignFinalized(campaignId);
         // 资金释放逻辑可以在这里实现
     }
+
+    // 撤销手链筹
+    function revokeCampaign(uint256 campaignId) public payable {
+        require(campaignId > 0 && campaignId <= campaignCount, "Invalid campaign ID");
+        require(msg.sender == campaigns[campaignId].beneficiary,"Not From Beneficiary");
+        require(campaigns[campaignId].status == Status.LimitReached || campaigns[campaignId].status == Status.Fundraising || campaigns[campaignId].status == Status.Launched, "Not Valid State to Finish");
+        // 一一退回所有筹款
+        for(uint256 i = 0 ; i < participants[campaignId].length ; i ++ )
+        {
+            payable(participants[campaignId][i]).transfer(contributions[campaignId][participants[campaignId][i]]);
+        }
+        campaigns[campaignId].status == Status.Revoked;
+        removingCampign(campaignId);
+        emit campaignRevoked(campaignId);
+    }
+
+    // 从筹款中活动列表删除某个活动
+    function removingCampign(uint256 campaignId) internal {
+        for(uint256 i = 0;i < raisingCampaigns.length;i++)
+        {
+            if( raisingCampaigns[i] == campaignId){
+                raisingCampaigns[i] = raisingCampaigns[raisingCampaigns.length-1];
+                raisingCampaigns.pop();
+                return;
+            }
+        }
+    }   
+
+    // 获取手链筹信息
+    function getCampaignInfo(uint256 campaignId) public view returns (string memory description, uint256 currentAmount, uint256 targetAmount,address launcher,address beneficiary) {
+        Campaign memory campaign = campaigns[campaignId];
+        return (campaign.description, campaign.currentAmount, campaign.targetAmount, campaign.launcher,campaign.beneficiary);
+    }
+
+    // 获取正在筹款中的手链筹单元列表id
+    function getActiveCampaignIdList() public view returns (uint256[] memory) {
+        return raisingCampaigns;
+    }
+
+    //获取对应账户的NFT列表: 这个先搁置一下 等一下再说
+    function getNFTList(address account) public view returns (uint256[] memory) {
+        uint256 balance = balanceOf(account);
+        uint256[] memory nftList = new uint256[](balance);
+        for (uint256 i = 0; i < balance; i++) {
+            nftList[i] = tokenOfOwnerByIndex(account, i);
+        }
+        return nftList;
+    }
+
+    // 设置新的第三方可信平台
+    function setNewThirdParty(address new_tp) public onlyOwner {
+        thirdPartyTrusted[new_tp] = true;
+    }   
+
 }
