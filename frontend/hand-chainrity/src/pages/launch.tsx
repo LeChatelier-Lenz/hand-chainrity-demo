@@ -1,209 +1,161 @@
-import { useOutletContext } from "react-router-dom";
-import { CampaignType, OutletContext, Status,LaunchProps } from "../types/interfaces";
-import { useState } from "react";
-import { HandChainrityContract, web3 } from "../utils/contracts";
-import Campaign from "./campaign";
-
-
-export default function Launch({ prop_account }: LaunchProps) {
-  const { account } = useOutletContext<OutletContext>();
-  // 内联样式
-  const [formData,setFormData] = useState<CampaignType>({
-    id: 0,
-    title: "",
-    details: "",
-    description: "",
-    target: 0,
-    current: 0,
-    deadline: new Date(),
-    beneficiary: "",
-    launcher: "",
-    status: ""
-  });
-  const [error,setError] = useState('');
-
-  
-  const [campaigns,setCampaigns] = useState<CampaignType[]>([]);
-
-
-  const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-    const {name,value} = e.target;
-    // console.log(name,value);
-    // console.log(typeof(value));
-    setFormData((prevData) => ({
-      ...prevData,
-    [name]: name === 'deadline' ? new Date(value) : value
-    }));
-  }
-
-  const handleSubmit = async (e:React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault(); // 阻止默认表单提交行为
-    setError(''); // 清空错误信息
-
-    // 简单验证
-    //
-
-    try {
-        // 发起 POST 请求到后端
-        const targetValue = web3.utils.toWei(formData.target.toString(),'ether');
-        // 按秒获取时间戳
-        const ddlTimestamp = Math.floor(formData.deadline.getTime()/1000);
-        const campaignId = await HandChainrityContract.methods.createCampaign(formData.description,targetValue,ddlTimestamp,formData.beneficiary).send({from:account});
-        console.log('成功创建新手链筹单元');
-        console.log(campaignId);
-        // 处理成功后的逻辑，如清空表单或提示用户
-        setFormData({
-          id: 0,
-          title: "",
-          description: "",
-          details: "",
-          target: 0,
-          current: 0,
-          deadline: new Date(),
-          beneficiary: "",
-          launcher: "",
-          status: ""
-        })
-        alert('提交成功！');
-    } catch (err) {
-        console.error('提交失败:', err);
-        setError('提交失败，请重试');
+import * as React from 'react';
+import {
+  Box,
+  Button,
+  CssBaseline,
+  TextField,
+  Typography,
+  Stack,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
+  FormHelperText,
+} from '@mui/material';
+import { createTheme, ThemeProvider, PaletteMode } from '@mui/material/styles';
+import { PhotoCamera } from '@mui/icons-material';
+import axios from 'axios';
+import AppAppBar from '../component/AppAppBar';
+import getBlogTheme from '../theme/getBlogTheme';
+export default function FundraisingPage() {
+  const [mode, setMode] = React.useState<PaletteMode>('light');
+  const [title, setTitle] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  const [goal, setGoal] = React.useState('');
+  const [image, setImage] = React.useState<File | null>(null);
+  const [errorMessage, setErrorMessage] = React.useState('');
+  const blogTheme = createTheme(getBlogTheme(mode));
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setImage(event.target.files[0]);
     }
   };
 
-  const getCampaigns = async () => {
-    if(HandChainrityContract){
-      try{
-        const newCampaigns:CampaignType[] = [];
-        const campaignCount:number = await HandChainrityContract.methods.campaignCount().call();
-        // console.log(campaignCount);
-        for (let i = 1; i <= Number(campaignCount); i++) {
-          const new_campaign:any = await HandChainrityContract.methods.campaigns(i).call();
-          // console.log(new_campaign);
-          newCampaigns.push({
-            id: Number(new_campaign.hcuId),
-            title: "Need To Load from Backend",
-            description: new_campaign.description,
-            details: "Need To Load from Backend",
-            target: Number(web3.utils.fromWei(new_campaign.targetAmount,'ether')),
-            current: Number(new_campaign.currentAmount),
-            deadline: new Date(Number(new_campaign.deadline)*1000),
-            beneficiary: new_campaign.beneficiary,
-            launcher: new_campaign.launcher,
-            status: Status[Number(new_campaign.status)]
-          });
-        }
-        setCampaigns(newCampaigns);
-        console.log(campaigns);
-      }catch(e:any){
-        console.error(e.message);
-        alert(`活动列表获取失败:${e.message}`);
-      }   
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!title || !description || !goal) {
+      setErrorMessage('请填写所有必填信息');
+      return;
     }
-  }
+
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('goal', goal);
+    if (image) {
+      formData.append('image', image);
+    }
+
+    try {
+      const response = await axios.post('http://localhost:8888/api/fundraising', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log(response.data);
+      alert('筹款发起成功！');
+    } catch (error) {
+      console.error(error);
+      setErrorMessage('筹款发起失败，请重试');
+    }
+  };
 
   return (
-    <div id="launch" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-      <h1>Launch</h1>
-      <p>
-        This is the launch page.
-      </p>
-      <p>Account:{account}</p>
-      <div className="launch-form" style={{border:"solid"}}>
-        <form onSubmit={handleSubmit}>
-          <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-            <div>
-              <label htmlFor="title">Title</label>
-              <input 
-                type="text" 
-                id="title" 
-                name="title" 
-                placeholder="Campaign Title" 
-                value={formData.title}
-                onChange={handleChange}
-                /> 
-            </div>
-            <div>
-              <label htmlFor="description">Description</label>
-              <input 
-                type="text" 
-                id="description" 
-                name="description" 
-                placeholder="Campaign Description" 
-                value={formData.description}
-                onChange={handleChange}
+    <ThemeProvider theme={blogTheme }>
+      <CssBaseline />
+      <AppAppBar />
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+          backgroundColor: 'background.default',
+          padding: 4,
+        }}
+      >
+        <Stack
+          component="form"
+          onSubmit={handleSubmit}
+          spacing={3}
+          sx={{
+            width: '100%',
+            maxWidth: 600,
+            padding: 4,
+            boxShadow: 3,
+            borderRadius: 2,
+            backgroundColor: 'background.paper',
+          }}
+        >
+          <Typography variant="h4" align="center" gutterBottom>
+            发起筹款
+          </Typography>
+
+          <FormControl fullWidth>
+            <TextField
+              label="筹款标题"
+              variant="outlined"
+              required
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <TextField
+              label="筹款描述"
+              variant="outlined"
+              required
+              multiline
+              minRows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <InputLabel htmlFor="goal">目标金额</InputLabel>
+            <OutlinedInput
+              id="goal"
+              type="number"
+              value={goal}
+              onChange={(e) => setGoal(e.target.value)}
+              startAdornment={<InputAdornment position="start">¥</InputAdornment>}
+              label="目标金额"
+              required
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <Button
+              variant="outlined"
+              component="label"
+              startIcon={<PhotoCamera />}
+            >
+              上传图片
+              <input
+                hidden
+                accept="image/*"
+                type="file"
+                onChange={handleImageUpload}
               />
-            </div>
-            <div>
-              <label htmlFor="details">Details</label>
-              <input 
-                type="text" 
-                id="details" 
-                name="details" 
-                placeholder="Campaign Details" 
-                value={formData.details}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="target">Target</label>
-              <input 
-                type="number" 
-                id="target" 
-                name="target" 
-                placeholder="Campaign Target" 
-                value={formData.target}
-                onChange={handleChange}
-                />
-            </div>
-            <div>
-              <label htmlFor="deadline">Deadline</label>
-              <input 
-                type="date" 
-                id="deadline" 
-                name="deadline" 
-                value={formData.deadline.toISOString().split('T')[0]}
-                onChange={handleChange}
-                />
-            </div>
-            <div>
-              <label htmlFor="beneficiary">Beneficiary</label>
-              <input 
-                type="text" 
-                id="beneficiary" 
-                name="beneficiary" 
-                placeholder="Campaign Beneficiary" 
-                value={formData.beneficiary}
-                onChange={handleChange}
-                />
-            </div>
-            <div>
-              <button type="submit">Launch</button>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div className="checkCampaigns">
-        <button type="button" onClick={getCampaigns} >List</button>
-        <div>
-          <ul>
-            {campaigns.map((campaign) => (
-              <li style={{border:"solid"}} key={campaign.id}>
-                <p>ID : {campaign.id}</p>
-                <p>Title : {campaign.title}</p>
-                <p>Description : {campaign.description}</p>
-                <p>Details : {campaign.details}</p>
-                <p>Target : {campaign.target}</p>
-                <p>Current : {campaign.current}</p>
-                <p>Deadline : {campaign.deadline.toISOString().split('T')[0]}</p>
-                <p>Beneficiary : {campaign.beneficiary}</p>
-                <p>Launcher : {campaign.launcher}</p>
-                <p>Status : {campaign.status}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </div>
+            </Button>
+            {image && <FormHelperText>已选择图片: {image.name}</FormHelperText>}
+          </FormControl>
+
+          {errorMessage && (
+            <Typography color="error" align="center">
+              {errorMessage}
+            </Typography>
+          )}
+
+          <Button type="submit" variant="contained" size="large">
+            发起筹款
+          </Button>
+        </Stack>
+      </Box>
+    </ThemeProvider>
   );
 }

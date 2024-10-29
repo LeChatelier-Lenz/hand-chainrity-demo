@@ -4,13 +4,14 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import Root from './routes/root';
 import DashBoard from './routes/dashboard';
+import CampaignPage from './routes/campaign';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import {
   createBrowserRouter,
   RouterProvider,
 } from 'react-router-dom';
-import Campaign from './pages/campaign';
+// import Campaign from './pages/campaign_old';
 import Launch from './pages/launch';
 import User from './pages/user';
 import SignInSide from './pages/sign-in-side/SignInSide';
@@ -47,6 +48,14 @@ const router = createBrowserRouter([
     {
       path:'/signin',
       element: <SignInSide />,
+    },
+    {
+      path:'/campaign',
+      element: <CampaignPage />,
+    },
+    {
+      path:'/launch',
+      element: <Launch />,
     },
     {
       path:'/signup',

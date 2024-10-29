@@ -62,6 +62,7 @@ def register_user(user: UserCreate, db: Session):
         db.refresh(new_user)
         token = create_access_token(data={"user_address": new_user.address})
         return {
+            "name": new_user.name,
             "address": new_user.address,
             "email": new_user.email,
             "token": token
