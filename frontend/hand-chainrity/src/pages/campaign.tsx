@@ -1,45 +1,41 @@
 import { useEffect, useState } from "react";
 import {web3,HandChainrityContract} from "../utils/contracts";
+import { CampaignType, Status } from "../types/interfaces";
 export default function Campaign() {
-    const [campaigns, setCampaigns] = useState<Campaign[]>([]); // Campaign[] is an array of Campaign objects
+    const [campaigns, setCampaigns] = useState<CampaignType[]>([]); // Campaign[] is an array of Campaign objects
     
-    interface Campaign {
-        id: number;
-        title: string;
-        description: string;
-        target: number;
-        current: number;
-        deadline: Date;
-        beneficiary: string;
-        launcher: string;
-        status: string;
-    }
-
     useEffect(() => {
-      const fetchCampaigns = async () => {
-          if(HandChainrityContract){
-            try{
-              const campaign_list:[] = await HandChainrityContract.methods.campaigns().call();
-              console.log(campaign_list);
-              campaign_list.forEach((campaign:any) => {
-                setCampaigns([...campaigns, {
-                  id: campaign.hcu_id,
-                  title: campaign.title,
-                  description: campaign.description,
-                  target: campaign.target,
-                  current: campaign.current,
-                  deadline: campaign.deadline,
-                  beneficiary: campaign.beneficiary,
-                  launcher: campaign.launcher,
-                  status: campaign.status
-                }]);
+      const getCampaigns = async () => {
+        if(HandChainrityContract){
+          try{
+            const newCampaigns:CampaignType[] = [];
+            const campaignCount:number = await HandChainrityContract.methods.campaignCount().call();
+            // console.log(campaignCount);
+            for (let i = 1; i <= Number(campaignCount); i++) {
+              const new_campaign:any = await HandChainrityContract.methods.campaigns(i).call();
+              // console.log(new_campaign);
+              newCampaigns.push({
+                id: Number(new_campaign.hcuId),
+                title: "Need To Load from Backend",
+                description: new_campaign.description,
+                details: "Need To Load from Backend",
+                target: Number(web3.utils.fromWei(new_campaign.targetAmount,'ether')),
+                current: Number(new_campaign.currentAmount),
+                deadline: new Date(Number(new_campaign.deadline)*1000),
+                beneficiary: new_campaign.beneficiary,
+                launcher: new_campaign.launcher,
+                status: Status[Number(new_campaign.status)]
               });
-            }catch(e:any){
-              console.error(e.message);
-            }   
-          }
+            }
+            setCampaigns(newCampaigns);
+            console.log(campaigns);
+          }catch(e:any){
+            console.error(e.message);
+            alert(`活动列表获取失败:${e.message}`);
+          }   
+        }
       }
-      fetchCampaigns();
+      getCampaigns();
     }, [campaigns]);
 
     
@@ -51,9 +47,24 @@ export default function Campaign() {
         <p>
           This is the campaign page.
         </p>
-        <div className="campaign-list">
-          <h2>Campaign List</h2>
-          {/*  */}
+        <div className="campaign-list" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+          <h2>Active Campaign List</h2>
+          <ul>
+            {campaigns.map((campaign) => (
+              <li style={{display:"flex",flexDirection:"column",border:"solid",margin:"10px",padding:"10px"}} key={campaign.id}>
+                <h3>Title: {campaign.title}</h3>
+                <p>ID: {campaign.id}</p>
+                <p>Description:{campaign.description}</p>
+                <p>Details: {campaign.details}</p>
+                <p>Target: {campaign.target}</p>
+                <p>Current: {campaign.current}</p>
+                <p>Deadline: {campaign.deadline.toString()}</p>
+                <p>Beneficiary: {campaign.beneficiary}</p>
+                <p>Launcher: {campaign.launcher}</p>
+                <p>Status: {campaign.status}</p>
+              </li>
+            ))}
+          </ul>
           </div>
       </div>
     );
