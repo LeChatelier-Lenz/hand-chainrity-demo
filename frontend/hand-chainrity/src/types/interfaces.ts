@@ -1,10 +1,7 @@
 // types.ts
 // 子组件的上下文类型【相当于props接口】
-export interface OutletContext {
-    account: string; // 根据实际情况修改
-}
 
-export interface LaunchProps {
+export interface ChildProps {
   prop_account: string;
 }
 

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { CampaignType, LaunchProps, Status } from "../types/interfaces";
+import { CampaignType, ChildProps, Status } from "../types/interfaces";
 import { HandChainrityContract, web3 } from "../utils/contracts";
 
 
-export default function Launch({ prop_account }: LaunchProps) {
+export default function Launch({ prop_account }: ChildProps) {
   // 内联样式
   const [formData,setFormData] = useState<CampaignType>({
     id: 0,

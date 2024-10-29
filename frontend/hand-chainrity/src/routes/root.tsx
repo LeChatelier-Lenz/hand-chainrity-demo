@@ -86,15 +86,11 @@ const demoTheme = createTheme({
 
 
 export default function DashboardLayoutBasic() {
-
     const [account, setAccount] = useState<string | null>(null)
 
     function DemoPageContent({ pathname }: { pathname: string }) {
-    // Define a function to select the correct component based on pathname
-    // console.log("看看",pathname);
     const renderComponent = () => {
-        console.log("这里的account",account);
-        
+        console.log("pathname",pathname);
         switch (pathname) {
             case '/donate':
                 return <Campaign prop_account={account!}/>;
@@ -175,9 +171,7 @@ export default function DashboardLayoutBasic() {
             // 获取小狐狸拿到的授权用户列表
             const accounts = await ethereum.request({ method: 'eth_accounts' });
             // 如果用户存在，展示其account，否则显示错误信息
-            console.log("连接上了",accounts);
-            console.log("连接上了666",accounts![0]);
-            
+            console.log(accounts[0]);
             setAccount(accounts[0] || 'Not able to get accounts');
         } catch (error: any) {
             alert(error.message)

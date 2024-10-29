@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import {web3,HandChainrityContract} from "../utils/contracts";
-import { CampaignType, Status,LaunchProps } from "../types/interfaces";
+import { CampaignType, Status,ChildProps } from "../types/interfaces";
 
 
-export default function Campaign({ prop_account }: LaunchProps) {
+export default function Campaign({ prop_account }: ChildProps) {
     const [campaigns, setCampaigns] = useState<CampaignType[]>([]); // Campaign[] is an array of Campaign objects
     
     useEffect(() => {
