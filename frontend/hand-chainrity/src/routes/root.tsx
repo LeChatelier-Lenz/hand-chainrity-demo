@@ -8,6 +8,9 @@ import AddToDriveOutlinedIcon from '@mui/icons-material/AddToDriveOutlined';
 import DescriptionIcon from '@mui/icons-material/Description';
 import LayersIcon from '@mui/icons-material/Layers';
 import Chip from '@mui/material/Chip';
+import Campaign from "../pages/campaign"
+import Launch from "../pages/launch"
+import User from "../pages/user"
 import { AppProvider, type Navigation } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { useDemoRouter } from '@toolpad/core/internal';
@@ -76,19 +79,33 @@ const demoTheme = createTheme({
 });
 
 function DemoPageContent({ pathname }: { pathname: string }) {
-  return (
-    <Box
-      sx={{
-        py: 4,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        textAlign: 'center',
-      }}
-    >
-      <Typography>Dashboard content for {pathname}</Typography>
-    </Box>
-  );
+  // Define a function to select the correct component based on pathname
+  const renderComponent = () => {
+    switch (pathname) {
+      case '/dashboard/donate crowdfunding':
+        return <Campaign />;
+      case '/dashboard/start crowdfunding':
+        return <Launch customProp="Value you want to pass" />;
+      case '/dashboard/user':
+        return <User />;
+      default:
+        return (
+          <Box
+            sx={{
+              py: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+            }}
+          >
+            <Typography>Dashboard content for {pathname}</Typography>
+          </Box>
+        );
+    }
+  };
+
+  return <>{renderComponent()}</>;
 }
 
 interface DemoProps {
