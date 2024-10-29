@@ -71,6 +71,48 @@ export const fetchCampaignById = async(id:number,setState:any) => {
     } 
 }
 
+
+/**
+ * 获取区块链上所有正在筹款中的活动列表
+ * @param hcuId 活动id
+ * @param setState 对应campaign list[活动列表]更改状态的函数
+ */
+export const fetchFundraisingCampaigns = async(setState:any) => {
+  if(HandChainrityContract){
+      try{
+        const newCampaigns:CampaignType[] = [];
+        const campaignId:number[] = await HandChainrityContract.methods.getFundraisingCampaigns().call();
+        // console.log(campaignCount);
+        for (let i = 1; i <= campaignId.length; i++) {
+          const new_campaign:any = await HandChainrityContract.methods.campaigns(campaignId[i]).call();
+          // console.log(new_campaign);
+          if(new_campaign.status === '1'){
+            newCampaigns.push({
+              id: Number(new_campaign.hcuId),
+              title: "Need To Load from Backend",
+              description: new_campaign.description,
+              details: "Need To Load from Backend",
+              target: Number(web3.utils.fromWei(new_campaign.targetAmount,'ether')),
+              current: Number(new_campaign.currentAmount),
+              deadline: new Date(Number(new_campaign.deadline)*1000),
+              beneficiary: new_campaign.beneficiary,
+              launcher: new_campaign.launcher,
+              status: Status[Number(new_campaign.status)]
+            });
+          }
+        }
+        setState(newCampaigns);
+        // console.log(newCampaigns);
+      }catch(e:any){
+        console.error(e.message);
+        alert(`活动列表获取失败:${e.message}`);
+      } 
+  }else{
+      alert('合约未部署');
+  } 
+}
+
+
 /**
  * 根据id向已有活动捐款
  * @param campaignId 活动id
@@ -137,3 +179,74 @@ export const revokeCampaign = async(campaignId:number,account:string) => {
  * @param campaignId 活动id
  * @param account 用户账户（钱包地址）
  */ 
+
+
+/**
+ * 获取用户的活动参与列表
+ * @param account 用户账户（钱包地址）
+ * @param setState 对应活动更改状态的函数
+ * @returns 返回用户参与的活动列表（CampaignType[]）
+ */
+export const fetchUserCampaigns = async(account:string,setState:any) => {
+    if(HandChainrityContract){
+        try{
+          const newCampaigns:CampaignType[] = [];
+          const campaignId:number[] = await HandChainrityContract.methods.getParticipantCampaigns(account).call();
+          // console.log(campaignCount);
+          console.log(campaignId);
+          if(campaignId.length === 0){
+            alert('您还没有参与任何活动！');
+            return;
+          }
+          for (let i = 0; i < campaignId.length ; i++) {
+            const new_campaign:any = await HandChainrityContract.methods.campaigns(campaignId[i]).call();
+            if(new_campaign.launcher === account){
+              newCampaigns.push({
+                id: Number(new_campaign.hcuId),
+                title: "Need To Load from Backend",
+                description: new_campaign.description,
+                details: "Need To Load from Backend",
+                target: Number(web3.utils.fromWei(new_campaign.targetAmount,'ether')),
+                current: Number(new_campaign.currentAmount),
+                deadline: new Date(Number(new_campaign.deadline)*1000),
+                beneficiary: new_campaign.beneficiary,
+                launcher: new_campaign.launcher,
+                status: Status[Number(new_campaign.status)]
+              });
+            }
+          }
+          setState(newCampaigns);
+          // console.log(newCampaigns);
+        }catch(e:any){
+          console.error(e.message);
+          alert(`活动列表获取失败:${e.message}`);
+        } 
+    }else{
+        alert('合约未部署');
+    } 
+}
+
+
+/**
+ * 第三方对活动进行审核
+ * @param campaignId 活动id
+ * @param checkResult 审核结果
+ * @return 返回审核结果
+ */
+export const checkCampaign = async(campaignId:number, checkResult:boolean, account:any) => {
+    if(HandChainrityContract){
+        try{
+          const check = await HandChainrityContract.methods.approveCampaign(campaignId,checkResult).send({from:account});
+          console.log(check);
+          alert('审核成功！');
+          return check;
+        }catch(e:any){
+          console.error(e.message);
+          alert(`审核失败:${e.message}`);
+        } 
+    }else{
+        alert('合约未部署');
+    }
+  }
+
+
