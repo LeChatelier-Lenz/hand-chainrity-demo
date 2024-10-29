@@ -15,6 +15,12 @@ import { styled } from '@mui/material/styles';
 
 import ForgotPassword from './ForgotPassword';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
+import axios , { AxiosError, AxiosResponse }  from 'axios';
+import { useNavigate } from 'react-router-dom';
+const axiosInstance = axios.create({
+  baseURL: 'http://localhost:8888', // 设置基础 URL
+  timeout: 10000,                    // 可选：请求超时时间
+});
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -40,7 +46,7 @@ export default function SignInCard() {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
-
+  const navigate = useNavigate(); // 初始化 navigate
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -49,13 +55,55 @@ export default function SignInCard() {
     setOpen(false);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) =>  {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    let username  = data.get('email');
+    let password = data.get('password');
     console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+      email: username,
+      password: password,
     });
+    try {
+      // dispatch({
+      //   type: "USER_LOGIN_REQUEST",
+      //   payload: undefined
+      // });
+
+      // setTimeout(async () => {
+      //   const { data } = await axios.get('/api/products');
+
+      //   dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
+      // }, 3000);
+      const config = {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      };
+      const res = await axiosInstance.post(
+        '/api/users/login',
+        { username, password },
+        config
+      );
+      
+      //dispatch({ type: "USER_LOGIN_SUCCESS", payload: data });
+      localStorage.setItem('userInfo', JSON.stringify(res));
+      console.log(res);
+      navigate('/root/campaign'); 
+      
+    }
+    catch (error: unknown) {
+      const err = error as AxiosError<{ message: string }>;
+      const errorMessage: string =
+        err.response && err.response.data.message
+          ? err.response.data.message
+          : err.message;
+  
+      // dispatch({
+      //   type: "USER_LOGIN_FAIL",
+      //   payload: errorMessage,
+      // });
+    }
   };
 
   const validateInputs = () => {
@@ -160,7 +208,7 @@ export default function SignInCard() {
           Don&apos;t have an account?{' '}
           <span>
             <Link
-              href="/material-ui/getting-started/templates/sign-in/"
+              href="signUp"
               variant="body2"
               sx={{ alignSelf: 'center' }}
             >

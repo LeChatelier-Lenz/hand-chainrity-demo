@@ -9,18 +9,21 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 # 登录用户并生成 token
 def auth_user(db: Session, form_data: OAuth2PasswordRequestForm):
-    user = authenticate_user(db, form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(status_code=400, detail="邮箱或密码错误")
-    token = create_access_token(data={"user_address": user.address})
-    return {
-        "address": user.address,
-        "name": user.name,
-        "email": user.email,
-        "role": user.role,
-        "image": user.image,
-        "token": token
-    }
+    try:
+        user = authenticate_user(db, form_data.username, form_data.password)
+        if not user:
+            raise HTTPException(status_code=400, detail="邮箱或密码错误")
+        token = create_access_token(data={"user_address": user.address})
+        return {
+            "address": user.address,
+            "name": user.name,
+            "email": user.email,
+            "role": user.role,
+            "image": user.image,
+            "token": token
+        }
+    except Exception as e:
+        return {"error": str(e)}
 
 # 获取当前登录用户的个人资料
 def get_user_profile(db: Session, current_user: User = Depends(get_current_user)):
@@ -49,20 +52,23 @@ def update_user_profile(user_update: UserUpdate, db: Session, current_user: User
 
 # 注册新用户
 def register_user(user: UserCreate, db: Session):
-    user_exists = db.query(User).filter(User.address == user.address).first()
-    if user_exists:
-        raise HTTPException(status_code=400, detail="用户已存在")
-    new_user = User(**user.dict())
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    token = create_access_token(data={"user_address": new_user.address})
-    return {
-        "address": new_user.address,
-        "name": new_user.name,
-        "email": new_user.email,
-        "token": token
-    }
+    try:
+        user_exists = db.query(User).filter(User.address == user.address).first()
+        if user_exists:
+            raise HTTPException(status_code=400, detail="用户已存在")
+        new_user = User(**user.dict())
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        token = create_access_token(data={"user_address": new_user.address})
+        return {
+            "address": new_user.address,
+            "name": new_user.name,
+            "email": new_user.email,
+            "token": token
+        }
+    except Exception as e:
+        return {"error": str(e)}
 
 # 关注用户
 def follow_user(target_user_id: int, db: Session, current_user: User = Depends(get_current_user)):
