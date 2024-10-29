@@ -23,39 +23,6 @@ const GanacheTestChainId = '0x539' // Ganache默认的ChainId = 0x539 = Hex(1337
 const GanacheTestChainName = 'REChain'  //
 const GanacheTestChainRpcUrl = 'http://127.0.0.1:8545' // Ganache RPC地址
 
-// export default function Root() {
-
-
-//     return (
-//       <>
-//         <div id="sidebar">
-//             <nav>
-//             <ul style={{display:"flex",flex:"row"}}>
-//                 <li>
-//                     <Link to="./campaign"> - Campaign </Link>
-//                 </li>
-//                 <li>
-//                     <Link to="./launch"> | Launch </Link>
-//                 </li>
-//                 <li>
-//                     <Link to="./user"> | User - </Link>
-//                 </li>
-//             </ul>
-//             </nav>
-//         </div>
-        // <button style={{"border":"solid"}} onClick={onClickConnectWallet} type="button" className="btn btn-primary">Connect Wallet</button>
-        // { account?
-        //     <p>Connected Account: {account}</p>:
-        //     <p>Not Connected</p>
-        // }
-        // <div id="detail" style={{border:"solid"}}>
-        //     <Outlet context={{account:account}} />
-        // </div>
-//       </>
-//     );
-//   }
-
-
 const NAVIGATION: Navigation = [
     {
         kind: 'header',
@@ -119,32 +86,22 @@ const demoTheme = createTheme({
     },
 });
 
-function DemoPageContent({ pathname }: { pathname: string }) {
+
+export default function DashboardLayoutBasic() {
+
+    const [account, setAccount] = useState<string | null>(null)
+
+    function DemoPageContent({ pathname }: { pathname: string }) {
     // Define a function to select the correct component based on pathname
     // console.log("看看",pathname);
-
-    // //初始化时检查用户是否连接钱包
-    // useEffect(() => {
-    //     const initCheckAccounts = async () => {
-    //         // @ts-ignore
-    //         const { ethereum } = window;
-    //         if (Boolean(ethereum && ethereum.isMetaMask)) {
-    //             // 尝试获取连接的用户账户
-    //             const accounts = await web3.eth.getAccounts()
-    //             if (accounts && accounts.length) {
-    //                 setAccount(accounts[0])
-    //             }
-    //         }
-    //     }
-    //     initCheckAccounts()
-    // }, [])
-    
     const renderComponent = () => {
+        console.log("这里的account",account);
+        
         switch (pathname) {
             case '/donate':
-                return <Campaign account="0x68686686868686868"/>;
+                return <Campaign prop_account={account!}/>;
             case '/start':
-                return <Launch now_account="0x54088540885408854088" />;
+                return <Launch prop_account="0x54088540885408854088" />;
             case '/reports/followed':
                 return <User />;
             case '/reports/created':
@@ -169,16 +126,21 @@ function DemoPageContent({ pathname }: { pathname: string }) {
     return <>{renderComponent()}</>;
 }
 
-interface DemoProps {
-    /**
-     * Injected by the documentation to work in an iframe.
-     * Remove this when copying and pasting into your project.
-     */
-    window?: () => Window;
-}
-
-export default function DashboardLayoutBasic(props: DemoProps) {
-    const [account, setAccount] = useState<string | null>(null)
+        //初始化时检查用户是否连接钱包
+    useEffect(() => {
+        const initCheckAccounts = async () => {
+            // @ts-ignore
+            const { ethereum } = window;
+            if (Boolean(ethereum && ethereum.isMetaMask)) {
+                // 尝试获取连接的用户账户
+                const accounts = await web3.eth.getAccounts()
+                if (accounts && accounts.length) {
+                    setAccount(accounts[0])
+                }
+            }
+        }
+        initCheckAccounts()
+    }, [])
 
         // 连接钱包
     const onClickConnectWallet = async () => {
@@ -215,18 +177,16 @@ export default function DashboardLayoutBasic(props: DemoProps) {
             // 获取小狐狸拿到的授权用户列表
             const accounts = await ethereum.request({ method: 'eth_accounts' });
             // 如果用户存在，展示其account，否则显示错误信息
+            console.log("连接上了",accounts);
+            console.log("连接上了666",accounts![0]);
+            
             setAccount(accounts[0] || 'Not able to get accounts');
         } catch (error: any) {
             alert(error.message)
         }
     }
 
-    const { window } = props;
-
     const router = useDemoRouter('/dashboard');
-
-    // Remove this const when copying and pasting into your project.
-    const demoWindow = window !== undefined ? window() : undefined;
 
     return (
         // preview-start
@@ -234,7 +194,6 @@ export default function DashboardLayoutBasic(props: DemoProps) {
             navigation={NAVIGATION}
             router={router}
             theme={demoTheme}
-            window={demoWindow}
         >
             <DashboardLayout>
                 <>

@@ -4,6 +4,10 @@ export interface OutletContext {
     account: string; // 根据实际情况修改
 }
 
+export interface LaunchProps {
+  prop_account: string;
+}
+
 export interface CampaignType {
     id: number;
     title: string;
