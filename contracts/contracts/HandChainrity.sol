@@ -10,7 +10,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract HandChainrity is ERC721Enumerable, Ownable {
     enum Status {
         Launched,
-        //运行中
         Fundraising,
         Rejected,
         LimitReached, //金额或者是时间
@@ -54,7 +53,7 @@ contract HandChainrity is ERC721Enumerable, Ownable {
     event CampaignApproved(uint256 campaignId);
     event CampaignRejected(uint256 campaignId);
     event ContributionMade(uint256 campaignId, address indexed contributor, uint256 amount);
-    event CampaignLimitReached(uint256 campaignId);
+    event CampaignLimitReached(uint256 campaignId,string reason);
     event CampaignFinalized(uint256 campaignId);
     event campaignRevoked(uint256 campaignId);
 
@@ -90,27 +89,40 @@ contract HandChainrity is ERC721Enumerable, Ownable {
         require(msg.sender != campaigns[campaignId].beneficiary, "Shouldn't Donate for yourself");
         // 当且仅当手链筹单元处于筹款状态时可参与
         require(campaigns[campaignId].status == Status.Fundraising,"Campaign is not in Fundraising State");
-        campaigns[campaignId].currentAmount += msg.value;
-        // 假如已经到达目标金额或超过截止时间，则直接更新状态，不再存入
-        if (campaigns[campaignId].currentAmount >= campaigns[campaignId].targetAmount || block.timestamp >= campaigns[campaignId].deadline)
-        {
-            // 超过目标金额的部分退回给参与者
-            payable(msg.sender).transfer(campaigns[campaignId].currentAmount - campaigns[campaignId].targetAmount);
-            // 更新状态
+        // 超过截止时间的筹款不再接受
+        if (block.timestamp > campaigns[campaignId].deadline){
+            payable(msg.sender).transfer(msg.value);
+            // 超过截止时间的筹款不再接受
             campaigns[campaignId].status = Status.LimitReached;
             removingCampign(campaignId);
-            emit CampaignLimitReached(campaignId);
+            emit CampaignLimitReached(campaignId,"Campaign is Overdue");
             return false;
         }
-        contributions[campaignId][msg.sender] += msg.value;
+
+        uint256 actulIn = msg.value;
+        bool isReached = true;
+        // 超过目标金额的筹款不再接受
+        if (campaigns[campaignId].currentAmount + msg.value > campaigns[campaignId].targetAmount)
+        {
+            actulIn = campaigns[campaignId].targetAmount - campaigns[campaignId].currentAmount; // 实际接受的金额
+            payable(msg.sender).transfer(campaigns[campaignId].currentAmount + msg.value - campaigns[campaignId].targetAmount);
+            campaigns[campaignId].status = Status.LimitReached;
+            removingCampign(campaignId);
+            emit CampaignLimitReached(campaignId,"Campaign is Over Target");
+            isReached = false;
+        }
+        campaigns[campaignId].currentAmount += actulIn;
+        contributions[campaignId][msg.sender] += actulIn;
+
         // Mint NFT作为参与凭证（ERC721的作用）
         childId[campaignId]++; // 对应的campaign中nftid更新
         uint256 nftId = campaignId * 10000 + childId[campaignId];
         //更新参与者列表
         participants[campaignId].push(msg.sender);
         _mint(msg.sender, nftId); // 给参与者发行NFT作为凭证
-        emit ContributionMade(campaignId, msg.sender, msg.value);
-        return true;
+
+        emit ContributionMade(campaignId, msg.sender, actulIn);
+        return isReached;
     }
 
     // 完成手链筹
@@ -120,7 +132,8 @@ contract HandChainrity is ERC721Enumerable, Ownable {
         // 完成手链筹没有严格要求，可以在受益人觉得合适的情况下提前结束
         require(campaigns[campaignId].status == Status.LimitReached || campaigns[campaignId].status == Status.Fundraising, "Not Valid State to Finish");
         // 将目前筹款全部转移给受益人
-        campaigns[campaignId].beneficiary.transfer(campaigns[campaignId].currentAmount);
+        uint256 fundAmount = AgencyFeeDeduct(campaigns[campaignId].currentAmount);
+        campaigns[campaignId].beneficiary.transfer(fundAmount);
 
         removingCampign(campaignId);
         campaigns[campaignId].status = Status.Completed;
@@ -137,9 +150,10 @@ contract HandChainrity is ERC721Enumerable, Ownable {
         // 一一退回所有筹款
         for(uint256 i = 0 ; i < participants[campaignId].length ; i ++ )
         {
-            payable(participants[campaignId][i]).transfer(contributions[campaignId][participants[campaignId][i]]);
+            uint256 refundAmount = AgencyFeeDeduct(contributions[campaignId][participants[campaignId][i]]);
+            payable(participants[campaignId][i]).transfer(refundAmount);
         }
-        campaigns[campaignId].status == Status.Revoked;
+        campaigns[campaignId].status = Status.Revoked;
         removingCampign(campaignId);
         emit campaignRevoked(campaignId);
     }
@@ -181,4 +195,8 @@ contract HandChainrity is ERC721Enumerable, Ownable {
     function setNewThirdParty(address new_tp) public onlyOwner {
         thirdPartyTrusted[new_tp] = true;
     }   
+
+    function AgencyFeeDeduct(uint256 amount) internal pure returns(uint256){
+        return amount * 9995 / 10000; // 0.05%的手续费
+    }
 }
