@@ -19,7 +19,9 @@ import SignUp from './pages/sign-up/SignUp';
 import ThirdParty from './routes/third-party';
 import Admin from './routes/admin';
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  const [account, setAccount] = useState<string | null>(null)
+  [
   {
     path: '/root',
     element: < Root/>,
@@ -59,7 +61,7 @@ const router = createBrowserRouter([
     },
     {
       path:'/launch',
-      element: <Launch />,
+      element: <Launch prop_account={account!} />,
     },
     {
       path:'/signup',
