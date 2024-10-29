@@ -62,7 +62,4 @@ class Campaign(Base):
     # 关联 User 表，多对一关系
     owner = relationship("User", back_populates="campaigns")
 
-    def __init__(self, title, description, address):
-        self.title = title
-        self.description = description
-        self.address = address
+
