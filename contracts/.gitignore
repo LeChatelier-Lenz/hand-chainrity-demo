@@ -13,7 +13,7 @@ node_modules
 /coverage
 /coverage.json
 
-hardhat.config
+hardhat.config.ts
 
 # Hardhat Ignition default folder for deployments against a local node
 ignition/deployments/chain-1337
