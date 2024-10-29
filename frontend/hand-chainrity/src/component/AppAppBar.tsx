@@ -58,13 +58,13 @@ export default function AppAppBar() {
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
             <Sitemark />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" color="info" size="small" onClick={() => { navigate("/campaign") }}>
+              <Button variant="text" color="info" size="small" onClick={() => { navigate("/root/campaign") }}>
                 筹款活动
               </Button>
-              <Button variant="text" color="info" size="small" onClick={() => { navigate("/launch") }}>
+              <Button variant="text" color="info" size="small" onClick={() => { navigate("/root/launch") }}>
                 发起筹款
               </Button>
-              <Button variant="text" color="info" size="small" onClick={() => { navigate("/campaign") }}>
+              <Button variant="text" color="info" size="small" onClick={() => { navigate("/root/campaign") }}>
                 关于我们
               </Button>
               {/* <Button variant="text" color="info" size="small">

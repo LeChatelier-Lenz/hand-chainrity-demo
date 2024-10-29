@@ -5,6 +5,10 @@ export interface ChildProps {
   prop_account: string;
 }
 
+export interface OutletContext {
+  account: string;
+}
+
 export interface CampaignType {
     id: number;
     title: string;
