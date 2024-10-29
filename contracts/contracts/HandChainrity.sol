@@ -218,4 +218,8 @@ contract HandChainrity is ERC721Enumerable, Ownable {
     function AgencyFeeDeduct(uint256 amount) internal pure returns(uint256){
         return amount * 9995 / 10000; // 0.05%的手续费
     }
+
+    function getFundraisingCampaigns() public view returns (uint256[] memory) {
+        return raisingCampaigns;
+    }
 }
