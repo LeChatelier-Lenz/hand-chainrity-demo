@@ -2,12 +2,21 @@ import { Outlet } from "react-router-dom";
 import AppAppBar from "../component/AppAppBar";
 import { useEffect, useState } from "react";
 import { web3 } from "../utils/contracts";
+import { createTheme, ThemeProvider, PaletteMode } from '@mui/material/styles';
+import getBlogTheme from '../theme/getBlogTheme';
+import React from "react";
+
 
 const GanacheTestChainId = '0x539' // Ganache默认的ChainId = 0x539 = Hex(1337)
 const GanacheTestChainName = 'REChain'  //
 const GanacheTestChainRpcUrl = 'http://127.0.0.1:8545' // Ganache RPC地址
 
 export default function Root(){
+    const [mode, setMode] = React.useState<PaletteMode>('light');
+    // const [showCustomTheme, setShowCustomTheme] = React.useState(true);
+    const blogTheme = createTheme(getBlogTheme(mode));
+    // const defaultTheme = createTheme({ palette: { mode } });
+
     const [account, setAccount] = useState<string | null>(null)
     //初始化时检查用户是否连接钱包
     useEffect(() => {
@@ -67,11 +76,11 @@ export default function Root(){
         }
     }
     return(
-        <div>
+        <ThemeProvider theme={blogTheme}>
             <AppAppBar />
             <div>
                 <Outlet context={{account:account}} />
             </div>
-        </div>
+        </ThemeProvider>
     )
 }
