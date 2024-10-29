@@ -1,44 +1,39 @@
 import { useEffect, useState } from "react";
 import {web3,HandChainrityContract} from "../utils/contracts";
 import { CampaignType, Status,ChildProps } from "../types/interfaces";
+import { fetchCampaignById, fetchCampaigns } from "../actions/campaign";
 
 
 export default function Campaign({ prop_account }: ChildProps) {
     const [campaigns, setCampaigns] = useState<CampaignType[]>([]); // Campaign[] is an array of Campaign objects
-    
+    const [campaignFound,setCampaignFound] = useState<CampaignType>({
+      id: 0,
+      title: "",
+      details: "",
+      description: "",
+      target: 0,
+      current: 0,
+      deadline: new Date(),
+      beneficiary: "",
+      launcher: "",
+      status: ""
+    });
+    const [campaignId,setCampaignId] = useState<number>(0);
+
     useEffect(() => {
-      const getCampaigns = async () => {
-        if(HandChainrityContract){
-          try{
-            const newCampaigns:CampaignType[] = [];
-            const campaignCount:number = await HandChainrityContract.methods.campaignCount().call();
-            // console.log(campaignCount);
-            for (let i = 1; i <= Number(campaignCount); i++) {
-              const new_campaign:any = await HandChainrityContract.methods.campaigns(i).call();
-              // console.log(new_campaign);
-              newCampaigns.push({
-                id: Number(new_campaign.hcuId),
-                title: "Need To Load from Backend",
-                description: new_campaign.description,
-                details: "Need To Load from Backend",
-                target: Number(web3.utils.fromWei(new_campaign.targetAmount,'ether')),
-                current: Number(new_campaign.currentAmount),
-                deadline: new Date(Number(new_campaign.deadline)*1000),
-                beneficiary: new_campaign.beneficiary,
-                launcher: new_campaign.launcher,
-                status: Status[Number(new_campaign.status)]
-              });
-            }
-            setCampaigns(newCampaigns);
-            console.log(campaigns);
-          }catch(e:any){
-            console.error(e.message);
-            alert(`活动列表获取失败:${e.message}`);
-          }   
-        }
-      }
-      getCampaigns();
+        fetchCampaigns(setCampaigns);
     }, [campaigns]);
+
+    const findCampaignById = async (e:React.ChangeEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      try{
+        fetchCampaignById(campaignId,setCampaignFound);
+      }catch(e:any){
+        console.error(e.message);
+        alert(`活动获取失败:${e.message}`);
+      }
+    }
+
 
     
     return (      
@@ -51,6 +46,31 @@ export default function Campaign({ prop_account }: ChildProps) {
             <p>Connected Account: {prop_account}</p>:
             <p>Not Connected</p>
         }
+        <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+          <h2>Find Campaign By ID</h2>
+          <form onSubmit={findCampaignById}>
+            <label>
+              Campaign ID:
+              <input type="number" name="id" onChange={(e) => setCampaignId(Number(e.target.value))}/>
+            </label>
+            <button type="submit" >Find</button>
+          </form>
+          {campaignFound.id !== 0?
+            <div style={{display:"flex",flexDirection:"column",border:"solid",margin:"10px",padding:"10px"}}>
+              <h3>Title: {campaignFound.title}</h3>
+              <p>ID: {campaignFound.id}</p>
+              <p>Description:{campaignFound.description}</p>
+              <p>Details: {campaignFound.details}</p>
+              <p>Target: {campaignFound.target}</p>
+              <p>Current: {campaignFound.current}</p>
+              <p>Deadline: {campaignFound.deadline.toString()}</p>
+              <p>Beneficiary: {campaignFound.beneficiary}</p>
+              <p>Launcher: {campaignFound.launcher}</p>
+              <p>Status: {campaignFound.status}</p>
+            </div>:
+            <p>No Campaign Found</p>
+          }
+          </div>
         <div className="campaign-list" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
           <h2>Active Campaign List</h2>
           <ul>
@@ -69,7 +89,7 @@ export default function Campaign({ prop_account }: ChildProps) {
               </li>
             ))}
           </ul>
-          </div>
+        </div>
       </div>
     );
 }
