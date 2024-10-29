@@ -9,8 +9,11 @@ import Footer from './components/Footer';
 import TemplateFrame from './TemplateFrame';
 
 import getBlogTheme from '../../theme/getBlogTheme';
+import { ChildProps } from '../../types/interfaces';
 
-export default function Campaign() {
+
+
+export default function Campaign({ prop_account }: ChildProps) {
   const [mode, setMode] = React.useState<PaletteMode>('light');
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const blogTheme = createTheme(getBlogTheme(mode));

@@ -10,7 +10,7 @@ import { createTheme } from '@mui/material/styles';
 import { AppProvider, type Navigation } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { useDemoRouter } from '@toolpad/core/internal';
-import Campaign from "../pages/campaign";
+import Campaign from "../pages/campaign/Campaign";
 import Launch from "../pages/launch";
 import User from "../pages/user";
 
