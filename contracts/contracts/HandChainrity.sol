@@ -137,7 +137,7 @@ contract HandChainrity is ERC721Enumerable, Ownable {
 
         removingCampign(campaignId);
         campaigns[campaignId].status = Status.Completed;
-        
+        delete childId[campaignId];
         emit CampaignFinalized(campaignId);
         // 资金释放逻辑可以在这里实现
     }
