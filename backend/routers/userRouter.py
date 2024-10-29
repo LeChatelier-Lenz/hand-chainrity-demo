@@ -30,9 +30,9 @@ def update_profile(user_update: UserUpdate, db: Session = Depends(get_db), curre
     return userController.update_user_profile(user_update, db, current_user)
 
 # 获取用户信息
-@router.get("/api/users/{user_id}")
-def get_user(user_id: int, db: Session = Depends(get_db)):
-    return userController.get_user_by_id(user_id, db)
+@router.get("/api/users/{user_address}")
+def get_user(user_address: str, db: Session = Depends(get_db)):
+    return userController.get_user_by_address(user_address, db)
 
 
 

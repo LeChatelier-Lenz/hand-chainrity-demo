@@ -3,12 +3,13 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from routers import  userRouter
+from routers import  userRouter, campRouter
 from database import init_db
 
 app = FastAPI()
 
 app.include_router(userRouter.router)
+app.include_router(campRouter.router)
 app.mount("/images", StaticFiles(directory="../backend/public/images"), name="images")
 
 # 允许 CORS

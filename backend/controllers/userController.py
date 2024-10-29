@@ -12,15 +12,13 @@ def auth_user(db: Session, form_data: OAuth2PasswordRequestForm):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(status_code=400, detail="邮箱或密码错误")
-    token = create_access_token(data={"user_id": user.id})
+    token = create_access_token(data={"user_address": user.address})
     return {
-        "id": user.id,
+        "address": user.address,
         "name": user.name,
         "email": user.email,
         "role": user.role,
         "image": user.image,
-        "followers": user.followers,
-        "followings": user.followings,
         "token": token
     }
 
@@ -35,8 +33,8 @@ def get_user_profile(db: Session, current_user: User = Depends(get_current_user)
     }
 
 # 通过用户 ID 获取用户信息
-def get_user_by_id(user_id: int, db: Session):
-    user = db.query(User).filter(User.id == user_id).first()
+def get_user_by_address(user_address: str, db: Session):
+    user = db.query(User).filter(User.address == user_address).first()
     if not user:
         raise HTTPException(status_code=404, detail="用户不存在")
     return user
@@ -58,7 +56,7 @@ def register_user(user: UserCreate, db: Session):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    token = create_access_token(data={"user_id": new_user.address})
+    token = create_access_token(data={"user_address": new_user.address})
     return {
         "address": new_user.address,
         "name": new_user.name,
