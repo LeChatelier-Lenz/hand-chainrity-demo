@@ -80,7 +80,14 @@ export default function SignInCard() {
       localStorage.setItem('userInfo', JSON.stringify(res.data));
       console.log("res:", res.data);
       console.log("res.data:", JSON.parse(localStorage.getItem('userInfo') || '{}').name );
-      navigate('/campaign'); 
+      if (JSON.parse(localStorage.getItem('userInfo') || '{}').name){
+        navigate('/root/campaign'); 
+      }
+      else {
+        setPasswordError(true);
+        setPasswordErrorMessage("登录失败，请重试");
+      }
+      
       
     }
     catch (error: unknown) {

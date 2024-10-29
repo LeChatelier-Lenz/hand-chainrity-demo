@@ -30,7 +30,7 @@ export default function Home() {
 
         <Link
           className= 'mt-5 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
-          to='/root'
+          to='/root/campaign'
           target='_blank'>
           <div className='mx-auto mb-4 flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full border border-gray-200 bg-white px-7 py-2 shadow-md backdrop-blur transition-all hover:border-gray-300 hover:bg-white/50'>
           <p className='text-lg font-semibold text-gray-700'>
@@ -112,7 +112,7 @@ export default function Home() {
               <span className='mt-2 text-zinc-700'>
                 If you just want to donate , start {' '}
                 <Link
-                  to='/campaign'
+                  to='/root/campaign'
                   className='text-blue-700 underline underline-offset-2'>
                   donating
                 </Link>
