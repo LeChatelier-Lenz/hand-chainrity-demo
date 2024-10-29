@@ -63,7 +63,6 @@ def register_user(user: UserCreate, db: Session):
         token = create_access_token(data={"user_address": new_user.address})
         return {
             "address": new_user.address,
-            "name": new_user.name,
             "email": new_user.email,
             "token": token
         }
