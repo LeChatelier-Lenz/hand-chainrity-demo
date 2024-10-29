@@ -1,12 +1,12 @@
 import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
-// import { createTheme, ThemeProvider, PaletteMode } from '@mui/material/styles';
-import AppAppBar from '../../component/AppAppBar';
+import { createTheme, PaletteMode } from '@mui/material/styles';
+// import AppAppBar from '../../component/AppAppBar';
 import MainContent from './components/MainContent';
 import Latest from './components/Latest';
 import Footer from './components/Footer';
-import TemplateFrame from './TemplateFrame';
+// import TemplateFrame from './TemplateFrame';
 
 // import getBlogTheme from '../../theme/getBlogTheme';
 import { useOutletContext } from 'react-router-dom';
