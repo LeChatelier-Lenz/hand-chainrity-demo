@@ -48,10 +48,9 @@ export default function Campaign() {
 
   return (
     
-      <ThemeProvider theme={showCustomTheme ? blogTheme : defaultTheme}>
+      <div>
         <CssBaseline enableColorScheme />
 
-        <AppAppBar />
         <Container
           maxWidth="lg"
           component="main"
@@ -61,7 +60,8 @@ export default function Campaign() {
           <Latest />
         </Container>
         <Footer />
-      </ThemeProvider>
+       {/* </ThemeProvider> */}
+      </div>
     
   );
 }
