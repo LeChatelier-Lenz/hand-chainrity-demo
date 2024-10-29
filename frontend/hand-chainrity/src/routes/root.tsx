@@ -7,13 +7,13 @@ export default function Root() {
             <nav>
             <ul>
                 <li>
-                    <Link to="/campaign">Campaign</Link>
+                    <Link to="./campaign">Campaign</Link>
                 </li>
                 <li>
-                    <Link to="/launch">Launch</Link>
+                    <Link to="./launch">Launch</Link>
                 </li>
                 <li>
-                    <Link to="/user">User</Link>
+                    <Link to="./user">User</Link>
                 </li>
             </ul>
             </nav>

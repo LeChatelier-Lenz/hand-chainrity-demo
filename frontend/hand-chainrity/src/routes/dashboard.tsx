@@ -1,6 +1,7 @@
-import MaxWidthWrapper from "./component/MaxWidthWrapper";
+import MaxWidthWrapper from "../component/MaxWidthWrapper";
 //shift + alt + o 去除不必要引入
 import { Link } from "react-router-dom";
+
 
 export default function Home() {
   return (
@@ -14,7 +15,7 @@ export default function Home() {
         <h1 className='max-w-4xl text-5xl font-bold md:text-6xl lg:text-7xl'>
           Donate or start your{' '}
           <span className='text-blue-600'>crowdfunding</span>{' '}
-          in blockchain.
+          in blockofchain.
         </h1>
         <p className='mt-5 max-w-prose text-zinc-700 sm:text-lg'>
           HandChainrity allows you to start crowdfunding and donate to others in the Block Of Chain.
@@ -23,7 +24,7 @@ export default function Home() {
 
         <Link
           className= 'mt-5 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
-          to='/dashboard'
+          to='/root'
           target='_blank'>
           <div className='mx-auto mb-4 flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full border border-gray-200 bg-white px-7 py-2 shadow-md backdrop-blur transition-all hover:border-gray-300 hover:bg-white/50'>
           <p className='text-lg font-semibold text-gray-700'>
@@ -52,14 +53,13 @@ export default function Home() {
             <div className='mx-auto max-w-6xl px-6 lg:px-8'>
               <div className='mt-16 flow-root sm:mt-24'>
                 <div className='-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4'>
-                  {/* <Image
-                    src='/dashboard-preview.jpg'//换
-                    alt='product preview'
+                  <img
+                    src={require("../img/img1.jpg")} // 这里放入图片的 URL
+                    alt="Description of the"
                     width={1364}
                     height={866}
-                    quality={100}
-                    className='rounded-md bg-white p-2 sm:p-8 md:p-20 shadow-2xl ring-1 ring-gray-900/10'
-                  /> */}
+                    className='rounded-md bg-white p-2 sm:p-5 md:p-2 shadow-2xl ring-1 ring-gray-900/10'
+                  />
                 </div>
               </div>
             </div>
@@ -80,15 +80,15 @@ export default function Home() {
       </div>
 
       {/* Feature section */}
-      <div className='mx-auto mb-32 mt-32 max-w-5xl sm:mt-56'>
+      <div className='mx-auto mb-32 mt-32 max-w-5xl sm:mt-30'>
         <div className='mb-12 px-6 lg:px-8'>
           <div className='mx-auto max-w-2xl sm:text-center'>
             <h2 className='mt-2 font-bold text-4xl text-gray-900 sm:text-5xl'>
-              Start chatting in minutes
+              Start crowdfunding in minutes
             </h2>
             <p className='mt-4 text-lg text-gray-600'>
-              Chatting to your PDF files has never been
-              easier than with Quill.
+              Fundraising has never been
+              more secure and transparent than with HandChain.
             </p>
           </div>
         </div>
@@ -104,14 +104,13 @@ export default function Home() {
                 Sign up for an account
               </span>
               <span className='mt-2 text-zinc-700'>
-                Either starting out with a free plan or
-                choose our{' '}
+                If you just want to donate , start {' '}
                 <Link
-                  to='/pricing'
+                  to='/campaign'
                   className='text-blue-700 underline underline-offset-2'>
-                  pro plan
+                  donating
                 </Link>
-                .
+                {' '}now.
               </span>
             </div>
           </li>
@@ -121,11 +120,10 @@ export default function Home() {
                 Step 2
               </span>
               <span className='text-xl font-semibold'>
-                Upload your PDF file
+                Fill in your fundraising information and personal details
               </span>
               <span className='mt-2 text-zinc-700'>
-                We&apos;ll process your file and make it
-                ready for you to chat with.
+              All funds circulate only on the blockchain.
               </span>
             </div>
           </li>
@@ -135,10 +133,10 @@ export default function Home() {
                 Step 3
               </span>
               <span className='text-xl font-semibold'>
-                Start asking questions
+                Start your crowdfunding 
               </span>
               <span className='mt-2 text-zinc-700'>
-                It&apos;s that simple. Try out Quill today -
+                It&apos;s that simple. Try out HandChain today -
                 it really takes less than a minute.
               </span>
             </div>
