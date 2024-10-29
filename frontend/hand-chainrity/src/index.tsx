@@ -1,7 +1,9 @@
 import React from 'react';
 import ErrorPage from "./error-page";
 import ReactDOM from 'react-dom/client';
+import App from './App';
 import Root from './routes/root';
+import DashBoard from './routes/dashboard';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import {
@@ -14,23 +16,28 @@ import User from './pages/user';
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: <Root />,
+    path: '/root',
+    element: < Root/>,
     errorElement:<ErrorPage />,
     children: [
       {
-        path:'/campaign',
+        path:'/root/campaign',
         element: <Campaign />,
       },
       {
-        path:'/launch',
+        path:'/root/launch',
         element: <Launch />,
       },
       {
-        path:'/user',
+        path:'/root/user',
         element: <User />,
       },
     ]},
+    {
+      path:'/',
+      element: <DashBoard />,
+      errorElement:<ErrorPage />,
+    },
     {
       path:'/admin',
     },
