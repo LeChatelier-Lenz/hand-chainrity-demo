@@ -38,7 +38,6 @@ export default function Launch({ now_account }: LaunchProps) {
       ...prevData,
     [name]: name === 'deadline' ? new Date(value) : value
     }));
->>>>>>> 3c3c81d46b138553814eab8b7eb3c4a8aea85a6a
   }
 
   const handleSubmit = async (e:React.ChangeEvent<HTMLFormElement>) => {

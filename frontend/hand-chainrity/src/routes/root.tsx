@@ -123,8 +123,6 @@ function DemoPageContent({ pathname }: { pathname: string }) {
     // Define a function to select the correct component based on pathname
     // console.log("看看",pathname);
 
-    // const [account, setAccount] = useState<string | null>(null)
-
     // //初始化时检查用户是否连接钱包
     // useEffect(() => {
     //     const initCheckAccounts = async () => {
@@ -140,48 +138,6 @@ function DemoPageContent({ pathname }: { pathname: string }) {
     //     }
     //     initCheckAccounts()
     // }, [])
-
-
-    // // 连接钱包
-    // const onClickConnectWallet = async () => {
-    //     // 查看window对象里是否存在ethereum（metamask安装后注入的）对象
-    //     // @ts-ignore
-    //     const { ethereum } = window;
-    //     if (!Boolean(ethereum && ethereum.isMetaMask)) {
-    //         alert('MetaMask is not installed!');
-    //         return
-    //     }
-    //     try {
-    //         // 如果当前小狐狸不在本地链上，切换Metamask到本地测试链
-    //         if (ethereum.chainId !== GanacheTestChainId) {
-    //             const chain = {
-    //                 chainId: GanacheTestChainId, // Chain-ID
-    //                 chainName: GanacheTestChainName, // Chain-Name
-    //                 rpcUrls: [GanacheTestChainRpcUrl], // RPC-URL
-    //             };
-
-    //             try {
-    //                 // 尝试切换到本地网络
-    //                 await ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: chain.chainId }] })
-    //             } catch (switchError: any) {
-    //                 // 如果本地网络没有添加到Metamask中，添加该网络
-    //                 if (switchError.code === 4902) {
-    //                     await ethereum.request({
-    //                         method: 'wallet_addEthereumChain', params: [chain]
-    //                     });
-    //                 }
-    //             }
-    //         }
-    //         // 小狐狸成功切换网络了，接下来让小狐狸请求用户的授权
-    //         await ethereum.request({ method: 'eth_requestAccounts' });
-    //         // 获取小狐狸拿到的授权用户列表
-    //         const accounts = await ethereum.request({ method: 'eth_accounts' });
-    //         // 如果用户存在，展示其account，否则显示错误信息
-    //         setAccount(accounts[0] || 'Not able to get accounts');
-    //     } catch (error: any) {
-    //         alert(error.message)
-    //     }
-    // }
     
     const renderComponent = () => {
         switch (pathname) {
@@ -222,6 +178,49 @@ interface DemoProps {
 }
 
 export default function DashboardLayoutBasic(props: DemoProps) {
+    const [account, setAccount] = useState<string | null>(null)
+
+        // 连接钱包
+    const onClickConnectWallet = async () => {
+        // 查看window对象里是否存在ethereum（metamask安装后注入的）对象
+        // @ts-ignore
+        const { ethereum } = window;
+        if (!Boolean(ethereum && ethereum.isMetaMask)) {
+            alert('MetaMask is not installed!');
+            return
+        }
+        try {
+            // 如果当前小狐狸不在本地链上，切换Metamask到本地测试链
+            if (ethereum.chainId !== GanacheTestChainId) {
+                const chain = {
+                    chainId: GanacheTestChainId, // Chain-ID
+                    chainName: GanacheTestChainName, // Chain-Name
+                    rpcUrls: [GanacheTestChainRpcUrl], // RPC-URL
+                };
+
+                try {
+                    // 尝试切换到本地网络
+                    await ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: chain.chainId }] })
+                } catch (switchError: any) {
+                    // 如果本地网络没有添加到Metamask中，添加该网络
+                    if (switchError.code === 4902) {
+                        await ethereum.request({
+                            method: 'wallet_addEthereumChain', params: [chain]
+                        });
+                    }
+                }
+            }
+            // 小狐狸成功切换网络了，接下来让小狐狸请求用户的授权
+            await ethereum.request({ method: 'eth_requestAccounts' });
+            // 获取小狐狸拿到的授权用户列表
+            const accounts = await ethereum.request({ method: 'eth_accounts' });
+            // 如果用户存在，展示其account，否则显示错误信息
+            setAccount(accounts[0] || 'Not able to get accounts');
+        } catch (error: any) {
+            alert(error.message)
+        }
+    }
+
     const { window } = props;
 
     const router = useDemoRouter('/dashboard');
@@ -238,6 +237,9 @@ export default function DashboardLayoutBasic(props: DemoProps) {
             window={demoWindow}
         >
             <DashboardLayout>
+                <>
+                </>
+                <button style={{"border":"solid"}} onClick={onClickConnectWallet} type="button" className="btn btn-primary">Connect Wallet</button>
                 <DemoPageContent pathname={router.pathname} />
             </DashboardLayout>
         </AppProvider>
