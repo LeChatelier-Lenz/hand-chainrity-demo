@@ -24,7 +24,7 @@ contract HandChainrity is ERC721Enumerable, Ownable {
         uint256 deadline; //截止日期
         address payable beneficiary; //受益人
         address launcher; //发起人
-        uint256 nftId; // 对应的NFT ID
+        uint256 hcuId; // 对应的筹款单元id
         Status status; // 状态
     }
 
