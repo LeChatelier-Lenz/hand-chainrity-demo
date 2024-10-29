@@ -116,9 +116,9 @@ contract HandChainrity is ERC721Enumerable, Ownable {
 
         // Mint NFT作为参与凭证（ERC721的作用）
         childId[campaignId]++; // 对应的campaign中nftid更新
-        uint256 nftId = campaignId * 10000 + childId[campaignId];
+        uint256 nftId = campaignId * 1000000 + childId[campaignId];
         //更新参与者列表
-        participants[campaignId].push(msg.sender);
+        participants[campaignId].push(msg.sender); //有一个重复捐款会导致重复加入的问题
         _mint(msg.sender, nftId); // 给参与者发行NFT作为凭证
 
         emit ContributionMade(campaignId, msg.sender, actulIn);
@@ -155,6 +155,12 @@ contract HandChainrity is ERC721Enumerable, Ownable {
         }
         campaigns[campaignId].status = Status.Revoked;
         removingCampign(campaignId);
+        delete participants[campaignId];
+        delete childId[campaignId];
+        address[] memory campaignParticipants = participants[campaignId];
+        for (uint256 i = 0; i < campaignParticipants.length; i++) {
+            delete contributions[campaignId][campaignParticipants[i]];
+        }
         emit campaignRevoked(campaignId);
     }
 
