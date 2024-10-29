@@ -65,16 +65,6 @@ export default function SignInCard() {
       password: password,
     });
     try {
-      // dispatch({
-      //   type: "USER_LOGIN_REQUEST",
-      //   payload: undefined
-      // });
-
-      // setTimeout(async () => {
-      //   const { data } = await axios.get('/api/products');
-
-      //   dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
-      // }, 3000);
       const config = {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

@@ -11,6 +11,7 @@ router = APIRouter()
 # 注册新用户
 @router.post("/api/users")
 def register(user: UserCreate, db: Session = Depends(get_db)):
+    a = 0
     return userController.register_user(user, db)
 
 
