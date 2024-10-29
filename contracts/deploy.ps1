@@ -7,6 +7,7 @@ $status = npx hardhat ignition status chain-1337
 $deployed = $status -match "Deployed Addresses"
 if ($deployed) {
     # 清除所有合约
+    npx hardhat ignition wipe chain-1337 HandChainrityModule#HandChainrity.setNewThirdParty
     npx hardhat ignition wipe chain-1337 HandChainrityModule#HandChainrity
     echo "[Cleared all contracts]"
 } else {

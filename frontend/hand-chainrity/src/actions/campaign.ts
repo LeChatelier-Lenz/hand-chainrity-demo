@@ -137,3 +137,41 @@ export const revokeCampaign = async(campaignId:number,account:string) => {
  * @param campaignId 活动id
  * @param account 用户账户（钱包地址）
  */ 
+
+
+/**
+ * 获取用户的活动参与列表
+ */
+export const fetchUserCampaigns = async(account:string,setState:any) => {
+    if(HandChainrityContract){
+        try{
+          const newCampaigns:CampaignType[] = [];
+          const campaignCount:number = await HandChainrityContract.methods.getParticipantCampaigns(account).call();
+          // console.log(campaignCount);
+          for (let i = 1; i <= Number(campaignCount); i++) {
+            const new_campaign:any = await HandChainrityContract.methods.campaigns(i).call();
+            if(new_campaign.launcher === account){
+              newCampaigns.push({
+                id: Number(new_campaign.hcuId),
+                title: "Need To Load from Backend",
+                description: new_campaign.description,
+                details: "Need To Load from Backend",
+                target: Number(web3.utils.fromWei(new_campaign.targetAmount,'ether')),
+                current: Number(new_campaign.currentAmount),
+                deadline: new Date(Number(new_campaign.deadline)*1000),
+                beneficiary: new_campaign.beneficiary,
+                launcher: new_campaign.launcher,
+                status: Status[Number(new_campaign.status)]
+              });
+            }
+          }
+          setState(newCampaigns);
+          // console.log(newCampaigns);
+        }catch(e:any){
+          console.error(e.message);
+          alert(`活动列表获取失败:${e.message}`);
+        } 
+    }else{
+        alert('合约未部署');
+    } 
+}

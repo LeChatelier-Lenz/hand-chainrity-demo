@@ -47,6 +47,7 @@ contract HandChainrity is ERC721Enumerable, Ownable {
     mapping(uint256 => uint256) public childId;
     uint256 public campaignCount = 0; // 不会减少的活动计数器
     mapping(uint256 => address[]) public participants; // 活动id => 参与者列表
+    mapping(address => uint256[]) public participantCampaigns; // 参与者 => 活动id列表
 
     // event
     event CampaignCreated(uint256 campaignId, string description, uint256 targetAmount, address beneficiary);
@@ -111,6 +112,7 @@ contract HandChainrity is ERC721Enumerable, Ownable {
             emit CampaignLimitReached(campaignId,"Campaign is Over Target");
             isReached = false;
         }
+        participantCampaigns[msg.sender].push(campaignId);
         campaigns[campaignId].currentAmount += actulIn;
         contributions[campaignId][msg.sender] += actulIn;
 
@@ -157,6 +159,7 @@ contract HandChainrity is ERC721Enumerable, Ownable {
         removingCampign(campaignId);
         delete participants[campaignId];
         delete childId[campaignId];
+        delete participantCampaigns[msg.sender][campaignId];
         address[] memory campaignParticipants = participants[campaignId];
         for (uint256 i = 0; i < campaignParticipants.length; i++) {
             delete contributions[campaignId][campaignParticipants[i]];
@@ -195,6 +198,16 @@ contract HandChainrity is ERC721Enumerable, Ownable {
             nftList[i] = tokenOfOwnerByIndex(account, i);
         }
         return nftList;
+    }
+
+    // 获取参与者列表
+    function getParticipants(uint256 campaignId) public view returns (address[] memory) {
+        return participants[campaignId];
+    }
+
+    // 获取参与者对应的筹款单元列表
+    function getParticipantCampaigns(address account) public view returns (uint256[] memory) {
+        return participantCampaigns[account];
     }
 
     // 设置新的第三方可信平台
