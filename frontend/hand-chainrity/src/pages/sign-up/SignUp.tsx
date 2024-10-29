@@ -195,7 +195,7 @@ export default function SignUp() {
       
       localStorage.setItem('userInfo', JSON.stringify(res.data)); // 使用 res.data
       console.log(res.data); // 确保只打印数据部分
-      navigate('/campaign'); 
+      navigate('/root/campaign'); 
   
     } catch (error: unknown) {
       const err = error as AxiosError<{ message: string }>;
