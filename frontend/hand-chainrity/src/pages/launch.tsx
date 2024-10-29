@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CampaignType, ChildProps, Status } from "../types/interfaces";
 import { HandChainrityContract, web3 } from "../utils/contracts";
+import { fetchCampaignById, fetchCampaigns } from "../actions/campaign";
 
 
 export default function Launch({ prop_account }: ChildProps) {
@@ -17,7 +18,8 @@ export default function Launch({ prop_account }: ChildProps) {
     launcher: "",
     status: ""
   });
-  const [error,setError] = useState('');
+
+  
 
   
   const [campaigns,setCampaigns] = useState<CampaignType[]>([]);
@@ -35,13 +37,9 @@ export default function Launch({ prop_account }: ChildProps) {
 
   const handleSubmit = async (e:React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault(); // 阻止默认表单提交行为
-    setError(''); // 清空错误信息
-
-    // 简单验证
-    //
+    // setError(''); // 清空错误信息
 
     try {
-        // 发起 POST 请求到后端
         const targetValue = web3.utils.toWei(formData.target.toString(),'ether');
         // 按秒获取时间戳
         const ddlTimestamp = Math.floor(formData.deadline.getTime()/1000);
@@ -64,40 +62,15 @@ export default function Launch({ prop_account }: ChildProps) {
         alert('提交成功！');
     } catch (err) {
         console.error('提交失败:', err);
-        setError('提交失败，请重试');
+        // setError('提交失败，请重试');
     }
   };
 
   const getCampaigns = async () => {
-    if(HandChainrityContract){
-      try{
-        const newCampaigns:CampaignType[] = [];
-        const campaignCount:number = await HandChainrityContract.methods.campaignCount().call();
-        // console.log(campaignCount);
-        for (let i = 1; i <= Number(campaignCount); i++) {
-          const new_campaign:any = await HandChainrityContract.methods.campaigns(i).call();
-          // console.log(new_campaign);
-          newCampaigns.push({
-            id: Number(new_campaign.hcuId),
-            title: "Need To Load from Backend",
-            description: new_campaign.description,
-            details: "Need To Load from Backend",
-            target: Number(web3.utils.fromWei(new_campaign.targetAmount,'ether')),
-            current: Number(new_campaign.currentAmount),
-            deadline: new Date(Number(new_campaign.deadline)*1000),
-            beneficiary: new_campaign.beneficiary,
-            launcher: new_campaign.launcher,
-            status: Status[Number(new_campaign.status)]
-          });
-        }
-        setCampaigns(newCampaigns);
-        console.log(campaigns);
-      }catch(e:any){
-        console.error(e.message);
-        alert(`活动列表获取失败:${e.message}`);
-      }   
-    }
+      fetchCampaigns(setCampaigns);
   }
+
+
 
   return (
     <div id="launch" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
