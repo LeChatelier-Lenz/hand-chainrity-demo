@@ -3,12 +3,12 @@ from typing import Optional, List
 
 class UserBase(BaseModel):
     address: str = Field(..., max_length=42)
-    name: str = Field(..., max_length=100)
-    image: Optional[str] = Field(default='/images/airpods.jpg')
+    # name: str = Field(..., max_length=100)
+    # image: Optional[str] = Field(default='/images/airpods.jpg')
     email: EmailStr
-    location: Optional[str] = Field(default='火星')
-    gender: Optional[str] = Field(default='保密')
-    role: Optional[str] = Field(default='user')
+    # location: Optional[str] = Field(default='火星')
+    # gender: Optional[str] = Field(default='保密')
+    # role: Optional[str] = Field(default='user')
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=6)
