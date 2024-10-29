@@ -1,19 +1,5 @@
-import AddToDriveOutlinedIcon from '@mui/icons-material/AddToDriveOutlined';
-import DescriptionIcon from '@mui/icons-material/Description';
-import LayersIcon from '@mui/icons-material/Layers';
-import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
-import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
-import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import Typography from '@mui/material/Typography';
-import { createTheme } from '@mui/material/styles';
-import { AppProvider, type Navigation } from '@toolpad/core/AppProvider';
-import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { useDemoRouter } from '@toolpad/core/internal';
-import Campaign from "../pages/campaign/Campaign";
-import Launch from "../pages/launch";
-import User from "../pages/user";
-
+import { Outlet } from "react-router-dom";
+import AppAppBar from "../component/AppAppBar";
 import { useEffect, useState } from "react";
 import { web3 } from "../utils/contracts";
 
@@ -21,106 +7,9 @@ const GanacheTestChainId = '0x539' // Ganache默认的ChainId = 0x539 = Hex(1337
 const GanacheTestChainName = 'REChain'  //
 const GanacheTestChainRpcUrl = 'http://127.0.0.1:8545' // Ganache RPC地址
 
-const NAVIGATION: Navigation = [
-    {
-        kind: 'header',
-        title: 'Main items',
-    },
-    {
-        segment: 'donate',
-        title: 'Donate Crowdfunding',
-        icon: <MonetizationOnOutlinedIcon />,
-        action: <Chip label={7} color="primary" size="small" />,
-    },
-    {
-        segment: 'start',
-        title: 'Start Crowdfunding',
-        icon: <AddToDriveOutlinedIcon />,
-    },
-    {
-        kind: 'divider',
-    },
-    {
-        kind: 'header',
-        title: 'Analytics',
-    },
-    {
-        segment: 'reports',
-        title: 'Reports',
-        icon: <ListAltOutlinedIcon />,
-        children: [
-            {
-                segment: 'followed',
-                title: 'Your Followed Crowdfunding',
-                icon: <DescriptionIcon />,
-            },
-            {
-                segment: 'created',
-                title: 'Your Created Crowdfunding',
-                icon: <DescriptionIcon />,
-            },
-        ],
-    },
-    {
-        segment: 'integrations',
-        title: 'Integrations',
-        icon: <LayersIcon />,
-    },
-];
-
-const demoTheme = createTheme({
-    cssVariables: {
-        colorSchemeSelector: 'data-toolpad-color-scheme',
-    },
-    colorSchemes: { light: true, dark: true },
-    breakpoints: {
-        values: {
-            xs: 0,
-            sm: 600,
-            md: 600,
-            lg: 1200,
-            xl: 1536,
-        },
-    },
-});
-
-
-export default function DashboardLayoutBasic() {
+export default function Root(){
     const [account, setAccount] = useState<string | null>(null)
-
-    function DemoPageContent({ pathname }: { pathname: string }) {
-    const renderComponent = () => {
-        console.log("pathname",pathname);
-        switch (pathname) {
-            case '/donate':
-                return <Campaign prop_account={account!}/>;
-            case '/start':
-                return <Launch prop_account={account!} />;
-            case '/reports/followed':
-                return <User />;
-            case '/reports/created':
-                return <User />;
-            default:
-                return (
-                    <Box
-                        sx={{
-                            py: 4,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            textAlign: 'center',
-                        }}
-                    >
-                        <Typography>Dashboard content for {pathname}</Typography>
-                    </Box>
-                );
-        }
-    };
-
-    return <>{renderComponent()}</>;
-}
-
-        //初始化时检查用户是否连接钱包
+    //初始化时检查用户是否连接钱包
     useEffect(() => {
         const initCheckAccounts = async () => {
             // @ts-ignore
@@ -177,23 +66,12 @@ export default function DashboardLayoutBasic() {
             alert(error.message)
         }
     }
-
-    const router = useDemoRouter('/dashboard');
-
-    return (
-        // preview-start
-        <AppProvider
-            navigation={NAVIGATION}
-            router={router}
-            theme={demoTheme}
-        >
-            <DashboardLayout>
-                <>
-                </>
-                <button style={{"border":"solid"}} onClick={onClickConnectWallet} type="button" className="btn btn-primary">Connect Wallet</button>
-                <DemoPageContent pathname={router.pathname} />
-            </DashboardLayout>
-        </AppProvider>
-        // preview-end
-    );
+    return(
+        <div>
+            <AppAppBar />
+            <div>
+                <Outlet context={{account:account}} />
+            </div>
+        </div>
+    )
 }
