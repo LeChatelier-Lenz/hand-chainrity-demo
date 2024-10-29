@@ -13,6 +13,8 @@ import {
 import Campaign from './pages/campaign';
 import Launch from './pages/launch';
 import User from './pages/user';
+import SignInSide from './pages/sign-in-side/SignInSide';
+import SignUp from './pages/sign-up/SignUp';
 
 const router = createBrowserRouter([
   {
@@ -32,6 +34,7 @@ const router = createBrowserRouter([
         path:'/root/user',
         element: <User />,
       },
+      
     ]},
     {
       path:'/',
@@ -40,6 +43,14 @@ const router = createBrowserRouter([
     },
     {
       path:'/admin',
+    },
+    {
+      path:'/signin',
+      element: <SignInSide />,
+    },
+    {
+      path:'/signup',
+      element: <SignUp />,
     },
     {
       path:'/third-party'
