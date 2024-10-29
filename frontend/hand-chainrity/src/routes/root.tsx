@@ -8,7 +8,7 @@ import AddToDriveOutlinedIcon from '@mui/icons-material/AddToDriveOutlined';
 import DescriptionIcon from '@mui/icons-material/Description';
 import LayersIcon from '@mui/icons-material/Layers';
 import Chip from '@mui/material/Chip';
-import Campaign from "../pages/campaign"
+import Campaign from "../pages/campaign/Campaign"
 import Launch from "../pages/launch"
 import User from "../pages/user"
 import { AppProvider, type Navigation } from '@toolpad/core/AppProvider';
@@ -98,10 +98,10 @@ export default function DashboardLayoutBasic() {
         console.log("这里的account",account);
         
         switch (pathname) {
-            case '/donate':
-                return <Campaign prop_account={account!}/>;
-            case '/start':
-                return <Launch prop_account="0x54088540885408854088" />;
+            // case '/donate':
+            //     return <Campaign prop_account={account!}/>;
+            // case '/start':
+            //     return <Launch prop_account="0x54088540885408854088" />;
             case '/reports/followed':
                 return <User />;
             case '/reports/created':

@@ -12,12 +12,9 @@ import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import Sitemark from './SitemarkIcon';
-import { useNavigate } from 'react-router-dom';
-import { Typography } from '@mui/material';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
-  marginTop: '-5%',
   alignItems: 'center',
   justifyContent: 'space-between',
   flexShrink: 0,
@@ -32,20 +29,9 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 
 export default function AppAppBar() {
   const [open, setOpen] = React.useState(false);
-  const navigate = useNavigate(); // 初始化导航钩子
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
-  };
-
-  
-
-  const handleSignInClick = () => {
-    navigate('/signin'); // 跳转到 signinsignup 页面
-  };
-
-  const handleSignUpClick = () => {
-    navigate('/signup'); // 可根据需求跳转到不同的路径
   };
 
   return (
@@ -58,16 +44,16 @@ export default function AppAppBar() {
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
             <Sitemark />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" color="info" size="small" onClick={() => { navigate("/campaign") }}>
-                筹款活动
+              <Button variant="text" color="info" size="small">
+                Features
               </Button>
-              <Button variant="text" color="info" size="small" onClick={() => { navigate("/launch") }}>
-                发起筹款
+              <Button variant="text" color="info" size="small">
+                Testimonials
               </Button>
-              <Button variant="text" color="info" size="small" onClick={() => { navigate("/campaign") }}>
-                关于我们
+              <Button variant="text" color="info" size="small">
+                Highlights
               </Button>
-              {/* <Button variant="text" color="info" size="small">
+              <Button variant="text" color="info" size="small">
                 Pricing
               </Button>
               <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>
@@ -75,7 +61,7 @@ export default function AppAppBar() {
               </Button>
               <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>
                 Blog
-              </Button> */}
+              </Button>
             </Box>
           </Box>
           <Box
@@ -85,35 +71,13 @@ export default function AppAppBar() {
               alignItems: 'center',
             }}
           >
-            {localStorage.getItem('userInfo') ? (
-              // 如果 localStorage 中有用户信息，显示用户名
-              <Typography variant="body1">
-                {JSON.parse(localStorage.getItem('userInfo') || '{}').name || '未填写姓名'}
-              </Typography>
-
-            ) : (
-              // 如果没有用户信息，显示登录和注册按钮
-              <>
-                <Button
-                  color="primary"
-                  variant="text"
-                  size="small"
-                  onClick={handleSignInClick}
-                >
-                  登录
-                </Button>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  size="small"
-                  onClick={handleSignUpClick}
-                >
-                  注册
-                </Button>
-              </>
-            )}
+            <Button color="primary" variant="text" size="small">
+              Sign in
+            </Button>
+            <Button color="primary" variant="contained" size="small">
+              Sign up
+            </Button>
           </Box>
-
           <Box sx={{ display: { sm: 'flex', md: 'none' } }}>
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
               <MenuIcon />
@@ -139,12 +103,12 @@ export default function AppAppBar() {
                 <MenuItem>FAQ</MenuItem>
                 <MenuItem>Blog</MenuItem>
                 <MenuItem>
-                  <Button color="primary" variant="contained" fullWidth onClick={handleSignUpClick}>
+                  <Button color="primary" variant="contained" fullWidth>
                     Sign up
                   </Button>
                 </MenuItem>
                 <MenuItem>
-                  <Button color="primary" variant="outlined" fullWidth  onClick={handleSignInClick}>
+                  <Button color="primary" variant="outlined" fullWidth>
                     Sign in
                   </Button>
                 </MenuItem>
