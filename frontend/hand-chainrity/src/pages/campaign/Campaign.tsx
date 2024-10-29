@@ -9,11 +9,14 @@ import Footer from './components/Footer';
 import TemplateFrame from './TemplateFrame';
 
 import getBlogTheme from '../../theme/getBlogTheme';
-import { ChildProps } from '../../types/interfaces';
+import { useOutletContext } from 'react-router-dom';
+import { OutletContext } from '../../types/interfaces';
 
 
 
-export default function Campaign({ prop_account }: ChildProps) {
+
+export default function Campaign() {
+  const {account} = useOutletContext<OutletContext>();
   const [mode, setMode] = React.useState<PaletteMode>('light');
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const blogTheme = createTheme(getBlogTheme(mode));

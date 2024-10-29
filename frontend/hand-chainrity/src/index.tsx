@@ -1,10 +1,9 @@
 import React from 'react';
 import ErrorPage from "./error-page";
 import ReactDOM from 'react-dom/client';
-import App from './App';
-import Root from './routes/root';
+// import App from './App';
+// import Root from './routes/oldRoot';
 import DashBoard from './routes/dashboard';
-import CampaignPage from './routes/campaign';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import {
@@ -18,61 +17,63 @@ import SignInSide from './pages/sign-in-side/SignInSide';
 import SignUp from './pages/sign-up/SignUp';
 import ThirdParty from './routes/third-party';
 import Admin from './routes/admin';
+import Campaign from './pages/campaign/Campaign';
+import Root from './routes/root';
 
 const router = createBrowserRouter(
-  
+  // const [account, setAccount] = useState<string | null>(null)
   [
   {
     path: '/root',
     element: < Root/>,
     errorElement:<ErrorPage />,
     children: [
-      // {
-      //   path:'/root/campaign',
-      //   element: <Campaign />,
-      // },
-      // {
-      //   path:'/root/launch',
-      //   element: <Launch customProp="Login 666"/>,
-      // },
+      {
+        path:'/root/campaign',
+        element: <Campaign />,
+      },
+      {
+        path:'/root/launch',
+        element: <Launch />,
+      },
       {
         path:'/root/user',
         element: <User />,
       },
     ]},
-    {
-      path:'/',
-      element: <DashBoard />,
-      errorElement:<ErrorPage />,
-    },
-    {
-      path:'/admin',
-      element:<Admin  />,
-      errorElement:<ErrorPage />,
-    },
-    {
-      path:'/signin',
-      element: <SignInSide />,
-      errorElement:<ErrorPage />,
-    },
-    {
-      path:'/campaign',
-      element: <CampaignPage />,
-    },
-    {
-      path:'/launch',
-      element: <Launch />,
-    },
-    {
-      path:'/signup',
-      element: <SignUp />,
-      errorElement:<ErrorPage />,
-    },
-    {
-      path:'/third-party',
-      element:<ThirdParty />,
-      errorElement:<ErrorPage />,
-    }
+  {
+    path:'/',
+    element: <DashBoard />,
+    errorElement:<ErrorPage />,
+  },
+  {
+    path:'/admin',
+    element:<Admin  />,
+    errorElement:<ErrorPage />,
+  },
+  {
+    path:'/signin',
+    element: <SignInSide />,
+    errorElement:<ErrorPage />,
+  },
+  // {
+  //   path:'/campaign',
+  //   element: <CampaignPage />,
+  // },
+  // {
+  //   path:'/launch',
+  //   element: <Launch prop_account={account!} />,
+  // },
+  {
+    path:'/signup',
+    element: <SignUp />,
+    errorElement:<ErrorPage />,
+  },
+  {
+    path:'/third-party',
+    element:<ThirdParty />,
+    errorElement:<ErrorPage />,
+  }
 ]);
 
 const root = ReactDOM.createRoot(
