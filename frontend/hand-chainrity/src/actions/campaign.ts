@@ -81,9 +81,9 @@ export const fetchFundraisingCampaigns = async(setState:any) => {
   if(HandChainrityContract){
       try{
         const newCampaigns:CampaignType[] = [];
-        const campaignId:number[] = await HandChainrityContract.methods.getFundraisingCampaigns().call();
+        const campaignId:number[] = await HandChainrityContract.methods.getActiveCampaignIdList().call();
         // console.log(campaignCount);
-        for (let i = 1; i <= campaignId.length; i++) {
+        for (let i = 0; i <= campaignId.length; i++) {
           const new_campaign:any = await HandChainrityContract.methods.campaigns(campaignId[i]).call();
           // console.log(new_campaign);
           if(new_campaign.status === '1'){
@@ -112,6 +112,46 @@ export const fetchFundraisingCampaigns = async(setState:any) => {
   } 
 }
 
+
+/**
+ * 获取区块链上所有刚发起的活动列表
+ * @param campaignId 活动id
+ * @param setState 对应campaign list[活动列表]更改状态的函数
+ */
+export const fetchLaunchedCampaigns = async(setState:any) => {
+  if(HandChainrityContract){
+      try{
+        const newCampaigns:CampaignType[] = [];
+        const campaignId:number[] = await HandChainrityContract.methods.getLaunchedCampaignIdList().call();
+        // console.log(campaignCount);
+        for (let i = 0; i <= campaignId.length; i++) {
+          const new_campaign:any = await HandChainrityContract.methods.campaigns(campaignId[i]).call();
+          // console.log(new_campaign);
+          if(new_campaign.status === '0'){
+            newCampaigns.push({
+              id: Number(new_campaign.hcuId),
+              title: "Need To Load from Backend",
+              description: new_campaign.description,
+              details: "Need To Load from Backend",
+              target: Number(web3.utils.fromWei(new_campaign.targetAmount,'ether')),
+              current: Number(new_campaign.currentAmount),
+              deadline: new Date(Number(new_campaign.deadline)*1000),
+              beneficiary: new_campaign.beneficiary,
+              launcher: new_campaign.launcher,
+              status: Status[Number(new_campaign.status)]
+            });
+          }
+        }
+        setState(newCampaigns);
+        // console.log(newCampaigns);
+      }catch(e:any){
+        console.error(e.message);
+        alert(`活动列表获取失败:${e.message}`);
+      } 
+  }else{
+      alert('合约未部署');
+  } 
+}
 
 /**
  * 根据id向已有活动捐款
