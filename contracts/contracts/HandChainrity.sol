@@ -155,6 +155,12 @@ contract HandChainrity is ERC721Enumerable, Ownable {
         }
         campaigns[campaignId].status = Status.Revoked;
         removingCampign(campaignId);
+        delete participants[campaignId];
+        delete childId[campaignId];
+        address[] memory campaignParticipants = participants[campaignId];
+        for (uint256 i = 0; i < campaignParticipants.length; i++) {
+            delete contributions[campaignId][campaignParticipants[i]];
+        }
         emit campaignRevoked(campaignId);
     }
 
