@@ -7,7 +7,7 @@ const config: HardhatUserConfig = {
     ganache: {
       url: "http://localhost:8545",
       accounts: [
-        //wenhao
+        //wenhao66
         "0x08ae3c456a5a229cb56e17fb57173fa00cc34075079f784b7aa6c1f5221037c5",
         "0xa8b2a09811c77b41967edd15c41160c29caff261bc4c03175148d92d49cb8caa",
         "0x48cb577b784aae69be012a24e11cdd0210742ae63ac498eb656141364ed0ae3f",
