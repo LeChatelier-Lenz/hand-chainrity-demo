@@ -22,14 +22,14 @@ const router = createBrowserRouter([
     element: < Root/>,
     errorElement:<ErrorPage />,
     children: [
-      {
-        path:'/root/campaign',
-        element: <Campaign />,
-      },
-      {
-        path:'/root/launch',
-        element: <Launch />,
-      },
+      // {
+      //   path:'/root/campaign',
+      //   element: <Campaign />,
+      // },
+      // {
+      //   path:'/root/launch',
+      //   element: <Launch customProp="Login 666"/>,
+      // },
       {
         path:'/root/user',
         element: <User />,
