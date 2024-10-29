@@ -77,9 +77,10 @@ export default function SignInCard() {
       );
       
       //dispatch({ type: "USER_LOGIN_SUCCESS", payload: data });
-      localStorage.setItem('userInfo', JSON.stringify(res));
-      console.log(res);
-      navigate('/root/campaign'); 
+      localStorage.setItem('userInfo', JSON.stringify(res.data));
+      console.log("res:", res.data);
+      console.log("res.data:", JSON.parse(localStorage.getItem('userInfo') || '{}').name );
+      navigate('/campaign'); 
       
     }
     catch (error: unknown) {
