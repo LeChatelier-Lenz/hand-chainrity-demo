@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import {web3,HandChainrityContract} from "../utils/contracts";
-import { CampaignType, Status } from "../types/interfaces";
+import { CampaignType, Status,LaunchProps } from "../types/interfaces";
 
-interface LaunchProps {
-  account: string;
-}
 
-export default function Campaign({ account }: LaunchProps) {
+export default function Campaign({ prop_account }: LaunchProps) {
     const [campaigns, setCampaigns] = useState<CampaignType[]>([]); // Campaign[] is an array of Campaign objects
     
     useEffect(() => {
@@ -52,8 +49,8 @@ export default function Campaign({ account }: LaunchProps) {
         <p>
           This is the campaign page.
         </p>
-        { account?
-            <p>Connected Account: {account}</p>:
+        { prop_account?
+            <p>Connected Account: {prop_account}</p>:
             <p>Not Connected</p>
         }
         <div className="campaign-list" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>

@@ -1,15 +1,11 @@
 import { useOutletContext } from "react-router-dom";
-import { CampaignType, OutletContext, Status } from "../types/interfaces";
+import { CampaignType, OutletContext, Status,LaunchProps } from "../types/interfaces";
 import { useState } from "react";
 import { HandChainrityContract, web3 } from "../utils/contracts";
 import Campaign from "./campaign";
 
 
-interface LaunchProps {
-  now_account: string;
-}
-
-export default function Launch({ now_account }: LaunchProps) {
+export default function Launch({ prop_account }: LaunchProps) {
   const { account } = useOutletContext<OutletContext>();
   // 内联样式
   const [formData,setFormData] = useState<CampaignType>({
