@@ -21,6 +21,13 @@ import {
 import getSignUpTheme from './theme/getSignUpTheme';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
 import TemplateFrame from './TemplateFrame';
+import axios , { AxiosError, AxiosResponse }  from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+const axiosInstance = axios.create({
+  baseURL: 'http://localhost:8888', // 设置基础 URL
+  timeout: 10000,                    // 可选：请求超时时间
+});
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -62,8 +69,9 @@ export default function SignUp() {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-  const [nameError, setNameError] = React.useState(false);
-  const [nameErrorMessage, setNameErrorMessage] = React.useState('');
+  const [addressError, setAddressError] = React.useState(false);
+  const [addressErrorMessage, setAddressErrorMessage] = React.useState('');
+  const navigate = useNavigate(); // 初始化 navigate
   // This code only runs on the client side, to determine the system color preference
   React.useEffect(() => {
     // Check if there is a preferred mode in localStorage
@@ -92,7 +100,7 @@ export default function SignUp() {
   const validateInputs = () => {
     const email = document.getElementById('email') as HTMLInputElement;
     const password = document.getElementById('password') as HTMLInputElement;
-    const name = document.getElementById('name') as HTMLInputElement;
+    const address = document.getElementById('address') as HTMLInputElement;
 
     let isValid = true;
 
@@ -114,28 +122,68 @@ export default function SignUp() {
       setPasswordErrorMessage('');
     }
 
-    if (!name.value || name.value.length < 1) {
-      setNameError(true);
-      setNameErrorMessage('Name is required.');
+    if (!address.value || address.value.length < 1) {
+      setAddressError(true);
+      setAddressErrorMessage('Address is required.');
       isValid = false;
     } else {
-      setNameError(false);
-      setNameErrorMessage('');
+      setAddressError(false);
+      setAddressErrorMessage('');
     }
 
     return isValid;
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    let address = data.get('address') as string;
+    let email = data.get('email') as string;
+    let password = data.get('password') as string;
+  
+    // 输入验证
+    if (!validateInputs()) {
+      return; // 如果验证失败，停止提交
+    }
+  
     console.log({
-      name: data.get('name'),
-      lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
+      address: address,
+      email: email,
+      password: password,
     });
+  
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json', // 修改为 JSON 格式
+        },
+      };
+  
+      // 直接创建 JSON 对象
+      const requestData = {
+        address: address,
+        email: email,
+        password: password,
+      };
+  
+      const res = await axiosInstance.post('/api/users', requestData, config);
+      
+      localStorage.setItem('userInfo', JSON.stringify(res.data)); // 使用 res.data
+      console.log(res.data); // 确保只打印数据部分
+      navigate('/root/campaign'); 
+  
+    } catch (error: unknown) {
+      const err = error as AxiosError<{ message: string }>;
+      const errorMessage: string =
+        err.response && err.response.data.message
+          ? err.response.data.message
+          : err.message;
+  
+      // 处理错误消息
+      console.error(errorMessage);
+    }
   };
+  
 
   return (
     <TemplateFrame
@@ -170,17 +218,17 @@ export default function SignUp() {
                 sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
               >
                 <FormControl>
-                  <FormLabel htmlFor="name">Full name</FormLabel>
+                  <FormLabel htmlFor="address">address</FormLabel>
                   <TextField
                     autoComplete="name"
-                    name="name"
+                    name="address"
                     required
                     fullWidth
-                    id="name"
-                    placeholder="Jon Snow"
-                    error={nameError}
-                    helperText={nameErrorMessage}
-                    color={nameError ? 'error' : 'primary'}
+                    id="address"
+                    placeholder="0x1234567890000000000000000000000000ABCDEF"
+                    error={addressError}
+                    helperText={addressErrorMessage}
+                    color={addressError ? 'error' : 'primary'}
                   />
                 </FormControl>
                 <FormControl>

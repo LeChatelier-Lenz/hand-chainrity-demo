@@ -26,7 +26,7 @@ class User(Base):
     # 关联 Campaign 表，一对多关系
     campaigns = relationship("Campaign", back_populates="owner", cascade="all, delete-orphan")
 
-    def __init__(self, address, name, email, password, image, location='火星', gender='保密', role='user'):
+    def __init__(self, address, email, password , name= '', image='', location='火星', gender='保密', role='user'):
         self.address = address
         self.name = name
         self.email = email
