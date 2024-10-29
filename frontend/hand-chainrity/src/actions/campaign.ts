@@ -11,7 +11,7 @@ export const fetchCampaigns = async(setState:any) => {
         try{
           const newCampaigns:CampaignType[] = [];
           const campaignCount:number = await HandChainrityContract.methods.campaignCount().call();
-          // console.log(campaignCount);
+          // console.log(campaignCount)
           for (let i = 1; i <= Number(campaignCount); i++) {
             const new_campaign:any = await HandChainrityContract.methods.campaigns(i).call();
             // console.log(new_campaign);
@@ -83,23 +83,26 @@ export const fetchFundraisingCampaigns = async(setState:any) => {
         const newCampaigns:CampaignType[] = [];
         const campaignId:number[] = await HandChainrityContract.methods.getActiveCampaignIdList().call();
         // console.log(campaignCount);
-        for (let i = 0; i <= campaignId.length; i++) {
-          const new_campaign:any = await HandChainrityContract.methods.campaigns(campaignId[i]).call();
+        console.log(campaignId);
+        if(campaignId.length === 0){
+          alert('还没有任何活动正在筹款中！');
+          return;
+        }
+        for (let i = 0; i < campaignId.length; i++) {
+          const new_campaign:any = await HandChainrityContract.methods.campaigns(Number(campaignId[i])).call();
           // console.log(new_campaign);
-          if(new_campaign.status === '1'){
-            newCampaigns.push({
-              id: Number(new_campaign.hcuId),
-              title: "Need To Load from Backend",
-              description: new_campaign.description,
-              details: "Need To Load from Backend",
-              target: Number(web3.utils.fromWei(new_campaign.targetAmount,'ether')),
-              current: Number(new_campaign.currentAmount),
-              deadline: new Date(Number(new_campaign.deadline)*1000),
-              beneficiary: new_campaign.beneficiary,
-              launcher: new_campaign.launcher,
-              status: Status[Number(new_campaign.status)]
-            });
-          }
+          newCampaigns.push({
+            id: Number(new_campaign.hcuId),
+            title: "Need To Load from Backend",
+            description: new_campaign.description,
+            details: "Need To Load from Backend",
+            target: Number(web3.utils.fromWei(new_campaign.targetAmount,'ether')),
+            current: Number(new_campaign.currentAmount),
+            deadline: new Date(Number(new_campaign.deadline)*1000),
+            beneficiary: new_campaign.beneficiary,
+            launcher: new_campaign.launcher,
+            status: Status[Number(new_campaign.status)]
+          });
         }
         setState(newCampaigns);
         // console.log(newCampaigns);
@@ -124,23 +127,27 @@ export const fetchLaunchedCampaigns = async(setState:any) => {
         const newCampaigns:CampaignType[] = [];
         const campaignId:number[] = await HandChainrityContract.methods.getLaunchedCampaignIdList().call();
         // console.log(campaignCount);
-        for (let i = 0; i <= campaignId.length; i++) {
-          const new_campaign:any = await HandChainrityContract.methods.campaigns(campaignId[i]).call();
+        console.log(campaignId);
+        if(campaignId.length === 0){
+          // alert('还没有任何活动发起！');
+          console.log('还没有任何活动发起！');
+          return;
+        }
+        for (let i = 0; i < campaignId.length; i++) {
+          const new_campaign:any = await HandChainrityContract.methods.campaigns(Number(campaignId[i])).call();
           // console.log(new_campaign);
-          if(new_campaign.status === '0'){
-            newCampaigns.push({
-              id: Number(new_campaign.hcuId),
-              title: "Need To Load from Backend",
-              description: new_campaign.description,
-              details: "Need To Load from Backend",
-              target: Number(web3.utils.fromWei(new_campaign.targetAmount,'ether')),
-              current: Number(new_campaign.currentAmount),
-              deadline: new Date(Number(new_campaign.deadline)*1000),
-              beneficiary: new_campaign.beneficiary,
-              launcher: new_campaign.launcher,
-              status: Status[Number(new_campaign.status)]
-            });
-          }
+          newCampaigns.push({
+            id: Number(new_campaign.hcuId),
+            title: "Need To Load from Backend",
+            description: new_campaign.description,
+            details: "Need To Load from Backend",
+            target: Number(web3.utils.fromWei(new_campaign.targetAmount,'ether')),
+            current: Number(new_campaign.currentAmount),
+            deadline: new Date(Number(new_campaign.deadline)*1000),
+            beneficiary: new_campaign.beneficiary,
+            launcher: new_campaign.launcher,
+            status: Status[Number(new_campaign.status)]
+          });
         }
         setState(newCampaigns);
         // console.log(newCampaigns);
@@ -239,7 +246,7 @@ export const fetchUserCampaigns = async(account:string,setState:any) => {
             return;
           }
           for (let i = 0; i < campaignId.length ; i++) {
-            const new_campaign:any = await HandChainrityContract.methods.campaigns(campaignId[i]).call();
+            const new_campaign:any = await HandChainrityContract.methods.campaigns(Number(campaignId[i])).call();
             if(new_campaign.launcher === account){
               newCampaigns.push({
                 id: Number(new_campaign.hcuId),
@@ -276,7 +283,7 @@ export const fetchUserCampaigns = async(account:string,setState:any) => {
 export const checkCampaign = async(campaignId:number, checkResult:boolean, account:any) => {
     if(HandChainrityContract){
         try{
-          const check = await HandChainrityContract.methods.approveCampaign(campaignId,checkResult).send({from:account});
+          const check = await HandChainrityContract.methods.approveCampaign(campaignId,checkResult).send({from:account, gas: "3000000"});
           console.log(check);
           alert('审核成功！');
           return check;
