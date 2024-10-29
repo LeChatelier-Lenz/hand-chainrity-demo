@@ -1,12 +1,9 @@
-import { useOutletContext } from "react-router-dom";
-import { CampaignType, OutletContext, Status,LaunchProps } from "../types/interfaces";
 import { useState } from "react";
+import { CampaignType, LaunchProps, Status } from "../types/interfaces";
 import { HandChainrityContract, web3 } from "../utils/contracts";
-import Campaign from "./campaign";
 
 
 export default function Launch({ prop_account }: LaunchProps) {
-  const { account } = useOutletContext<OutletContext>();
   // 内联样式
   const [formData,setFormData] = useState<CampaignType>({
     id: 0,
@@ -48,7 +45,7 @@ export default function Launch({ prop_account }: LaunchProps) {
         const targetValue = web3.utils.toWei(formData.target.toString(),'ether');
         // 按秒获取时间戳
         const ddlTimestamp = Math.floor(formData.deadline.getTime()/1000);
-        const campaignId = await HandChainrityContract.methods.createCampaign(formData.description,targetValue,ddlTimestamp,formData.beneficiary).send({from:account});
+        const campaignId = await HandChainrityContract.methods.createCampaign(formData.description,targetValue,ddlTimestamp,formData.beneficiary).send({from:prop_account});
         console.log('成功创建新手链筹单元');
         console.log(campaignId);
         // 处理成功后的逻辑，如清空表单或提示用户
@@ -108,7 +105,7 @@ export default function Launch({ prop_account }: LaunchProps) {
       <p>
         This is the launch page.
       </p>
-      <p>Account:{account}</p>
+      <p>Account:{prop_account}</p>
       <div className="launch-form" style={{border:"solid"}}>
         <form onSubmit={handleSubmit}>
           <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>

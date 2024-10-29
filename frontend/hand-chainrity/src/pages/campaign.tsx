@@ -41,8 +41,6 @@ export default function Campaign({ prop_account }: LaunchProps) {
     }, [campaigns]);
 
     
-
-
     return (      
       <div id="campaign">
         <h1>Campaign</h1>

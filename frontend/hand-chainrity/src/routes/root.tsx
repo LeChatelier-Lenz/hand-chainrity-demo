@@ -1,21 +1,19 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { createTheme } from '@mui/material/styles';
-import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
-import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
 import AddToDriveOutlinedIcon from '@mui/icons-material/AddToDriveOutlined';
 import DescriptionIcon from '@mui/icons-material/Description';
 import LayersIcon from '@mui/icons-material/Layers';
+import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
+import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
+import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Campaign from "../pages/campaign"
-import Launch from "../pages/launch"
-import User from "../pages/user"
+import Typography from '@mui/material/Typography';
+import { createTheme } from '@mui/material/styles';
 import { AppProvider, type Navigation } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { useDemoRouter } from '@toolpad/core/internal';
+import Campaign from "../pages/campaign";
+import Launch from "../pages/launch";
+import User from "../pages/user";
 
-import { Link, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { web3 } from "../utils/contracts";
 
@@ -101,7 +99,7 @@ export default function DashboardLayoutBasic() {
             case '/donate':
                 return <Campaign prop_account={account!}/>;
             case '/start':
-                return <Launch prop_account="0x54088540885408854088" />;
+                return <Launch prop_account={account!} />;
             case '/reports/followed':
                 return <User />;
             case '/reports/created':
