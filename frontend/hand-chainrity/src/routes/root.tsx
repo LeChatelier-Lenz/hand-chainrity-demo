@@ -188,7 +188,7 @@ function DemoPageContent({ pathname }: { pathname: string }) {
             case '/donate':
                 return <Campaign account="0x68686686868686868"/>;
             case '/start':
-                return <Launch customProp="Value you want to pass" />;
+                return <Launch now_account="0x54088540885408854088" />;
             case '/reports/followed':
                 return <User />;
             case '/reports/created':
