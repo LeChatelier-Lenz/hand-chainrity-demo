@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState} from "react";
 import { CampaignType, OutletContext } from "../types/interfaces";
 import CssBaseline from '@mui/material/CssBaseline';
 
 import { HandChainrityContract, web3 } from "../utils/contracts";
 import { fetchCampaigns } from "../actions/campaign";
 import { useOutletContext } from "react-router-dom";
-import getBlogTheme from '../theme/getBlogTheme';
+// import getBlogTheme from '../theme/getBlogTheme';
 import { 
   Box, 
   Button, 
