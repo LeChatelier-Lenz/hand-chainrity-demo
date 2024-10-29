@@ -1,14 +1,27 @@
-import { useState } from "react";
-import { CampaignType, ChildProps, OutletContext, Status } from "../types/interfaces";
-import { HandChainrityContract, web3 } from "../utils/contracts";
-import { fetchCampaignById, fetchCampaigns } from "../actions/campaign";
-import { useOutletContext } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { CampaignType, OutletContext } from "../types/interfaces";
+import CssBaseline from '@mui/material/CssBaseline';
 
+import { HandChainrityContract, web3 } from "../utils/contracts";
+import { fetchCampaigns } from "../actions/campaign";
+import { useOutletContext } from "react-router-dom";
+import getBlogTheme from '../theme/getBlogTheme';
+import { 
+  Box, 
+  Button, 
+  TextField, 
+  Typography, 
+  List, 
+  ListItem, 
+  ListItemText, 
+  Paper, 
+  Container
+} from "@mui/material";
+import React from "react";
 
 export default function Launch() {
-  const {account} = useOutletContext<OutletContext>();
-
-  const [formData,setFormData] = useState<CampaignType>({
+  const { account } = useOutletContext<OutletContext>();
+  const [formData, setFormData] = useState<CampaignType>({
     id: 0,
     title: "",
     details: "",
@@ -21,161 +34,159 @@ export default function Launch() {
     status: ""
   });
 
-  
+  const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
 
-  
-  const [campaigns,setCampaigns] = useState<CampaignType[]>([]);
-
-
-  const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-    const {name,value} = e.target;
-    // console.log(name,value);
-    // console.log(typeof(value));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-    [name]: name === 'deadline' ? new Date(value) : value
+      [name]: name === "deadline" ? new Date(value) : value,
     }));
-  }
+  };
 
-  const handleSubmit = async (e:React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault(); // 阻止默认表单提交行为
-    // setError(''); // 清空错误信息
-
+  const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
-        const targetValue = web3.utils.toWei(formData.target.toString(),'ether');
-        // 按秒获取时间戳
-        const ddlTimestamp = Math.floor(formData.deadline.getTime()/1000);
-        const campaignId = await HandChainrityContract.methods.createCampaign(formData.description,targetValue,ddlTimestamp,formData.beneficiary).send({from:account});
-        console.log('成功创建新手链筹单元');
-        console.log(campaignId);
-        // 处理成功后的逻辑，如清空表单或提示用户
-        setFormData({
-          id: 0,
-          title: "",
-          description: "",
-          details: "",
-          target: 0,
-          current: 0,
-          deadline: new Date(),
-          beneficiary: "",
-          launcher: "",
-          status: ""
-        })
-        alert('提交成功！');
+      const targetValue = web3.utils.toWei(formData.target.toString(), "ether");
+      const ddlTimestamp = Math.floor(formData.deadline.getTime() / 1000);
+
+      await HandChainrityContract.methods
+        .createCampaign(formData.description, targetValue, ddlTimestamp, formData.beneficiary)
+        .send({ from: account });
+
+      alert("提交成功！");
+      setFormData({
+        id: 0,
+        title: "",
+        description: "",
+        details: "",
+        target: 0,
+        current: 0,
+        deadline: new Date(),
+        beneficiary: "",
+        launcher: "",
+        status: ""
+      });
     } catch (err) {
-        console.error('提交失败:', err);
-        // setError('提交失败，请重试');
+      console.error("提交失败:", err);
+      alert("提交失败，请重试");
     }
   };
 
   const getCampaigns = async () => {
-      fetchCampaigns(setCampaigns);
-  }
-
-
+    await fetchCampaigns(setCampaigns);
+  };
 
   return (
-    <div id="launch" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-      <h1>Launch</h1>
-      <p>
-        This is the launch page.
-      </p>
-      <p>Account:{account}</p>
-      <div className="launch-form" style={{border:"solid"}}>
+    
+    <div>
+    <CssBaseline enableColorScheme />
+    <Container
+          maxWidth="lg"
+          component="main"
+          sx={{ display: 'flex', flexDirection: 'column', my: 16, gap: 4 }}
+        >
+    <Box 
+      sx={{ 
+        
+        display: "flex", 
+        flexDirection: "column", 
+        alignItems: "center", 
+        gap: 2, 
+        mt: 4,
+        backgroundColor: 'background.default',
+          
+
+      }}
+    >
+      <Typography variant="h4">Launch Campaign</Typography>
+      <Typography>Account: {account}</Typography>
+
+      <Paper sx={{ p: 4, width: "100%", maxWidth: 600 }}>
         <form onSubmit={handleSubmit}>
-          <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-            <div>
-              <label htmlFor="title">Title</label>
-              <input 
-                type="text" 
-                id="title" 
-                name="title" 
-                placeholder="Campaign Title" 
-                value={formData.title}
-                onChange={handleChange}
-                /> 
-            </div>
-            <div>
-              <label htmlFor="description">Description</label>
-              <input 
-                type="text" 
-                id="description" 
-                name="description" 
-                placeholder="Campaign Description" 
-                value={formData.description}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="details">Details</label>
-              <input 
-                type="text" 
-                id="details" 
-                name="details" 
-                placeholder="Campaign Details" 
-                value={formData.details}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="target">Target</label>
-              <input 
-                type="number" 
-                id="target" 
-                name="target" 
-                placeholder="Campaign Target" 
-                value={formData.target}
-                onChange={handleChange}
-                />
-            </div>
-            <div>
-              <label htmlFor="deadline">Deadline</label>
-              <input 
-                type="date" 
-                id="deadline" 
-                name="deadline" 
-                value={formData.deadline.toISOString().split('T')[0]}
-                onChange={handleChange}
-                />
-            </div>
-            <div>
-              <label htmlFor="beneficiary">Beneficiary</label>
-              <input 
-                type="text" 
-                id="beneficiary" 
-                name="beneficiary" 
-                placeholder="Campaign Beneficiary" 
-                value={formData.beneficiary}
-                onChange={handleChange}
-                />
-            </div>
-            <div>
-              <button type="submit">Launch</button>
-            </div>
-          </div>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <TextField
+              label="Title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              fullWidth
+            />
+            <TextField
+              label="Description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              fullWidth
+            />
+            <TextField
+              label="Details"
+              name="details"
+              value={formData.details}
+              onChange={handleChange}
+              fullWidth
+            />
+            <TextField
+              label="Target (ETH)"
+              name="target"
+              type="number"
+              value={formData.target}
+              onChange={handleChange}
+              fullWidth
+            />
+            <TextField
+              label="Deadline"
+              name="deadline"
+              type="date"
+              value={formData.deadline.toISOString().split("T")[0]}
+              onChange={handleChange}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              label="Beneficiary"
+              name="beneficiary"
+              value={formData.beneficiary}
+              onChange={handleChange}
+              fullWidth
+            />
+            <Button type="submit" variant="contained" color="primary">
+              Launch
+            </Button>
+          </Box>
         </form>
-      </div>
-      <div className="checkCampaigns">
-        <button type="button" onClick={getCampaigns} >List</button>
-        <div>
-          <ul>
-            {campaigns.map((campaign) => (
-              <li style={{border:"solid"}} key={campaign.id}>
-                <p>ID : {campaign.id}</p>
-                <p>Title : {campaign.title}</p>
-                <p>Description : {campaign.description}</p>
-                <p>Details : {campaign.details}</p>
-                <p>Target : {campaign.target}</p>
-                <p>Current : {campaign.current}</p>
-                <p>Deadline : {campaign.deadline.toISOString().split('T')[0]}</p>
-                <p>Beneficiary : {campaign.beneficiary}</p>
-                <p>Launcher : {campaign.launcher}</p>
-                <p>Status : {campaign.status}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      </Paper>
+
+      <Button variant="outlined" onClick={getCampaigns}>
+        List Campaigns
+      </Button>
+
+      <List sx={{ width: "100%", maxWidth: 600 }}>
+        {campaigns.map((campaign) => (
+          <Paper key={campaign.id} sx={{ mb: 2, p: 2 }}>
+            <ListItem>
+              <ListItemText
+                primary={`ID: ${campaign.id} - ${campaign.title}`}
+                secondary={
+                  <>
+                    <p>Description: {campaign.description}</p>
+                    <p>Details: {campaign.details}</p>
+                    <p>Target: {campaign.target} ETH</p>
+                    <p>Current: {campaign.current} ETH</p>
+                    <p>Deadline: {campaign.deadline.toISOString().split("T")[0]}</p>
+                    <p>Beneficiary: {campaign.beneficiary}</p>
+                    <p>Launcher: {campaign.launcher}</p>
+                    <p>Status: {campaign.status}</p>
+                  </>
+                }
+              />
+            </ListItem>
+          </Paper>
+        ))}
+      </List>
+    </Box>
+    </Container>
     </div>
+    
   );
 }
