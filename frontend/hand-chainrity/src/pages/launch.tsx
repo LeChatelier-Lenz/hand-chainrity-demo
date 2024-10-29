@@ -8,7 +8,6 @@ import { useOutletContext } from "react-router-dom";
 export default function Launch() {
   const {account} = useOutletContext<OutletContext>();
 
-  // 内联样式
   const [formData,setFormData] = useState<CampaignType>({
     id: 0,
     title: "",
