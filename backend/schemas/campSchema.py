@@ -3,8 +3,8 @@ from typing import Optional, List
 from datetime import datetime
 
 # CampaignSchema 定义
-class CampaignSchema(BaseModel):
-    id: Optional[int] = None  # 自增主键
+class CampaignBase(BaseModel):
+    id: int = None  # 自增主键
     title: str = Field(..., max_length=100, description="活动标题")
     description: str = Field(..., description="活动描述")
     address: str = Field(..., max_length=42, description="活动地址（与用户地址关联）")
