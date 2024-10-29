@@ -29,7 +29,7 @@ export const fetchCampaigns = async(setState:any) => {
             });
           }
           setState(newCampaigns);
-          console.log(newCampaigns);
+          // console.log(newCampaigns);
         }catch(e:any){
           console.error(e.message);
           alert(`活动列表获取失败:${e.message}`);
@@ -118,16 +118,22 @@ export const finalizeCampaign = async(campaignId:number,account:string) => {
  * @param account 用户账户（钱包地址）
  */
 export const revokeCampaign = async(campaignId:number,account:string) => {
-    if(HandChainrityContract){
-        try{
-          const revoke = await HandChainrityContract.methods.revokeCampaign(campaignId).send({from:account});
-          console.log(revoke);
-          alert('活动撤销成功！');
-        }catch(e:any){
-          console.error(e.message);
-          alert(`活动撤销失败:${e.message}`);
-        } 
-    }else{
-        alert('合约未部署');
-    }
+  if(HandChainrityContract){
+      try{
+        const revoke = await HandChainrityContract.methods.revokeCampaign(campaignId).send({from:account});
+        console.log(revoke);
+        alert('活动撤销成功！');
+      }catch(e:any){
+        console.error(e.message);
+        alert(`活动撤销失败:${e.message}`);
+      } 
+  }else{
+      alert('合约未部署');
   }
+}
+
+/**
+ * 根据id获取活动的捐款记录
+ * @param campaignId 活动id
+ * @param account 用户账户（钱包地址）
+ */ 

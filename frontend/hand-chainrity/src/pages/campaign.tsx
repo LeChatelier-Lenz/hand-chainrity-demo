@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {web3,HandChainrityContract} from "../utils/contracts";
 import { CampaignType, Status,ChildProps } from "../types/interfaces";
 import { fetchCampaignById, fetchCampaigns } from "../actions/campaign";
-
+import { fetchTransactions } from "../actions/blockchain";
 
 export default function Campaign({ prop_account }: ChildProps) {
     const [campaigns, setCampaigns] = useState<CampaignType[]>([]); // Campaign[] is an array of Campaign objects
@@ -89,6 +89,10 @@ export default function Campaign({ prop_account }: ChildProps) {
               </li>
             ))}
           </ul>
+        </div>
+        <div>
+          <p>获取对应账户区块交易信息</p>
+          <button onClick={() => fetchTransactions(prop_account)}>获取</button>
         </div>
       </div>
     );
