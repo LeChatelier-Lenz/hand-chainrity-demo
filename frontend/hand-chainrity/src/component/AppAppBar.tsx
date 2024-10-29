@@ -14,6 +14,9 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import Sitemark from './SitemarkIcon';
 import { useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import {  Menu } from '@mui/material';
+import userImage from '../img/user.png';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -33,6 +36,9 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 export default function AppAppBar() {
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate(); // 初始化导航钩子
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+  const isLoggedIn = Boolean(userInfo.name); // 检查是否登录
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
@@ -46,6 +52,23 @@ export default function AppAppBar() {
 
   const handleSignUpClick = () => {
     navigate('/signup'); // 可根据需求跳转到不同的路径
+  };
+
+  // 打开菜单
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // 关闭菜单
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  // 退出登录逻辑
+  const handleLogout = () => {
+    localStorage.removeItem('userInfo'); // 清除用户信息
+    handleMenuClose();
+    window.location.reload(); // 刷新页面
   };
 
   return (
@@ -79,40 +102,59 @@ export default function AppAppBar() {
             </Box>
           </Box>
           <Box
+      sx={{
+        display: { xs: 'none', md: 'flex' },
+        gap: 1,
+        alignItems: 'center',
+      }}
+    >
+      {isLoggedIn ? (
+        <>
+          <img src={userImage} alt="描述文字" style={{ width: '80%', height: 'auto' }} />
+          <Button onClick={handleMenuOpen} size="small" >
+            
+            <Typography variant="body1" sx={{ color: 'darkblue' }}>
+              {userInfo.name || '未填写姓名'}
+            </Typography>
+            
+          </Button>
+
+          {/* 菜单组件 */}
+          
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
             sx={{
-              display: { xs: 'none', md: 'flex' },
-              gap: 1,
-              alignItems: 'center',
+              '& .MuiPaper-root': {
+                width: '300px', // 让菜单适配文本长度
+              },
             }}
           >
-            {localStorage.getItem('userInfo') ? (
-              // 如果 localStorage 中有用户信息，显示用户名
-              <Typography variant="body1">
-                {JSON.parse(localStorage.getItem('userInfo') || '{}').name || '未填写姓名'}
-              </Typography>
-
-            ) : (
-              // 如果没有用户信息，显示登录和注册按钮
-              <>
-                <Button
-                  color="primary"
-                  variant="text"
-                  size="small"
-                  onClick={handleSignInClick}
-                >
-                  登录
-                </Button>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  size="small"
-                  onClick={handleSignUpClick}
-                >
-                  注册
-                </Button>
-              </>
-            )}
-          </Box>
+            <MenuItem onClick={handleMenuClose}>个人主页</MenuItem>
+            <MenuItem onClick={handleLogout}>退出登录</MenuItem>
+          </Menu>
+        </>
+      )
+ : (
+        <>
+          <Button color="primary" variant="text" size="small" onClick={handleSignInClick}>
+            登录
+          </Button>
+          <Button color="primary" variant="contained" size="small" onClick={handleSignUpClick}>
+            注册
+          </Button>
+        </>
+      )}
+    </Box>
 
           <Box sx={{ display: { sm: 'flex', md: 'none' } }}>
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
