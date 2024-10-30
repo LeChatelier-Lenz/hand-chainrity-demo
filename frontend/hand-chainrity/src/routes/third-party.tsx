@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { checkCampaign, fetchLaunchedCampaigns } from "../actions/campaign";
 import { CampaignType } from "../types/interfaces";
 import { web3 } from "../utils/contracts";
+import { Box, Button, FormControl, FormControlLabel, FormLabel, List, ListItem, ListItemText, Paper, Radio, RadioGroup, TextField } from "@mui/material";
+import { Form } from "react-router-dom";
 
 const GanacheTestChainId = '0x539' // Ganache默认的ChainId = 0x539 = Hex(1337)
 const GanacheTestChainName = 'REChain'  //
@@ -18,7 +20,7 @@ export default function ThirdParty() {
     if (name === "campaignId") {
       setCampaignId(parseInt(value));
     } else if (name === "approve") {
-      setApprove(value === "yes" ? true : false);
+      setApprove(value === "true");
     }
   }
 
@@ -100,24 +102,31 @@ export default function ThirdParty() {
         </p>
         <button onClick={onClickConnectWallet}>Connect Wallet</button>
         <p>Campaign List to be Approved : </p>
-        <ul style={{border: "1px solid black"}}>
-          {
-            campaigns.length === 0 ? <li>No Campaigns</li> : campaigns.map((campaign) => (
-              <li key={campaign.id}>
-                <h2>{campaign.title}</h2>
-                <p>{campaign.description}</p>
-                <p>{campaign.details}</p>
-                <p>{campaign.target}</p>
-                <p>{campaign.current}</p>
-                <p>{campaign.deadline.toISOString()}</p>
-                <p>{campaign.beneficiary}</p>
-                <p>{campaign.launcher}</p>
-                <p>{campaign.status}</p>
-              </li>
-            ))
-          } 
-        </ul>
-        <div style={{border: "1px solid black",display: "flex", flexDirection: "column"}}>
+        <List sx={{ width: "100%", maxWidth: 600 }}>
+        {campaigns.map((campaign) => (
+          <Paper key={campaign.id} sx={{ mb: 2, p: 2 }}>
+            <ListItem>
+              <ListItemText
+                primary={`ID: ${campaign.id} - ${campaign.title}`}
+                secondary={
+                  <>
+                    <p>Description: {campaign.description}</p>
+                    <p>Details: {campaign.details}</p>
+                    <p>Target: {campaign.target} ETH</p>
+                    <p>Current: {campaign.current} ETH</p>
+                    <p>Deadline: {campaign.deadline.toISOString().split("T")[0]}</p>
+                    <p>Beneficiary: {campaign.beneficiary}</p>
+                    <p>Launcher: {campaign.launcher}</p>
+                    <p>Status: {campaign.status}</p>
+                  </>
+                }
+              />
+            </ListItem>
+          </Paper>
+        ))}
+      </List>
+
+        {/* <div style={{border: "1px solid black",display: "flex", flexDirection: "column"}}>
           <p>Choose any to Approve</p>
           <form onSubmit={handleSubmit}>
             <div style={{display: "flex", flexDirection: "row"}}>
@@ -134,7 +143,35 @@ export default function ThirdParty() {
             </label>
             <button type="submit" style={{border:"solid"}}>Submit</button>
           </form>
-        </div>
+        </div> */}
+        <Paper sx={{ p: 4, width: "100%", maxWidth: 600 }}>
+        <form onSubmit={handleSubmit}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <FormControl>
+            <TextField
+              label="Campaign ID"
+              name="campaignId"
+              value={campaignId}
+              onChange={handleChange}
+              fullWidth
+            />
+            <FormLabel component="legend">Approve</FormLabel>
+            <RadioGroup
+              aria-label="approve"
+              name="approve"
+              value={approve}
+              onChange={handleChange}
+            >
+              <FormControlLabel value="true" control={<Radio />} label="Yes" />
+              <FormControlLabel value="false" control={<Radio />} label="No" />
+            </RadioGroup>
+            <Button type="submit" variant="contained" color="primary">
+              Submit
+            </Button>
+            </FormControl>
+          </Box>
+        </form>
+      </Paper>
 
       </div>
     );
