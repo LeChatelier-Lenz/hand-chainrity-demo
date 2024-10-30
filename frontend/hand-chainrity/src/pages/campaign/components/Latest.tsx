@@ -7,8 +7,11 @@ import Pagination from '@mui/material/Pagination';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
+import { useEffect, useState } from 'react';
+import { fetchCampaigns } from '../../../actions/campaign';
+import { CampaignType } from '../../../types/interfaces';
 
-const articleInfo = [
+const campaignInfo = [
   {
     tag: 'Engineering',
     title: 'The future of AI in software engineering',
@@ -135,7 +138,15 @@ const TitleTypography = styled(Typography)(({ theme }) => ({
   },
 }));
 
-function Author({ authors }: { authors: { name: string; avatar: string }[] }) {
+const formatLauncherName = (name: string) => {
+  console.log("截断前：", name.length);
+  if (name.length <= 8) return name; // 如果名字长度小于等于 7，则不需要截断
+  // console.log("截断后：",`${name.slice(0, 5)}...${name.slice(-3)}`);
+
+  return `${name.slice(0, 5)}...${name.slice(-3)}`; // 取前三位和最后四位，中间加省略号
+};
+
+function Author({ authors }: { authors: { name: string; avatar: string; date: Date }[] }) {
   return (
     <Box
       sx={{
@@ -160,10 +171,10 @@ function Author({ authors }: { authors: { name: string; avatar: string }[] }) {
           ))}
         </AvatarGroup>
         <Typography variant="caption">
-          {authors.map((author) => author.name).join(', ')}
+          {authors.map((author) => formatLauncherName(author.name)).join(', ')}
         </Typography>
       </Box>
-      <Typography variant="caption">July 14, 2021</Typography>
+      <Typography variant="caption">Deadline:{authors[0].date.toISOString().split("T")[0]}</Typography>
     </Box>
   );
 }
@@ -172,6 +183,24 @@ export default function Latest() {
   const [focusedCardIndex, setFocusedCardIndex] = React.useState<number | null>(
     null,
   );
+
+      const [campaigns, setCampaigns] = useState<CampaignType[]>([{
+      id: 0,
+      title: "默认",
+      description: "默认",
+      details: "默认",
+      target: 100,
+      current: 0,
+      createdAt:new Date(),
+      deadline:new Date(),
+      beneficiary: "默认",
+      launcher: "默认",
+      status: "默认",
+    }]); // Campaign[] is an array of Campaign objects
+
+    useEffect(() => {
+        fetchCampaigns(setCampaigns);
+    }, [campaigns]);
 
   const handleFocus = (index: number) => {
     setFocusedCardIndex(index);
@@ -187,7 +216,7 @@ export default function Latest() {
         Latest
       </Typography>
       <Grid container spacing={8} columns={12} sx={{ my: 4 }}>
-        {articleInfo.map((article, index) => (
+        {campaigns.map((campaign, index) => (
           <Grid key={index} size={{ xs: 12, sm: 6 }}>
             <Box
               sx={{
@@ -199,7 +228,7 @@ export default function Latest() {
               }}
             >
               <Typography gutterBottom variant="caption" component="div">
-                {article.tag}
+                {formatLauncherName(campaigns[0].launcher)}
               </Typography>
               <TitleTypography
                 gutterBottom
@@ -209,17 +238,17 @@ export default function Latest() {
                 tabIndex={0}
                 className={focusedCardIndex === index ? 'Mui-focused' : ''}
               >
-                {article.title}
+                {campaign.title}
                 <NavigateNextRoundedIcon
                   className="arrow"
                   sx={{ fontSize: '1rem' }}
                 />
               </TitleTypography>
               <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {article.description}
+                {campaign.description}
               </StyledTypography>
 
-              <Author authors={article.authors} />
+              <Author authors={[{ name: campaign.launcher, avatar: '/static/images/avatar/1.jpg', date: campaign.createdAt }]} />
             </Box>
           </Grid>
         ))}
