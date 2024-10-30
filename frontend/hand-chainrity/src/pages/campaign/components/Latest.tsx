@@ -1,4 +1,4 @@
-import * as React from 'react';
+import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import Box from '@mui/material/Box';
@@ -6,92 +6,10 @@ import Grid from '@mui/material/Grid2';
 import Pagination from '@mui/material/Pagination';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
-import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
+import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { fetchCampaigns } from '../../../actions/campaign';
 import { CampaignType } from '../../../types/interfaces';
-
-const campaignInfo = [
-  {
-    tag: 'Engineering',
-    title: 'The future of AI in software engineering',
-    description:
-      'Artificial intelligence is revolutionizing software engineering. Explore how AI-driven tools are enhancing development processes and improving software quality.',
-    authors: [
-      { name: 'Remy Sharp', avatar: '/static/images/avatar/1.jpg' },
-      { name: 'Travis Howard', avatar: '/static/images/avatar/2.jpg' },
-    ],
-  },
-  {
-    tag: 'Product',
-    title: 'Driving growth with user-centric product design',
-    description:
-      'Our user-centric product design approach is driving significant growth. Learn about the strategies we employ to create products that resonate with users.',
-    authors: [{ name: 'Erica Johns', avatar: '/static/images/avatar/6.jpg' }],
-  },
-  {
-    tag: 'Design',
-    title: 'Embracing minimalism in modern design',
-    description:
-      'Minimalism is a key trend in modern design. Discover how our design team incorporates minimalist principles to create clean and impactful user experiences.',
-    authors: [{ name: 'Kate Morrison', avatar: '/static/images/avatar/7.jpg' }],
-  },
-  {
-    tag: 'Company',
-    title: 'Cultivating a culture of innovation',
-    description:
-      'Innovation is at the heart of our company culture. Learn about the initiatives we have in place to foster creativity and drive groundbreaking solutions.',
-    authors: [{ name: 'Cindy Baker', avatar: '/static/images/avatar/3.jpg' }],
-  },
-  {
-    tag: 'Engineering',
-    title: 'Advancing cybersecurity with next-gen solutions',
-    description:
-      'Our next-generation cybersecurity solutions are setting new standards in the industry. Discover how we protect our clients from evolving cyber threats.',
-    authors: [
-      { name: 'Agnes Walker', avatar: '/static/images/avatar/4.jpg' },
-      { name: 'Trevor Henderson', avatar: '/static/images/avatar/5.jpg' },
-    ],
-  },
-  {
-    tag: 'Product',
-    title: 'Enhancing customer experience through innovation',
-    description:
-      'Our innovative approaches are enhancing customer experience. Learn about the new features and improvements that are delighting our users.',
-    authors: [{ name: 'Travis Howard', avatar: '/static/images/avatar/2.jpg' }],
-  },
-  {
-    tag: 'Engineering',
-    title: 'Pioneering sustainable engineering solutions',
-    description:
-      "Learn about our commitment to sustainability and the innovative engineering solutions we're implementing to create a greener future. Discover the impact of our eco-friendly initiatives.",
-    authors: [
-      { name: 'Agnes Walker', avatar: '/static/images/avatar/4.jpg' },
-      { name: 'Trevor Henderson', avatar: '/static/images/avatar/5.jpg' },
-    ],
-  },
-  {
-    tag: 'Product',
-    title: 'Maximizing efficiency with our latest product updates',
-    description:
-      'Our recent product updates are designed to help you maximize efficiency and achieve more. Get a detailed overview of the new features and improvements that can elevate your workflow.',
-    authors: [{ name: 'Travis Howard', avatar: '/static/images/avatar/2.jpg' }],
-  },
-  {
-    tag: 'Design',
-    title: 'Designing for the future: trends and insights',
-    description:
-      'Stay ahead of the curve with the latest design trends and insights. Our design team shares their expertise on creating intuitive and visually stunning user experiences.',
-    authors: [{ name: 'Kate Morrison', avatar: '/static/images/avatar/7.jpg' }],
-  },
-  {
-    tag: 'Company',
-    title: "Our company's journey: milestones and achievements",
-    description:
-      "Take a look at our company's journey and the milestones we've achieved along the way. From humble beginnings to industry leader, discover our story of growth and success.",
-    authors: [{ name: 'Cindy Baker', avatar: '/static/images/avatar/3.jpg' }],
-  },
-];
 
 const StyledTypography = styled(Typography)({
   display: '-webkit-box',
@@ -139,9 +57,7 @@ const TitleTypography = styled(Typography)(({ theme }) => ({
 }));
 
 const formatLauncherName = (name: string) => {
-  console.log("截断前：", name.length);
   if (name.length <= 8) return name; // 如果名字长度小于等于 7，则不需要截断
-  // console.log("截断后：",`${name.slice(0, 5)}...${name.slice(-3)}`);
 
   return `${name.slice(0, 5)}...${name.slice(-3)}`; // 取前三位和最后四位，中间加省略号
 };
@@ -184,23 +100,38 @@ export default function Latest() {
     null,
   );
 
-      const [campaigns, setCampaigns] = useState<CampaignType[]>([{
-      id: 0,
-      title: "默认",
-      description: "默认",
-      details: "默认",
-      target: 100,
-      current: 0,
-      createdAt:new Date(),
-      deadline:new Date(),
-      beneficiary: "默认",
-      launcher: "默认",
-      status: "默认",
-    }]); // Campaign[] is an array of Campaign objects
+  const [campaigns, setCampaigns] = useState<CampaignType[]>([{// 用于存储筛选后的 campaign
+    id: 0,
+    title: "默认",
+    description: "默认",
+    details: "默认",
+    target: 100,
+    current: 0,
+    createdAt: new Date(),
+    deadline: new Date(),
+    beneficiary: "默认",
+    launcher: "默认",
+    status: "默认",
+    tag:"Donation-based Crowdfunding"
+  }]); // Campaign[] is an array of Campaign objects
+  
 
-    useEffect(() => {
-        fetchCampaigns(setCampaigns);
-    }, [campaigns]);
+  // 原始 campaigns 数据状态
+  const [allCampaigns, setAllCampaigns] = useState<CampaignType[]>([]); // 用于存储所有的 campaign
+
+  // 模拟 fetchCampaigns 的数据获取
+  useEffect(() => {
+    fetchCampaigns((fetchedCampaigns: CampaignType[]) => {
+      // 给每个 campaign 添加一个默认 tag
+      const taggedCampaigns = fetchedCampaigns.map((campaign) => ({
+        ...campaign,
+        tag: "Donation-based Crowdfunding",
+      }));
+      // 设置获取到的所有 campaign 和默认显示的 campaign
+      setAllCampaigns(taggedCampaigns);
+      setCampaigns(taggedCampaigns);
+    });
+  }, []);
 
   const handleFocus = (index: number) => {
     setFocusedCardIndex(index);
