@@ -15,6 +15,11 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import { styled } from '@mui/material/styles';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
+import { useEffect, useState } from 'react';
+import { web3 } from '../../../utils/contracts';
+import { CampaignType } from '../../../types/interfaces';
+import { fetchCampaigns } from '../../../actions/campaign';
+import { log } from 'console';
 
 const cardData = [
   {
@@ -109,7 +114,7 @@ const StyledTypography = styled(Typography)({
   textOverflow: 'ellipsis',
 });
 
-function Author({ authors }: { authors: { name: string; avatar: string }[] }) {
+function Author({ authors }: { authors: { name: string; avatar: string ;date:Date}[] }) {
   return (
     <Box
       sx={{
@@ -138,7 +143,7 @@ function Author({ authors }: { authors: { name: string; avatar: string }[] }) {
           {authors.map((author) => author.name).join(', ')}
         </Typography>
       </Box>
-      <Typography variant="caption">July 14, 2021</Typography>
+      <Typography variant="caption">Deadline:{authors[0].date.toISOString().split("T")[0]}</Typography>
     </Box>
   );
 }
@@ -164,7 +169,48 @@ export function Search() {
   );
 }
 
+const GanacheTestChainId = '0x539' // Ganache默认的ChainId = 0x539 = Hex(1337)
+const GanacheTestChainName = 'REChain'  //
+const GanacheTestChainRpcUrl = 'http://127.0.0.1:8545' // Ganache RPC地址
+
 export default function MainContent() {
+    const [account, setAccount] = useState<string | null>(null)
+    const [campaigns, setCampaigns] = useState<CampaignType[]>([{
+      id: 0,
+      title: "默认",
+      description: "默认",
+      details: "默认",
+      target: 100,
+      current: 0,
+      deadline:new Date(),
+      beneficiary: "默认",
+      launcher: "默认",
+      status: "默认",
+    }]); // Campaign[] is an array of Campaign objects
+
+    useEffect(() => {
+        fetchCampaigns(setCampaigns);
+    }, [campaigns]);
+
+    console.log("所有众筹：",campaigns);
+    
+
+    //初始化时检查用户是否连接钱包
+    useEffect(() => {
+        const initCheckAccounts = async () => {
+            // @ts-ignore
+            const { ethereum } = window;
+            if (Boolean(ethereum && ethereum.isMetaMask)) {
+                // 尝试获取连接的用户账户
+                const accounts = await web3.eth.getAccounts()
+                if (accounts && accounts.length) {
+                    setAccount(accounts[0])
+                }
+            }
+        }
+        initCheckAccounts()
+    }, [])
+
   const [focusedCardIndex, setFocusedCardIndex] = React.useState<number | null>(
     null,
   );
@@ -185,9 +231,9 @@ export default function MainContent() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <div>
         <Typography variant="h1" gutterBottom>
-          Blog
+          Crowdfunding
         </Typography>
-        <Typography>Stay in the loop with the latest about our products</Typography>
+        <Typography>Take a look at the latest crowdfunding</Typography>
       </div>
       <Box
         sx={{
@@ -276,7 +322,7 @@ export default function MainContent() {
         </Box>
       </Box>
       <Grid container spacing={2} columns={12}>
-        <Grid size={{ xs: 12, md: 6 }}>
+        {campaigns.length >= 1 &&<Grid size={{ xs: 12, md: 6 }}>
           <SyledCard
             variant="outlined"
             onFocus={() => handleFocus(0)}
@@ -296,19 +342,19 @@ export default function MainContent() {
             />
             <SyledCardContent>
               <Typography gutterBottom variant="caption" component="div">
-                {cardData[0].tag}
+                {campaigns[0].launcher}
               </Typography>
               <Typography gutterBottom variant="h6" component="div">
-                {cardData[0].title}
+                {campaigns[0].title}
               </Typography>
               <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {cardData[0].description}
+                {campaigns[0].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={cardData[0].authors} />
+            <Author authors={[{ name: campaigns[0].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[0].deadline}]} />
           </SyledCard>
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
+        </Grid>}
+        {campaigns.length >= 2 && (<Grid size={{ xs: 12, md: 6 }}>
           <SyledCard
             variant="outlined"
             onFocus={() => handleFocus(1)}
@@ -328,19 +374,19 @@ export default function MainContent() {
             />
             <SyledCardContent>
               <Typography gutterBottom variant="caption" component="div">
-                {cardData[1].tag}
+                {campaigns[1].launcher}
               </Typography>
               <Typography gutterBottom variant="h6" component="div">
-                {cardData[1].title}
+                {campaigns[1].title}
               </Typography>
               <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {cardData[1].description}
+                {campaigns[1].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={cardData[1].authors} />
+            <Author authors={[{ name: campaigns[1].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[1].deadline}]} />
           </SyledCard>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
+        </Grid>)}
+        {campaigns.length >= 3 && <Grid size={{ xs: 12, md: 4 }}>
           <SyledCard
             variant="outlined"
             onFocus={() => handleFocus(2)}
@@ -360,19 +406,19 @@ export default function MainContent() {
             />
             <SyledCardContent>
               <Typography gutterBottom variant="caption" component="div">
-                {cardData[2].tag}
+                {campaigns[2].launcher}
               </Typography>
               <Typography gutterBottom variant="h6" component="div">
-                {cardData[2].title}
+                {campaigns[2].title}
               </Typography>
               <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {cardData[2].description}
+                {campaigns[2].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={cardData[2].authors} />
+            <Author authors={[{ name: campaigns[2].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[2].deadline}]} />
           </SyledCard>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
+        </Grid>}
+        {campaigns.length >= 5 && <Grid size={{ xs: 12, md: 4 }}>
           <Box
             sx={{ display: 'flex', flexDirection: 'column', gap: 2, height: '100%' }}
           >
@@ -394,21 +440,21 @@ export default function MainContent() {
               >
                 <div>
                   <Typography gutterBottom variant="caption" component="div">
-                    {cardData[3].tag}
+                    {campaigns[3].launcher}
                   </Typography>
                   <Typography gutterBottom variant="h6" component="div">
-                    {cardData[3].title}
+                    {campaigns[3].title}
                   </Typography>
                   <StyledTypography
                     variant="body2"
                     color="text.secondary"
                     gutterBottom
                   >
-                    {cardData[3].description}
+                    {campaigns[3].description}
                   </StyledTypography>
                 </div>
               </SyledCardContent>
-              <Author authors={cardData[3].authors} />
+              <Author authors={[{ name: campaigns[3].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[3].deadline}]} />
             </SyledCard>
             <SyledCard
               variant="outlined"
@@ -428,25 +474,25 @@ export default function MainContent() {
               >
                 <div>
                   <Typography gutterBottom variant="caption" component="div">
-                    {cardData[4].tag}
+                    {campaigns[4].launcher}
                   </Typography>
                   <Typography gutterBottom variant="h6" component="div">
-                    {cardData[4].title}
+                    {campaigns[4].title}
                   </Typography>
                   <StyledTypography
                     variant="body2"
                     color="text.secondary"
                     gutterBottom
                   >
-                    {cardData[4].description}
+                    {campaigns[4].description}
                   </StyledTypography>
                 </div>
               </SyledCardContent>
-              <Author authors={cardData[4].authors} />
+              <Author authors={[{ name: campaigns[4].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[4].deadline}]} />
             </SyledCard>
           </Box>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
+        </Grid>}
+        {campaigns.length >= 5 && <Grid size={{ xs: 12, md: 4 }}>
           <SyledCard
             variant="outlined"
             onFocus={() => handleFocus(5)}
@@ -466,18 +512,18 @@ export default function MainContent() {
             />
             <SyledCardContent>
               <Typography gutterBottom variant="caption" component="div">
-                {cardData[5].tag}
+                {campaigns[5].launcher}
               </Typography>
               <Typography gutterBottom variant="h6" component="div">
-                {cardData[5].title}
+                {campaigns[5].title}
               </Typography>
               <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {cardData[5].description}
+                {campaigns[5].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={cardData[5].authors} />
+            <Author authors={[{ name: campaigns[5].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[5].deadline}]} />
           </SyledCard>
-        </Grid>
+        </Grid>}
       </Grid>
     </Box>
   );
