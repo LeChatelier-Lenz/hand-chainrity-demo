@@ -14,9 +14,12 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import Sitemark from './SitemarkIcon';
 import { useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+// import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import {  Menu } from '@mui/material';
 import userImage from '../img/user.png';
+import { GanacheTestChainId, GanacheTestChainName, GanacheTestChainRpcUrl } from '../utils/ganache';
+import { useEffect } from 'react';
+import { web3 } from '../utils/contracts';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -39,12 +42,93 @@ export default function AppAppBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
   const isLoggedIn = Boolean(userInfo.name); // 检查是否登录
+  const [account, setAccount] = React.useState<string | null>(null);
+  const [isConnected, setIsConnected] = React.useState<boolean>(false);
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
 
+    //初始化时检查用户是否连接钱包
+  useEffect(() => {
+    const initCheckAccounts = async () => {
+        // @ts-ignore
+        const { ethereum } = window;
+        if (Boolean(ethereum && ethereum.isMetaMask)) {
+            // 尝试获取连接的用户账户
+            const accounts = await web3.eth.getAccounts()
+            if (accounts && accounts.length) {
+                setAccount(accounts[0])
+                setIsConnected(true)
+                localStorage.setItem('account', accounts[0]);
+            }
+        }
+    }
+      initCheckAccounts()
+  }, [account])
+
+  // 连接钱包
+  const onClickConnectWallet = async () => {
+    // 查看window对象里是否存在ethereum（metamask安装后注入的）对象
+    // @ts-ignore
+    
+
+    const { ethereum } = window;
+    if (!Boolean(ethereum && ethereum.isMetaMask)) {
+        alert('MetaMask is not installed!');
+        return
+    }
+    try {
+        // 如果当前小狐狸不在本地链上，切换Metamask到本地测试链
+        if (ethereum.chainId !== GanacheTestChainId) {
+            const chain = {
+                chainId: GanacheTestChainId, // Chain-ID
+                chainName: GanacheTestChainName, // Chain-Name
+                rpcUrls: [GanacheTestChainRpcUrl], // RPC-URL
+            };
+
+            try {
+                // 尝试切换到本地网络
+                await ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: chain.chainId }] })
+            } catch (switchError: any) {
+                // 如果本地网络没有添加到Metamask中，添加该网络
+                if (switchError.code === 4902) {
+                    await ethereum.request({
+                        method: 'wallet_addEthereumChain', params: [chain]
+                    });
+                }
+            }
+        }
+        // 小狐狸成功切换网络了，接下来让小狐狸请求用户的授权
+        await ethereum.request({ method: 'eth_requestAccounts' });
+        // 获取小狐狸拿到的授权用户列表
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+        // 如果用户存在，展示其account，否则显示错误信息
+        console.log(accounts[0]);
+        if (accounts && accounts.length){
+          localStorage.setItem('account', accounts[0]);
+          setIsConnected(true);
+        }
+        setAccount(accounts[0] || 'Not able to get accounts');
+    } catch (error: any) {
+        alert(error.message)
+    }
+  }
   
+
+  const EllipsisMiddleTypography = ({ text="", length = 8 }) => {
+    if (text.length <= length * 2) {
+        return <Typography variant="body1" color='darkblue'>{text}</Typography>;
+    }
+
+    const start = text.slice(0, length);
+    const end = text.slice(-length);
+    return (
+        <Typography variant="body1" color='darkblue'>
+            {start}...{end}
+        </Typography>
+    );
+};
 
   const handleSignInClick = () => {
     navigate('/signin'); // 跳转到 signinsignup 页面
@@ -102,59 +186,70 @@ export default function AppAppBar() {
             </Box>
           </Box>
           <Box
-      sx={{
-        display: { xs: 'none', md: 'flex' },
-        gap: 1,
-        alignItems: 'center',
-      }}
-    >
-      {isLoggedIn ? (
-        <>
-          <img src={userImage} alt="描述文字" style={{ width: '80%', height: 'auto' }} />
-          <Button onClick={handleMenuOpen} size="small" >
-            
-            <Typography variant="body1" sx={{ color: 'darkblue' }}>
-              {userInfo.name || '未填写姓名'}
-            </Typography>
-            
-          </Button>
-
-          {/* 菜单组件 */}
-          
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
             sx={{
-              '& .MuiPaper-root': {
-                width: '300px', // 让菜单适配文本长度
-              },
+              display: { xs: 'none', md: 'flex' },
+              gap: 1,
+              alignItems: 'center',
             }}
-          >
-            <MenuItem onClick={handleMenuClose}>个人主页</MenuItem>
-            <MenuItem onClick={handleLogout}>退出登录</MenuItem>
-          </Menu>
-        </>
-      )
- : (
-        <>
-          <Button color="primary" variant="text" size="small" onClick={handleSignInClick}>
-            登录
-          </Button>
-          <Button color="primary" variant="contained" size="small" onClick={handleSignUpClick}>
-            注册
-          </Button>
-        </>
-      )}
-    </Box>
+          > {isConnected ? (
+            <>
+              <EllipsisMiddleTypography text={'已连接至'+account || '未连接'} length={8} />
+            </>
+          ) : (
+            <Button onClick={onClickConnectWallet} size="small" >
+              <Typography variant="body1" sx={{ color: 'darkblue' }}>
+                连接钱包
+              </Typography>
+            </Button>
+          )
+          }
+            {isLoggedIn ? (
+              <>
+                <img src={userImage} alt="描述文字" style={{ width: '80%', height: 'auto' }} />
+                <Button onClick={handleMenuOpen} size="small" >
+                  
+                  <Typography variant="body1" sx={{ color: 'darkblue' }}>
+                    {userInfo.name || '未填写姓名'}
+                  </Typography>
+                  
+                </Button>
+
+                {/* 菜单组件 */}
+                
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  sx={{
+                    '& .MuiPaper-root': {
+                      width: '300px', // 让菜单适配文本长度
+                    },
+                  }}
+                >
+                  <MenuItem onClick={handleMenuClose}>个人主页</MenuItem>
+                  <MenuItem onClick={handleLogout}>退出登录</MenuItem>
+                </Menu>
+              </>
+            )
+      : (
+              <>
+                <Button color="primary" variant="text" size="small" onClick={handleSignInClick}>
+                  登录
+                </Button>
+                <Button color="primary" variant="contained" size="small" onClick={handleSignUpClick}>
+                  注册
+                </Button>
+              </>
+            )}
+          </Box>
 
           <Box sx={{ display: { sm: 'flex', md: 'none' } }}>
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>

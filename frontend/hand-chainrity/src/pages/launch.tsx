@@ -28,6 +28,7 @@ export default function Launch() {
     description: "",
     target: 0,
     current: 0,
+    createdAt: new Date(),
     deadline: new Date(),
     beneficiary: "",
     launcher: "",
@@ -62,6 +63,7 @@ export default function Launch() {
         details: "",
         target: 0,
         current: 0,
+        createdAt: new Date(),
         deadline: new Date(),
         beneficiary: "",
         launcher: "",
@@ -179,6 +181,7 @@ export default function Launch() {
                     <p>Details: {campaign.details}</p>
                     <p>Target: {campaign.target} ETH</p>
                     <p>Current: {campaign.current} ETH</p>
+                    <p>CreatedAt: {campaign.createdAt.toISOString().split("T")[0]}</p>
                     <p>Deadline: {campaign.deadline.toISOString().split("T")[0]}</p>
                     <p>Beneficiary: {campaign.beneficiary}</p>
                     <p>Launcher: {campaign.launcher}</p>
