@@ -148,6 +148,11 @@ export default function AppAppBar() {
     setAnchorEl(null);
   };
 
+  const handleGoUser = () => {
+    navigate('/root/user'); // 跳转到个人主页
+    handleMenuClose();
+  }
+
   // 退出登录逻辑
   const handleLogout = () => {
     localStorage.removeItem('userInfo'); // 清除用户信息
@@ -234,7 +239,7 @@ export default function AppAppBar() {
                     },
                   }}
                 >
-                  <MenuItem onClick={handleMenuClose}>个人主页</MenuItem>
+                  <MenuItem onClick={handleGoUser}>个人主页</MenuItem>
                   <MenuItem onClick={handleLogout}>退出登录</MenuItem>
                 </Menu>
               </>
