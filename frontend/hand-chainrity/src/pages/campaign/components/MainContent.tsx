@@ -18,6 +18,8 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { fetchCampaigns } from '../../../actions/campaign';
 import { CampaignType } from '../../../types/interfaces';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 const SyledCard = styled(Card)(({ theme }) => ({
@@ -137,6 +139,7 @@ export default function MainContent() {
 
   // 原始 campaigns 数据状态
   const [allCampaigns, setAllCampaigns] = useState<CampaignType[]>([]); // 用于存储所有的 campaign
+  const [load, setLoad] = React.useState(true);
 
   // 模拟 fetchCampaigns 的数据获取
   useEffect(() => {
@@ -149,7 +152,11 @@ export default function MainContent() {
       // 设置获取到的所有 campaign 和默认显示的 campaign
       setAllCampaigns(taggedCampaigns);
       setCampaigns(taggedCampaigns);
-    });
+      // 延迟 700 毫秒再执行 setLoad(false)
+      setTimeout(() => {
+        setLoad(false);
+      }, 1500);
+      });
   }, []);
 
 
@@ -182,6 +189,12 @@ export default function MainContent() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <Backdrop
+        sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+        open={load}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <div>
         <Typography variant="h1" gutterBottom>
           Hostest Crowdfunding
