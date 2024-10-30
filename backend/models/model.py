@@ -25,7 +25,7 @@ class User(Base):
 
     # 关联 Campaign 表，一对多关系
     campaigns = relationship("Campaign", back_populates="owner", cascade="all, delete-orphan")
-
+    applications = relationship("Application", back_populates="user",cascade="all, delete-orphan")
     def __init__(self, address, email, password , name= '', image='', location='火星', gender='保密', role='user'):
         self.address = address
         self.name = name
@@ -63,3 +63,26 @@ class Campaign(Base):
     owner = relationship("User", back_populates="campaigns")
 
 
+class Application(Base):
+    __tablename__ = 'applications'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    address = Column(String(42), ForeignKey('users.address'))
+    name = Column(String(24), nullable=False)
+    idCard = Column(String(18), nullable=False)
+    phone = Column(String(11), nullable=False)
+    details = Column(Text, nullable=False)
+    description = Column(Text, nullable=True)
+    createdAt = Column(DateTime, default=datetime.utcnow)
+    status = Column(String(10), default='pending')
+
+    user = relationship("User", back_populates="applications")
+
+    def __init__(self, address, name, idCard, phone, details, description=''):
+        self.address = address
+        self.name = name
+        self.idCard = idCard
+        self.phone = phone
+        self.details = details
+        self.description = description
+        self.status = 'pending'

@@ -92,3 +92,9 @@ body{
     margin: 5px 0;
     color: #666;
 }
+
+.blank {
+    margin-top: 50px;
+    display: block; /* 或者使用 `display: flex;`，根据需要选择 */
+    width: 100%; /* 确保独占一行 */
+}

@@ -2,12 +2,10 @@ import AppAppBar from '../component/AppAppBar';
 import React, { useState } from 'react';
 import { CampaignType } from '../types/interfaces';
 import { fetchUserCampaigns } from '../actions/campaign';
-import { useOutletContext } from 'react-router-dom';
-import { OutletContext } from '../types/interfaces';
-import { Card, CardContent, Typography, Box ,Container, CssBaseline, Divider, List, ListItem, ListItemButton, ListItemText, CardMedia,  styled, Avatar, AvatarGroup} from '@mui/material';
+import { Card, CardContent, Typography, Box ,Container, CssBaseline, Divider, List, ListItem, ListItemButton, ListItemText, CardMedia,  styled, Avatar, AvatarGroup, Button, Paper, TextField} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import '../styles/user.css';  // 确保路径正确
-
+import Application from '../component/application';
 
 
 const SyledCard = styled(Card)(({ theme }) => ({
@@ -83,6 +81,13 @@ function Author({ authors }: { authors: { name: string; avatar: string }[] }) {
 export default function User() {
   const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
   const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  
+
+ 
+
   // const address = localStorage.getItem('account') || null;
   // const name = localStorage.getItem('name') || null;
   // const email = localStorage.getItem('email') || null;
@@ -185,31 +190,22 @@ export default function User() {
         <p><strong>邮箱:</strong> {userInfo.email}</p>
         <Divider />
         <nav aria-label="secondary mailbox folders">
-          <List sx={{ fontSize: '1.2rem', padding: '10px 20px' }}>
-            <ListItem disablePadding>
-              <ListItemButton >
-                <ListItemText primary="我参加的募捐" sx={{ fontSize: '2rem', padding: '10px 20px' }} />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton component="a" href="#simple-list">
-                <ListItemText primary="我发起的募捐" sx={{ fontSize: '2rem', padding: '10px 20px' }} />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton component="a" href="#simple-list">
-                <ListItemText primary="申请成为收益人" sx={{ fontSize: '2rem', padding: '10px 20px' }} />
-              </ListItemButton>
-            </ListItem>
-          </List>
+        <List>
+                {['我参加的募捐', '我发起的募捐', '申请成为受益人'].map((text, index) => (
+                  <ListItem disablePadding key={text}>
+                    <ListItemButton onClick={() => setSelectedIndex(index)}>
+                      <ListItemText primary={text} />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
         </nav>
       </Box>
       </div>
-      <div className="card">
+      <div className="card" >
         <Card variant="outlined">
           <CardContent>
-            <Typography variant="h5">Participated Campaigns</Typography>
-            <button onClick={fetchCampaigns}>Load Campaigns</button>
+            
             {/* <ul>
               {campaigns.map((campaign) => (
                 <li key={campaign.id}>
@@ -225,7 +221,10 @@ export default function User() {
                 </li>
               ))}
             </ul> */}
+            {selectedIndex === 0 || selectedIndex === 1 ? (
+            
             <Grid container spacing={2} columns={12}>
+            <div className='blank'></div>
             <Grid  size={{ xs: 12, md: 6 }}>
               <SyledCard
                 variant="outlined"
@@ -290,7 +289,11 @@ export default function User() {
                 <Author authors={cardData[0].authors} />
               </SyledCard>
             </Grid>
-            </Grid>
+            
+            </Grid>) :
+             (<Application/>)
+             }
+            
           </CardContent>
         </Card>
       </div>
