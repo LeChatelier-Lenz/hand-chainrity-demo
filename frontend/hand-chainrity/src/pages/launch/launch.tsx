@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { HandChainrityContract,web3 } from '../../utils/contracts';
 import FillSheet from './FillSheet';
 import Check from './Check';
+import Footer from '../campaign/components/Footer';
 
 function Copyright() {
   return (
@@ -147,57 +148,72 @@ export default function Launch() {
   };
 
   return (
-    <Container sx={{ py: 10 }} maxWidth="md">
-      <CssBaseline />
-      <main className={classes.layout}>
-        <Paper className={classes.paper}>
-          <Typography component="h1" variant="h4" align="center">
-            发起筹款活动
+    <>
+      <Container
+            maxWidth="lg"
+            component="main"
+            sx={{ display: 'flex', flexDirection: 'column', my: 16, gap: 4 }}
+          >
+        <div>
+          <Typography variant="h1" gutterBottom>
+            Start a Raising Campaign
           </Typography>
-          <Stepper activeStep={activeStep} className={classes.stepper}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          <React.Fragment>
-            {activeStep === steps.length ? (
+          <Typography>Fill the Sheet Below Now!</Typography>
+        </div>
+        <Container sx={{ py: 2 }} maxWidth="md">
+          <CssBaseline />
+          <main className={classes.layout}>
+            <Paper className={classes.paper}>
+              <Typography component="h1" variant="h4" align="center">
+                发起筹款活动
+              </Typography>
+              <Stepper activeStep={activeStep} className={classes.stepper}>
+                {steps.map((label) => (
+                  <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
               <React.Fragment>
-                <Typography variant="h5" gutterBottom>
-                  感谢你为善心出力！
-                </Typography>
-                <Typography variant="subtitle1">
-                  Your order number is #2001539. We have emailed your order confirmation, and will
-                  send you an update when your order has shipped.
-                </Typography>
+                {activeStep === steps.length ? (
+                  <React.Fragment>
+                    <Typography variant="h5" gutterBottom>
+                      感谢你为善心出力！
+                    </Typography>
+                    <Typography variant="subtitle1">
+                      Your order number is #2001539. We have emailed your order confirmation, and will
+                      send you an update when your order has shipped.
+                    </Typography>
+                  </React.Fragment>
+                ) : (
+                  <React.Fragment>
+                    {getStepContent(activeStep)}
+                    <div className={classes.buttons}>
+                      {activeStep !== 0 && (
+                        <Button onClick={handleBack} className={classes.button}>
+                          上一步
+                        </Button>
+                      )}
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={handleNext}
+                        className={classes.button}
+                        disabled={(activeStep === 0 && rootFormData.beneficiary.length === 0 )}
+                          // ||(activeStep ===1 && beneficiaryCheck === false)}
+                      >
+                        {activeStep === steps.length - 1 ? '确认申请' : '下一步'}
+                      </Button>
+                    </div>
+                  </React.Fragment>
+                )}
               </React.Fragment>
-            ) : (
-              <React.Fragment>
-                {getStepContent(activeStep)}
-                <div className={classes.buttons}>
-                  {activeStep !== 0 && (
-                    <Button onClick={handleBack} className={classes.button}>
-                      上一步
-                    </Button>
-                  )}
-                  <Button
-                    variant="contained"
-                    color="success"
-                    onClick={handleNext}
-                    className={classes.button}
-                    disabled={(activeStep === 0 && rootFormData.beneficiary.length === 0 )}
-                      // ||(activeStep ===1 && beneficiaryCheck === false)}
-                  >
-                    {activeStep === steps.length - 1 ? '确认申请' : '下一步'}
-                  </Button>
-                </div>
-              </React.Fragment>
-            )}
-          </React.Fragment>
-        </Paper>
-        <Copyright />
-      </main>
+            </Paper>
+          </main>
+        </Container>
+          
       </Container>
+      <Footer />
+    </>
   );
 }
