@@ -16,6 +16,7 @@ export interface CampaignType {
     details: string;
     target: number;
     current: number;
+    createdAt: Date;
     deadline: Date;
     beneficiary: string;
     launcher: string;
