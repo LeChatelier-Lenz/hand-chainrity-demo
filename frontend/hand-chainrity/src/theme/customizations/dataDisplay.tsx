@@ -18,6 +18,13 @@ export const dataDisplayCustomizations: Components<Theme> = {
       },
     },
   },
+  MuiTextField:{
+    styleOverrides: {
+      root: {
+        variant: 'outlined',
+      }
+    }
+  },
   MuiListItem: {
     styleOverrides: {
       root: ({ theme }) => ({
