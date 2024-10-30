@@ -1,16 +1,13 @@
-import React from 'react';
-import { AppBar, Button, Container, CssBaseline, Link, Paper, Step, StepLabel, Stepper, Toolbar, Typography } from '@mui/material';
+import { Button, Container, CssBaseline, Link, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import AddressForm from './FillSheet';
-import PaymentForm from './Check';
-import Review from './Review';
-import { CampaignType, OutletContext } from '../../types/interfaces';
+import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { useState } from 'react';
-import { HandChainrityContract,web3 } from '../../utils/contracts';
-import FillSheet from './FillSheet';
+import { OutletContext } from '../../types/interfaces';
+import { HandChainrityContract, web3 } from '../../utils/contracts';
 import Check from './Check';
 import Footer from '../campaign/components/Footer';
+import FillSheet from './FillSheet';
+import Review from './Review';
 
 function Copyright() {
   return (
