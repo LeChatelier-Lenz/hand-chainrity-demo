@@ -1,4 +1,5 @@
-import * as React from 'react';
+import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import Box from '@mui/material/Box';
@@ -6,20 +7,18 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
+import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid2';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { styled } from '@mui/material/styles';
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
+import Typography from '@mui/material/Typography';
+import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { web3 } from '../../../utils/contracts';
-import { CampaignType } from '../../../types/interfaces';
 import { fetchCampaigns } from '../../../actions/campaign';
-import { log } from 'console';
+import { CampaignType } from '../../../types/interfaces';
+import { web3 } from '../../../utils/contracts';
 
 const cardData = [
   {
@@ -114,6 +113,15 @@ const StyledTypography = styled(Typography)({
   textOverflow: 'ellipsis',
 });
 
+    // 定义一个格式化函数，用于截断名字
+  const formatLauncherName = (name:string) => {
+    console.log("截断前：",name.length);
+    if (name.length <= 8) return name; // 如果名字长度小于等于 7，则不需要截断
+    // console.log("截断后：",`${name.slice(0, 5)}...${name.slice(-3)}`);
+    
+    return `${name.slice(0, 5)}...${name.slice(-3)}`; // 取前三位和最后四位，中间加省略号
+  };
+
 function Author({ authors }: { authors: { name: string; avatar: string ;date:Date}[] }) {
   return (
     <Box
@@ -140,7 +148,7 @@ function Author({ authors }: { authors: { name: string; avatar: string ;date:Dat
           ))}
         </AvatarGroup>
         <Typography variant="caption">
-          {authors.map((author) => author.name).join(', ')}
+          {authors.map((author) => formatLauncherName(author.name)).join(', ')}
         </Typography>
       </Box>
       <Typography variant="caption">Deadline:{authors[0].date.toISOString().split("T")[0]}</Typography>
@@ -169,9 +177,6 @@ export function Search() {
   );
 }
 
-const GanacheTestChainId = '0x539' // Ganache默认的ChainId = 0x539 = Hex(1337)
-const GanacheTestChainName = 'REChain'  //
-const GanacheTestChainRpcUrl = 'http://127.0.0.1:8545' // Ganache RPC地址
 
 export default function MainContent() {
     const [account, setAccount] = useState<string | null>(null)
@@ -215,6 +220,8 @@ export default function MainContent() {
   const [focusedCardIndex, setFocusedCardIndex] = React.useState<number | null>(
     null,
   );
+
+
 
   const handleFocus = (index: number) => {
     setFocusedCardIndex(index);
@@ -343,7 +350,7 @@ export default function MainContent() {
             />
             <SyledCardContent>
               <Typography gutterBottom variant="caption" component="div">
-                {campaigns[0].launcher}
+                {formatLauncherName(campaigns[0].launcher)}
               </Typography>
               <Typography gutterBottom variant="h6" component="div">
                 {campaigns[0].title}
@@ -375,7 +382,7 @@ export default function MainContent() {
             />
             <SyledCardContent>
               <Typography gutterBottom variant="caption" component="div">
-                {campaigns[1].launcher}
+                {formatLauncherName(campaigns[1].launcher)}
               </Typography>
               <Typography gutterBottom variant="h6" component="div">
                 {campaigns[1].title}
@@ -407,7 +414,7 @@ export default function MainContent() {
             />
             <SyledCardContent>
               <Typography gutterBottom variant="caption" component="div">
-                {campaigns[2].launcher}
+                {formatLauncherName(campaigns[2].launcher)}
               </Typography>
               <Typography gutterBottom variant="h6" component="div">
                 {campaigns[2].title}
@@ -441,7 +448,7 @@ export default function MainContent() {
               >
                 <div>
                   <Typography gutterBottom variant="caption" component="div">
-                    {campaigns[3].launcher}
+                    {formatLauncherName(campaigns[3].launcher)}
                   </Typography>
                   <Typography gutterBottom variant="h6" component="div">
                     {campaigns[3].title}
@@ -475,7 +482,7 @@ export default function MainContent() {
               >
                 <div>
                   <Typography gutterBottom variant="caption" component="div">
-                    {campaigns[4].launcher}
+                    {formatLauncherName(campaigns[4].launcher)}
                   </Typography>
                   <Typography gutterBottom variant="h6" component="div">
                     {campaigns[4].title}
@@ -493,7 +500,7 @@ export default function MainContent() {
             </SyledCard>
           </Box>
         </Grid>}
-        {campaigns.length >= 5 && <Grid size={{ xs: 12, md: 4 }}>
+        {campaigns.length >= 6 && <Grid size={{ xs: 12, md: 4 }}>
           <SyledCard
             variant="outlined"
             onFocus={() => handleFocus(5)}
@@ -513,7 +520,7 @@ export default function MainContent() {
             />
             <SyledCardContent>
               <Typography gutterBottom variant="caption" component="div">
-                {campaigns[5].launcher}
+                {formatLauncherName(campaigns[5].launcher)}
               </Typography>
               <Typography gutterBottom variant="h6" component="div">
                 {campaigns[5].title}
