@@ -1,4 +1,5 @@
-import * as React from 'react';
+import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import Box from '@mui/material/Box';
@@ -6,77 +7,21 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
+import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid2';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { styled } from '@mui/material/styles';
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
+import Typography from '@mui/material/Typography';
+import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { web3 } from '../../../utils/contracts';
-import { CampaignType } from '../../../types/interfaces';
 import { fetchCampaigns } from '../../../actions/campaign';
-import { log } from 'console';
+import { CampaignType } from '../../../types/interfaces';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useNavigate } from 'react-router-dom';
 
-const cardData = [
-  {
-    img: 'https://picsum.photos/800/450?random=1',
-    tag: 'Engineering',
-    title: 'Revolutionizing software development with cutting-edge tools',
-    description:
-      'Our latest engineering tools are designed to streamline workflows and boost productivity. Discover how these innovations are transforming the software development landscape.',
-    authors: [
-      { name: 'Remy Sharp', avatar: '/static/images/avatar/1.jpg' },
-      { name: 'Travis Howard', avatar: '/static/images/avatar/2.jpg' },
-    ],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=2',
-    tag: 'Product',
-    title: 'Innovative product features that drive success',
-    description:
-      'Explore the key features of our latest product release that are helping businesses achieve their goals. From user-friendly interfaces to robust functionality, learn why our product stands out.',
-    authors: [{ name: 'Erica Johns', avatar: '/static/images/avatar/6.jpg' }],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=3',
-    tag: 'Design',
-    title: 'Designing for the future: trends and insights',
-    description:
-      'Stay ahead of the curve with the latest design trends and insights. Our design team shares their expertise on creating intuitive and visually stunning user experiences.',
-    authors: [{ name: 'Kate Morrison', avatar: '/static/images/avatar/7.jpg' }],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=4',
-    tag: 'Company',
-    title: "Our company's journey: milestones and achievements",
-    description:
-      "Take a look at our company's journey and the milestones we've achieved along the way. From humble beginnings to industry leader, discover our story of growth and success.",
-    authors: [{ name: 'Cindy Baker', avatar: '/static/images/avatar/3.jpg' }],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=45',
-    tag: 'Engineering',
-    title: 'Pioneering sustainable engineering solutions',
-    description:
-      "Learn about our commitment to sustainability and the innovative engineering solutions we're implementing to create a greener future. Discover the impact of our eco-friendly initiatives.",
-    authors: [
-      { name: 'Agnes Walker', avatar: '/static/images/avatar/4.jpg' },
-      { name: 'Trevor Henderson', avatar: '/static/images/avatar/5.jpg' },
-    ],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=6',
-    tag: 'Product',
-    title: 'Maximizing efficiency with our latest product updates',
-    description:
-      'Our recent product updates are designed to help you maximize efficiency and achieve more. Get a detailed overview of the new features and improvements that can elevate your workflow.',
-    authors: [{ name: 'Travis Howard', avatar: '/static/images/avatar/2.jpg' }],
-  },
-];
 
 const SyledCard = styled(Card)(({ theme }) => ({
   display: 'flex',
@@ -114,7 +59,13 @@ const StyledTypography = styled(Typography)({
   textOverflow: 'ellipsis',
 });
 
-function Author({ authors }: { authors: { name: string; avatar: string ;date:Date}[] }) {
+// 定义一个格式化函数，用于截断名字
+const formatLauncherName = (name: string) => {
+  if (name.length <= 8) return name; // 如果名字长度小于等于 7，则不需要截断
+  return `${name.slice(0, 5)}...${name.slice(-3)}`; // 取前三位和最后四位，中间加省略号
+};
+
+function Author({ authors }: { authors: { name: string; avatar: string; date: Date }[] }) {
   return (
     <Box
       sx={{
@@ -140,7 +91,7 @@ function Author({ authors }: { authors: { name: string; avatar: string ;date:Dat
           ))}
         </AvatarGroup>
         <Typography variant="caption">
-          {authors.map((author) => author.name).join(', ')}
+          {authors.map((author) => formatLauncherName(author.name)).join(', ')}
         </Typography>
       </Box>
       <Typography variant="caption">Deadline:{authors[0].date.toISOString().split("T")[0]}</Typography>
@@ -169,48 +120,48 @@ export function Search() {
   );
 }
 
-const GanacheTestChainId = '0x539' // Ganache默认的ChainId = 0x539 = Hex(1337)
-const GanacheTestChainName = 'REChain'  //
-const GanacheTestChainRpcUrl = 'http://127.0.0.1:8545' // Ganache RPC地址
 
 export default function MainContent() {
-    const [account, setAccount] = useState<string | null>(null)
-    const [campaigns, setCampaigns] = useState<CampaignType[]>([{
-      id: 0,
-      title: "默认",
-      description: "默认",
-      details: "默认",
-      target: 100,
-      current: 0,
-      createdAt:new Date(),
-      deadline:new Date(),
-      beneficiary: "默认",
-      launcher: "默认",
-      status: "默认",
-    }]); // Campaign[] is an array of Campaign objects
+  const [campaigns, setCampaigns] = useState<CampaignType[]>([{// 用于存储筛选后的 campaign
+    id: 0,
+    title: "默认",
+    description: "默认",
+    details: "默认",
+    target: 100,
+    current: 0,
+    createdAt: new Date(),
+    deadline: new Date(),
+    beneficiary: "默认",
+    launcher: "默认",
+    status: "默认",
+    tag:"Donation-based Crowdfunding"
+  }]); // Campaign[] is an array of Campaign objects
+  
 
-    useEffect(() => {
-        fetchCampaigns(setCampaigns);
-    }, [campaigns]);
+  // 原始 campaigns 数据状态
+  const [allCampaigns, setAllCampaigns] = useState<CampaignType[]>([]); // 用于存储所有的 campaign
+  const [load, setLoad] = React.useState(true);
+  const navigate = useNavigate(); // 初始化导航钩子
 
-    console.log("所有众筹：",campaigns);
-    
 
-    //初始化时检查用户是否连接钱包
-    useEffect(() => {
-        const initCheckAccounts = async () => {
-            // @ts-ignore
-            const { ethereum } = window;
-            if (Boolean(ethereum && ethereum.isMetaMask)) {
-                // 尝试获取连接的用户账户
-                const accounts = await web3.eth.getAccounts()
-                if (accounts && accounts.length) {
-                    setAccount(accounts[0])
-                }
-            }
-        }
-        initCheckAccounts()
-    }, [])
+  // 模拟 fetchCampaigns 的数据获取
+  useEffect(() => {
+    fetchCampaigns((fetchedCampaigns: CampaignType[]) => {
+      // 给每个 campaign 添加一个默认 tag
+      const taggedCampaigns = fetchedCampaigns.map((campaign) => ({
+        ...campaign,
+        tag: "Donation-based Crowdfunding",
+      }));
+      // 设置获取到的所有 campaign 和默认显示的 campaign
+      setAllCampaigns(taggedCampaigns);
+      setCampaigns(taggedCampaigns);
+      // 延迟 700 毫秒再执行 setLoad(false)
+      setTimeout(() => {
+        setLoad(false);
+      }, 1000);
+      });
+  }, []);
+
 
   const [focusedCardIndex, setFocusedCardIndex] = React.useState<number | null>(
     null,
@@ -224,15 +175,32 @@ export default function MainContent() {
     setFocusedCardIndex(null);
   };
 
-  const handleClick = () => {
-    console.info('You clicked the filter chip.');
+  // 处理点击 Chip 的逻辑
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    const selectedLabel = (event.target as HTMLElement).innerText;
+
+    if (selectedLabel === "All categories") {
+      // 显示所有 campaign
+      setCampaigns(allCampaigns);
+    } else {
+      // 根据 tag 进行筛选
+      setCampaigns(
+        allCampaigns.filter((campaign) => campaign.tag === selectedLabel)
+      );
+    }
   };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <Backdrop
+        sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+        open={load}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <div>
         <Typography variant="h1" gutterBottom>
-          Crowdfunding
+          Hostest Crowdfunding
         </Typography>
         <Typography>Take a look at the latest crowdfunding</Typography>
       </div>
@@ -257,7 +225,7 @@ export default function MainContent() {
           width: '100%',
           justifyContent: 'space-between',
           alignItems: { xs: 'start', md: 'center' },
-          gap: 4,
+          gap: 0,
           overflow: 'auto',
         }}
       >
@@ -265,7 +233,7 @@ export default function MainContent() {
           sx={{
             display: 'inline-flex',
             flexDirection: 'row',
-            gap: 3,
+            gap: 0,
             overflow: 'auto',
           }}
         >
@@ -273,7 +241,7 @@ export default function MainContent() {
           <Chip
             onClick={handleClick}
             size="medium"
-            label="Company"
+            label="Reward-based Crowdfundin"
             sx={{
               backgroundColor: 'transparent',
               border: 'none',
@@ -282,7 +250,7 @@ export default function MainContent() {
           <Chip
             onClick={handleClick}
             size="medium"
-            label="Product"
+            label="Equity-based Crowdfunding"
             sx={{
               backgroundColor: 'transparent',
               border: 'none',
@@ -291,7 +259,7 @@ export default function MainContent() {
           <Chip
             onClick={handleClick}
             size="medium"
-            label="Design"
+            label="Debt-based Crowdfunding"
             sx={{
               backgroundColor: 'transparent',
               border: 'none',
@@ -300,7 +268,7 @@ export default function MainContent() {
           <Chip
             onClick={handleClick}
             size="medium"
-            label="Engineering"
+            label="Donation-based Crowdfunding"
             sx={{
               backgroundColor: 'transparent',
               border: 'none',
@@ -323,18 +291,19 @@ export default function MainContent() {
         </Box>
       </Box>
       <Grid container spacing={2} columns={12}>
-        {campaigns.length >= 1 &&<Grid size={{ xs: 12, md: 6 }}>
+        {campaigns.length >= 1 && <Grid size={{ xs: 12, md: 6 }}>
           <SyledCard
             variant="outlined"
             onFocus={() => handleFocus(0)}
             onBlur={handleBlur}
+            onClick={() => {navigate("/root/details/" + campaigns[focusedCardIndex!].id)}}
             tabIndex={0}
             className={focusedCardIndex === 0 ? 'Mui-focused' : ''}
           >
             <CardMedia
               component="img"
               alt="green iguana"
-              image={cardData[0].img}
+              image={'https://picsum.photos/800/450?random=1'}
               aspect-ratio="16 / 9"
               sx={{
                 borderBottom: '1px solid',
@@ -343,7 +312,7 @@ export default function MainContent() {
             />
             <SyledCardContent>
               <Typography gutterBottom variant="caption" component="div">
-                {campaigns[0].launcher}
+                {campaigns[0].tag}
               </Typography>
               <Typography gutterBottom variant="h6" component="div">
                 {campaigns[0].title}
@@ -352,21 +321,23 @@ export default function MainContent() {
                 {campaigns[0].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={[{ name: campaigns[0].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[0].createdAt}]} />
+            <Author authors={[{ name: campaigns[0].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[0].createdAt }]} />
           </SyledCard>
         </Grid>}
+        {campaigns.length < 1 && "There have not been any crowdfunding projects in this category"} 
         {campaigns.length >= 2 && (<Grid size={{ xs: 12, md: 6 }}>
           <SyledCard
             variant="outlined"
             onFocus={() => handleFocus(1)}
             onBlur={handleBlur}
+            onClick={() => {navigate("/root/campaign/details/" + campaigns[focusedCardIndex!].id)}}
             tabIndex={0}
             className={focusedCardIndex === 1 ? 'Mui-focused' : ''}
           >
             <CardMedia
               component="img"
               alt="green iguana"
-              image={cardData[1].img}
+              image={'https://picsum.photos/800/450?random=2'}
               aspect-ratio="16 / 9"
               sx={{
                 borderBottom: '1px solid',
@@ -375,7 +346,7 @@ export default function MainContent() {
             />
             <SyledCardContent>
               <Typography gutterBottom variant="caption" component="div">
-                {campaigns[1].launcher}
+                {campaigns[1].tag}
               </Typography>
               <Typography gutterBottom variant="h6" component="div">
                 {campaigns[1].title}
@@ -384,7 +355,7 @@ export default function MainContent() {
                 {campaigns[1].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={[{ name: campaigns[1].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[1].createdAt}]} />
+            <Author authors={[{ name: campaigns[1].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[1].createdAt }]} />
           </SyledCard>
         </Grid>)}
         {campaigns.length >= 3 && <Grid size={{ xs: 12, md: 4 }}>
@@ -392,6 +363,7 @@ export default function MainContent() {
             variant="outlined"
             onFocus={() => handleFocus(2)}
             onBlur={handleBlur}
+            onClick={() => {navigate("/root/campaign/details/" + campaigns[focusedCardIndex!].id)}}
             tabIndex={0}
             className={focusedCardIndex === 2 ? 'Mui-focused' : ''}
             sx={{ height: '100%' }}
@@ -399,7 +371,7 @@ export default function MainContent() {
             <CardMedia
               component="img"
               alt="green iguana"
-              image={cardData[2].img}
+              image={'https://picsum.photos/800/450?random=3'}
               sx={{
                 height: { sm: 'auto', md: '50%' },
                 aspectRatio: { sm: '16 / 9', md: '' },
@@ -407,7 +379,7 @@ export default function MainContent() {
             />
             <SyledCardContent>
               <Typography gutterBottom variant="caption" component="div">
-                {campaigns[2].launcher}
+                {campaigns[2].tag}
               </Typography>
               <Typography gutterBottom variant="h6" component="div">
                 {campaigns[2].title}
@@ -416,7 +388,7 @@ export default function MainContent() {
                 {campaigns[2].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={[{ name: campaigns[2].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[2].createdAt}]} />
+            <Author authors={[{ name: campaigns[2].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[2].createdAt }]} />
           </SyledCard>
         </Grid>}
         {campaigns.length >= 5 && <Grid size={{ xs: 12, md: 4 }}>
@@ -427,6 +399,7 @@ export default function MainContent() {
               variant="outlined"
               onFocus={() => handleFocus(3)}
               onBlur={handleBlur}
+              onClick={() => {navigate("/root/campaign/details/" + campaigns[focusedCardIndex!].id)}}
               tabIndex={0}
               className={focusedCardIndex === 3 ? 'Mui-focused' : ''}
               sx={{ height: '100%' }}
@@ -441,7 +414,7 @@ export default function MainContent() {
               >
                 <div>
                   <Typography gutterBottom variant="caption" component="div">
-                    {campaigns[3].launcher}
+                    {campaigns[3].tag}
                   </Typography>
                   <Typography gutterBottom variant="h6" component="div">
                     {campaigns[3].title}
@@ -455,12 +428,13 @@ export default function MainContent() {
                   </StyledTypography>
                 </div>
               </SyledCardContent>
-              <Author authors={[{ name: campaigns[3].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[3].createdAt}]} />
+              <Author authors={[{ name: campaigns[3].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[3].createdAt }]} />
             </SyledCard>
             <SyledCard
               variant="outlined"
               onFocus={() => handleFocus(4)}
               onBlur={handleBlur}
+              onClick={() => {navigate("/root/campaign/details/" + campaigns[focusedCardIndex!].id)}}
               tabIndex={0}
               className={focusedCardIndex === 4 ? 'Mui-focused' : ''}
               sx={{ height: '100%' }}
@@ -475,7 +449,7 @@ export default function MainContent() {
               >
                 <div>
                   <Typography gutterBottom variant="caption" component="div">
-                    {campaigns[4].launcher}
+                    {campaigns[4].tag}
                   </Typography>
                   <Typography gutterBottom variant="h6" component="div">
                     {campaigns[4].title}
@@ -489,15 +463,16 @@ export default function MainContent() {
                   </StyledTypography>
                 </div>
               </SyledCardContent>
-              <Author authors={[{ name: campaigns[4].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[4].createdAt}]} />
+              <Author authors={[{ name: campaigns[4].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[4].createdAt }]} />
             </SyledCard>
           </Box>
         </Grid>}
-        {campaigns.length >= 5 && <Grid size={{ xs: 12, md: 4 }}>
+        {campaigns.length >= 6 && <Grid size={{ xs: 12, md: 4 }}>
           <SyledCard
             variant="outlined"
             onFocus={() => handleFocus(5)}
             onBlur={handleBlur}
+            onClick={() => {navigate("/root/campaign/details/" + campaigns[focusedCardIndex!].id)}}
             tabIndex={0}
             className={focusedCardIndex === 5 ? 'Mui-focused' : ''}
             sx={{ height: '100%' }}
@@ -505,7 +480,7 @@ export default function MainContent() {
             <CardMedia
               component="img"
               alt="green iguana"
-              image={cardData[5].img}
+              image={'https://picsum.photos/800/450?random=4'}
               sx={{
                 height: { sm: 'auto', md: '50%' },
                 aspectRatio: { sm: '16 / 9', md: '' },
@@ -513,7 +488,7 @@ export default function MainContent() {
             />
             <SyledCardContent>
               <Typography gutterBottom variant="caption" component="div">
-                {campaigns[5].launcher}
+                {campaigns[5].tag}
               </Typography>
               <Typography gutterBottom variant="h6" component="div">
                 {campaigns[5].title}
@@ -522,7 +497,7 @@ export default function MainContent() {
                 {campaigns[5].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={[{ name: campaigns[5].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[5].createdAt}]} />
+            <Author authors={[{ name: campaigns[5].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[5].createdAt }]} />
           </SyledCard>
         </Grid>}
       </Grid>

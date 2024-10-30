@@ -1,0 +1,94 @@
+html {
+    height: 90%; /* 确保html和body的高度为100% */
+    margin: 0; /* 去掉默认的margin */
+}
+
+body{
+    height: 80%; /* 确保html和body的高度为100% */
+    margin: 0; /* 去掉默认的margin */
+}
+
+#user {
+    display: flex;
+    flex-direction: row;
+    height: 90vh; /* 占满整个视口高度 */
+    background-color: #f9f9f9;
+    font-family: 'Arial', sans-serif;
+}
+
+.user-info {
+    width: 450px; /* 固定宽度，可以根据需要调整 */
+    padding: 20px; /* 内边距 */
+    border-right: 1px solid #eaeaea;
+    height: 100%; /* 占满高度 */
+    position: fixed; /* 固定在页面左侧 */
+    top: 0; /* 从顶部开始 */
+    left: 0; /* 靠近左侧 */
+    background-color: #fff; /* 可以设置背景色 */
+    overflow-y: auto; /* 如果内容超过高度，可以滚动 */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 水平居中 */
+    justify-content: flex-start; /* 从顶部开始 */
+}
+
+.user-info h1 {
+    color: #333;
+    margin-top: 40%;
+    margin-bottom: 20px; /* 增加标题和内容的间距 */
+}
+
+.user-info p {
+    margin: 10px 0;
+    color: #555;
+    text-align: center; /* 文本居中 */
+}
+
+.card {
+    margin-left: 470px; /* 留出左侧固定栏的空间 */
+    flex: 1; /* 占满剩余空间 */
+    padding: 20px; /* 内边距 */
+    height: 100%; /* 占满高度 */
+}
+
+.card h5 {
+    margin-bottom: 20px;
+    color: #444;
+}
+
+.card button {
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.card button:hover {
+    background-color: #0056b3;
+}
+
+.card ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.card li {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #eaeaea;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.card li h2 {
+    margin: 0;
+    color: #007bff;
+}
+
+.card li p {
+    margin: 5px 0;
+    color: #666;
+}
