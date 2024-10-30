@@ -38,8 +38,12 @@ export default function Launch() {
   const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // console.log("当前的change:",e);
     const { name, value } = e.target;
-    setFormData((prevData) => ({
+    // console.log("name和value:",name,value);
+    console.log("formData:",formData);
+
+    setFormData((prevData) => ({      
       ...prevData,
       [name]: name === "deadline" ? new Date(value) : value,
     }));
@@ -148,7 +152,6 @@ export default function Launch() {
               value={formData.deadline.toISOString().split("T")[0]}
               onChange={handleChange}
               fullWidth
-              InputLabelProps={{ shrink: true }}
             />
             <TextField
               label="Beneficiary"
