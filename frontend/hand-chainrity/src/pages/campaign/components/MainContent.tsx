@@ -20,6 +20,7 @@ import { fetchCampaigns } from '../../../actions/campaign';
 import { CampaignType } from '../../../types/interfaces';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useNavigate } from 'react-router-dom';
 
 
 const SyledCard = styled(Card)(({ theme }) => ({
@@ -140,6 +141,8 @@ export default function MainContent() {
   // 原始 campaigns 数据状态
   const [allCampaigns, setAllCampaigns] = useState<CampaignType[]>([]); // 用于存储所有的 campaign
   const [load, setLoad] = React.useState(true);
+  const navigate = useNavigate(); // 初始化导航钩子
+
 
   // 模拟 fetchCampaigns 的数据获取
   useEffect(() => {
@@ -155,7 +158,7 @@ export default function MainContent() {
       // 延迟 700 毫秒再执行 setLoad(false)
       setTimeout(() => {
         setLoad(false);
-      }, 1500);
+      }, 1000);
       });
   }, []);
 
@@ -293,6 +296,7 @@ export default function MainContent() {
             variant="outlined"
             onFocus={() => handleFocus(0)}
             onBlur={handleBlur}
+            onClick={() => {navigate("/root/details/" + campaigns[focusedCardIndex!].id)}}
             tabIndex={0}
             className={focusedCardIndex === 0 ? 'Mui-focused' : ''}
           >
@@ -326,6 +330,7 @@ export default function MainContent() {
             variant="outlined"
             onFocus={() => handleFocus(1)}
             onBlur={handleBlur}
+            onClick={() => {navigate("/root/campaign/details/" + campaigns[focusedCardIndex!].id)}}
             tabIndex={0}
             className={focusedCardIndex === 1 ? 'Mui-focused' : ''}
           >
@@ -358,6 +363,7 @@ export default function MainContent() {
             variant="outlined"
             onFocus={() => handleFocus(2)}
             onBlur={handleBlur}
+            onClick={() => {navigate("/root/campaign/details/" + campaigns[focusedCardIndex!].id)}}
             tabIndex={0}
             className={focusedCardIndex === 2 ? 'Mui-focused' : ''}
             sx={{ height: '100%' }}
@@ -393,6 +399,7 @@ export default function MainContent() {
               variant="outlined"
               onFocus={() => handleFocus(3)}
               onBlur={handleBlur}
+              onClick={() => {navigate("/root/campaign/details/" + campaigns[focusedCardIndex!].id)}}
               tabIndex={0}
               className={focusedCardIndex === 3 ? 'Mui-focused' : ''}
               sx={{ height: '100%' }}
@@ -427,6 +434,7 @@ export default function MainContent() {
               variant="outlined"
               onFocus={() => handleFocus(4)}
               onBlur={handleBlur}
+              onClick={() => {navigate("/root/campaign/details/" + campaigns[focusedCardIndex!].id)}}
               tabIndex={0}
               className={focusedCardIndex === 4 ? 'Mui-focused' : ''}
               sx={{ height: '100%' }}
@@ -464,6 +472,7 @@ export default function MainContent() {
             variant="outlined"
             onFocus={() => handleFocus(5)}
             onBlur={handleBlur}
+            onClick={() => {navigate("/root/campaign/details/" + campaigns[focusedCardIndex!].id)}}
             tabIndex={0}
             className={focusedCardIndex === 5 ? 'Mui-focused' : ''}
             sx={{ height: '100%' }}
