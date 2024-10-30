@@ -182,6 +182,7 @@ export default function MainContent() {
       details: "默认",
       target: 100,
       current: 0,
+      createdAt:new Date(),
       deadline:new Date(),
       beneficiary: "默认",
       launcher: "默认",
@@ -351,7 +352,7 @@ export default function MainContent() {
                 {campaigns[0].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={[{ name: campaigns[0].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[0].deadline}]} />
+            <Author authors={[{ name: campaigns[0].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[0].createdAt}]} />
           </SyledCard>
         </Grid>}
         {campaigns.length >= 2 && (<Grid size={{ xs: 12, md: 6 }}>
@@ -383,7 +384,7 @@ export default function MainContent() {
                 {campaigns[1].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={[{ name: campaigns[1].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[1].deadline}]} />
+            <Author authors={[{ name: campaigns[1].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[1].createdAt}]} />
           </SyledCard>
         </Grid>)}
         {campaigns.length >= 3 && <Grid size={{ xs: 12, md: 4 }}>
@@ -415,7 +416,7 @@ export default function MainContent() {
                 {campaigns[2].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={[{ name: campaigns[2].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[2].deadline}]} />
+            <Author authors={[{ name: campaigns[2].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[2].createdAt}]} />
           </SyledCard>
         </Grid>}
         {campaigns.length >= 5 && <Grid size={{ xs: 12, md: 4 }}>
@@ -454,7 +455,7 @@ export default function MainContent() {
                   </StyledTypography>
                 </div>
               </SyledCardContent>
-              <Author authors={[{ name: campaigns[3].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[3].deadline}]} />
+              <Author authors={[{ name: campaigns[3].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[3].createdAt}]} />
             </SyledCard>
             <SyledCard
               variant="outlined"
@@ -488,7 +489,7 @@ export default function MainContent() {
                   </StyledTypography>
                 </div>
               </SyledCardContent>
-              <Author authors={[{ name: campaigns[4].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[4].deadline}]} />
+              <Author authors={[{ name: campaigns[4].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[4].createdAt}]} />
             </SyledCard>
           </Box>
         </Grid>}
@@ -521,7 +522,7 @@ export default function MainContent() {
                 {campaigns[5].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={[{ name: campaigns[5].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[5].deadline}]} />
+            <Author authors={[{ name: campaigns[5].launcher, avatar: '/static/images/avatar/1.jpg',date: campaigns[5].createdAt}]} />
           </SyledCard>
         </Grid>}
       </Grid>
