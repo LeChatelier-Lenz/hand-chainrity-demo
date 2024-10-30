@@ -2,11 +2,13 @@ import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
+import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
+import CircularProgress from '@mui/material/CircularProgress';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid2';
 import IconButton from '@mui/material/IconButton';
@@ -16,11 +18,9 @@ import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { fetchCampaigns } from '../../../actions/campaign';
-import { CampaignType } from '../../../types/interfaces';
-import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
+import { fetchFundraisingCampaigns } from '../../../actions/campaign';
+import { CampaignType } from '../../../types/interfaces';
 
 
 const SyledCard = styled(Card)(({ theme }) => ({
@@ -66,6 +66,8 @@ const formatLauncherName = (name: string) => {
 };
 
 function Author({ authors }: { authors: { name: string; avatar: string; date: Date }[] }) {
+  console.log("截止时间：",authors[0].date.toISOString().split("T")[0]);
+  
   return (
     <Box
       sx={{
@@ -146,7 +148,7 @@ export default function MainContent() {
 
   // 模拟 fetchCampaigns 的数据获取
   useEffect(() => {
-    fetchCampaigns((fetchedCampaigns: CampaignType[]) => {
+    fetchFundraisingCampaigns((fetchedCampaigns: CampaignType[]) => {
       // 给每个 campaign 添加一个默认 tag
       const taggedCampaigns = fetchedCampaigns.map((campaign) => ({
         ...campaign,
@@ -321,7 +323,7 @@ export default function MainContent() {
                 {campaigns[0].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={[{ name: campaigns[0].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[0].createdAt }]} />
+            <Author authors={[{ name: campaigns[0].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[0].deadline }]} />
           </SyledCard>
         </Grid>}
         {campaigns.length < 1 && "There have not been any crowdfunding projects in this category"} 
@@ -330,7 +332,7 @@ export default function MainContent() {
             variant="outlined"
             onFocus={() => handleFocus(1)}
             onBlur={handleBlur}
-            onClick={() => {navigate("/root/campaign/details/" + campaigns[focusedCardIndex!].id)}}
+            onClick={() => {navigate("/root/details/" + campaigns[focusedCardIndex!].id)}}
             tabIndex={0}
             className={focusedCardIndex === 1 ? 'Mui-focused' : ''}
           >
@@ -355,7 +357,7 @@ export default function MainContent() {
                 {campaigns[1].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={[{ name: campaigns[1].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[1].createdAt }]} />
+            <Author authors={[{ name: campaigns[1].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[1].deadline }]} />
           </SyledCard>
         </Grid>)}
         {campaigns.length >= 3 && <Grid size={{ xs: 12, md: 4 }}>
@@ -363,7 +365,7 @@ export default function MainContent() {
             variant="outlined"
             onFocus={() => handleFocus(2)}
             onBlur={handleBlur}
-            onClick={() => {navigate("/root/campaign/details/" + campaigns[focusedCardIndex!].id)}}
+            onClick={() => {navigate("/root/details/" + campaigns[focusedCardIndex!].id)}}
             tabIndex={0}
             className={focusedCardIndex === 2 ? 'Mui-focused' : ''}
             sx={{ height: '100%' }}
@@ -388,7 +390,7 @@ export default function MainContent() {
                 {campaigns[2].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={[{ name: campaigns[2].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[2].createdAt }]} />
+            <Author authors={[{ name: campaigns[2].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[2].deadline }]} />
           </SyledCard>
         </Grid>}
         {campaigns.length >= 5 && <Grid size={{ xs: 12, md: 4 }}>
@@ -399,7 +401,7 @@ export default function MainContent() {
               variant="outlined"
               onFocus={() => handleFocus(3)}
               onBlur={handleBlur}
-              onClick={() => {navigate("/root/campaign/details/" + campaigns[focusedCardIndex!].id)}}
+              onClick={() => {navigate("/root/details/" + campaigns[focusedCardIndex!].id)}}
               tabIndex={0}
               className={focusedCardIndex === 3 ? 'Mui-focused' : ''}
               sx={{ height: '100%' }}
@@ -428,13 +430,13 @@ export default function MainContent() {
                   </StyledTypography>
                 </div>
               </SyledCardContent>
-              <Author authors={[{ name: campaigns[3].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[3].createdAt }]} />
+              <Author authors={[{ name: campaigns[3].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[3].deadline }]} />
             </SyledCard>
             <SyledCard
               variant="outlined"
               onFocus={() => handleFocus(4)}
               onBlur={handleBlur}
-              onClick={() => {navigate("/root/campaign/details/" + campaigns[focusedCardIndex!].id)}}
+              onClick={() => {navigate("/root/details/" + campaigns[focusedCardIndex!].id)}}
               tabIndex={0}
               className={focusedCardIndex === 4 ? 'Mui-focused' : ''}
               sx={{ height: '100%' }}
@@ -463,7 +465,7 @@ export default function MainContent() {
                   </StyledTypography>
                 </div>
               </SyledCardContent>
-              <Author authors={[{ name: campaigns[4].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[4].createdAt }]} />
+              <Author authors={[{ name: campaigns[4].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[4].deadline }]} />
             </SyledCard>
           </Box>
         </Grid>}
@@ -472,7 +474,7 @@ export default function MainContent() {
             variant="outlined"
             onFocus={() => handleFocus(5)}
             onBlur={handleBlur}
-            onClick={() => {navigate("/root/campaign/details/" + campaigns[focusedCardIndex!].id)}}
+            onClick={() => {navigate("/root/details/" + campaigns[focusedCardIndex!].id)}}
             tabIndex={0}
             className={focusedCardIndex === 5 ? 'Mui-focused' : ''}
             sx={{ height: '100%' }}
@@ -497,7 +499,7 @@ export default function MainContent() {
                 {campaigns[5].description}
               </StyledTypography>
             </SyledCardContent>
-            <Author authors={[{ name: campaigns[5].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[5].createdAt }]} />
+            <Author authors={[{ name: campaigns[5].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[5].deadline }]} />
           </SyledCard>
         </Grid>}
       </Grid>
