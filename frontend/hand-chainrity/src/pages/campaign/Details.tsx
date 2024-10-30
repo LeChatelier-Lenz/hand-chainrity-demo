@@ -1,11 +1,10 @@
-import { useParams } from "react-router-dom";
-import { CampaignType } from "../../types/interfaces";
-import { useState } from "react";
-import Paper from '@mui/material/Paper';
+import { Button, Card, CardContent, CardMedia, Chip, Divider, LinearProgress, Typography } from '@mui/material';
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid2";
-import { styled } from "@mui/material/styles";
-import { Card, CardContent, CardMedia, Typography, Button, LinearProgress, Divider, Chip } from '@mui/material';
+import Paper from '@mui/material/Paper';
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { fetchCampaigns } from "../../actions/campaign";
+import { CampaignType } from "../../types/interfaces";
 
 export default function MainContent() {
   const [campaigns, setCampaigns] = useState<CampaignType[]>([{// 用于存储筛选后的 campaign
@@ -24,6 +23,24 @@ export default function MainContent() {
     field:"医药医疗",
     stage:"某医药公司天使轮"
   }]); // Campaign[] is an array of Campaign objects
+
+  const navigate = useNavigate(); // 初始化导航钩子
+
+
+  // 模拟 fetchCampaigns 的数据获取
+  useEffect(() => {
+    fetchCampaigns((fetchedCampaigns: CampaignType[]) => {
+      // 给每个 campaign 添加一个默认 tag
+      const taggedCampaigns = fetchedCampaigns.map((campaign) => ({
+        ...campaign,
+        tag: "Donation-based Crowdfunding",
+      }));
+      // 设置获取到的所有 campaign 和默认显示的 campaign
+      setCampaigns(taggedCampaigns);
+      // 延迟 700 毫秒再执行 setLoad(false)
+      });
+  }, []);
+
   const { id } = useParams(); // 获取路径中的 id 参数
 
   
