@@ -108,6 +108,7 @@ export default function Launch() {
             <TextField
               label="Title"
               name="title"
+              variant="standard"
               value={formData.title}
               onChange={handleChange}
               fullWidth
@@ -115,6 +116,7 @@ export default function Launch() {
             <TextField
               label="Description"
               name="description"
+              variant="standard"
               value={formData.description}
               onChange={handleChange}
               fullWidth
@@ -122,6 +124,7 @@ export default function Launch() {
             <TextField
               label="Details"
               name="details"
+              variant="standard"
               value={formData.details}
               onChange={handleChange}
               fullWidth
@@ -129,6 +132,7 @@ export default function Launch() {
             <TextField
               label="Target (ETH)"
               name="target"
+              variant="standard"
               type="number"
               value={formData.target}
               onChange={handleChange}
@@ -138,6 +142,7 @@ export default function Launch() {
               label="Deadline"
               name="deadline"
               type="date"
+              variant="standard"
               value={formData.deadline.toISOString().split("T")[0]}
               onChange={handleChange}
               fullWidth
@@ -146,6 +151,7 @@ export default function Launch() {
             <TextField
               label="Beneficiary"
               name="beneficiary"
+              variant="standard"
               value={formData.beneficiary}
               onChange={handleChange}
               fullWidth
