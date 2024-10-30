@@ -21,6 +21,7 @@ export interface CampaignType {
     beneficiary: string;
     launcher: string;
     status: string;
+    [key: string]: any; // 允许其他属性，值的类型可以是任意
 }
 
 // enum Status {
