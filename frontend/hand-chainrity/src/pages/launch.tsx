@@ -28,6 +28,7 @@ export default function Launch() {
     description: "",
     target: 0,
     current: 0,
+    createdAt: new Date(),
     deadline: new Date(),
     beneficiary: "",
     launcher: "",
@@ -66,6 +67,7 @@ export default function Launch() {
         details: "",
         target: 0,
         current: 0,
+        createdAt: new Date(),
         deadline: new Date(),
         beneficiary: "",
         launcher: "",
@@ -112,6 +114,7 @@ export default function Launch() {
             <TextField
               label="Title"
               name="title"
+              variant="standard"
               value={formData.title}
               onChange={handleChange}
               fullWidth
@@ -119,6 +122,7 @@ export default function Launch() {
             <TextField
               label="Description"
               name="description"
+              variant="standard"
               value={formData.description}
               onChange={handleChange}
               fullWidth
@@ -126,6 +130,7 @@ export default function Launch() {
             <TextField
               label="Details"
               name="details"
+              variant="standard"
               value={formData.details}
               onChange={handleChange}
               fullWidth
@@ -133,6 +138,7 @@ export default function Launch() {
             <TextField
               label="Target (ETH)"
               name="target"
+              variant="standard"
               type="number"
               value={formData.target}
               onChange={handleChange}
@@ -142,6 +148,7 @@ export default function Launch() {
               label="Deadline"
               name="deadline"
               type="date"
+              variant="standard"
               value={formData.deadline.toISOString().split("T")[0]}
               onChange={handleChange}
               fullWidth
@@ -149,6 +156,7 @@ export default function Launch() {
             <TextField
               label="Beneficiary"
               name="beneficiary"
+              variant="standard"
               value={formData.beneficiary}
               onChange={handleChange}
               fullWidth
@@ -176,6 +184,7 @@ export default function Launch() {
                     <p>Details: {campaign.details}</p>
                     <p>Target: {campaign.target} ETH</p>
                     <p>Current: {campaign.current} ETH</p>
+                    <p>CreatedAt: {campaign.createdAt.toISOString().split("T")[0]}</p>
                     <p>Deadline: {campaign.deadline.toISOString().split("T")[0]}</p>
                     <p>Beneficiary: {campaign.beneficiary}</p>
                     <p>Launcher: {campaign.launcher}</p>
