@@ -40,6 +40,7 @@ contract HandChainrity is ERC721Enumerable, Ownable {
 
     mapping(address => bool) public thirdPartyTrusted; //可信任第三方地址映射
 
+    uint256[] public launchedCampaigns; // 已发起的活动（id）
     uint256[] public raisingCampaigns; // 筹款中的活动（id）
     // 活动id-活动信息映射表
     mapping(uint256 => Campaign) public campaigns; // 活动id => 活动信息
@@ -48,6 +49,7 @@ contract HandChainrity is ERC721Enumerable, Ownable {
     uint256 public campaignCount = 0; // 不会减少的活动计数器
     mapping(uint256 => address[]) public participants; // 活动id => 参与者列表
     mapping(address => uint256[]) public participantCampaigns; // 参与者 => 活动id列表
+
 
     // event
     event CampaignCreated(uint256 campaignId, string description, uint256 targetAmount, address beneficiary);
@@ -64,7 +66,8 @@ contract HandChainrity is ERC721Enumerable, Ownable {
         require(beneficiary != address(0), "Beneficiary address must be valid"); // 受益人必须是有效地址
         campaignCount++;
         campaigns[campaignCount] = Campaign(description, targetAmount, 0, block.timestamp,deadline, beneficiary ,msg.sender, campaignCount,Status.Launched);
-        
+        launchedCampaigns.push(campaignCount);
+
         emit CampaignCreated(campaignCount, description, targetAmount, beneficiary);
         return campaignCount;
     }
@@ -73,6 +76,8 @@ contract HandChainrity is ERC721Enumerable, Ownable {
     function approveCampaign(uint256 campaignId, bool ifApproved) public onlyThirdPartyTrusted {
         require(campaignId > 0 && campaignId <= campaignCount, "Invalid campaign ID"); // 
         require(campaigns[campaignId].status == Status.Launched, "Campaign is not Launched"); //审核只能对已发起状态的手链筹单元进行
+        // delete launchedCampaigns[campaignId];
+        removingLaunchedCampign(campaignId);
         if(ifApproved == false){
             campaigns[campaignId].status = Status.Rejected;
             emit CampaignRejected(campaignId);
@@ -95,7 +100,7 @@ contract HandChainrity is ERC721Enumerable, Ownable {
             payable(msg.sender).transfer(msg.value);
             // 超过截止时间的筹款不再接受
             campaigns[campaignId].status = Status.LimitReached;
-            removingCampign(campaignId);
+            removingRaisingCampign(campaignId);
             emit CampaignLimitReached(campaignId,"Campaign is Overdue");
             return false;
         }
@@ -108,7 +113,7 @@ contract HandChainrity is ERC721Enumerable, Ownable {
             actulIn = campaigns[campaignId].targetAmount - campaigns[campaignId].currentAmount; // 实际接受的金额
             payable(msg.sender).transfer(campaigns[campaignId].currentAmount + msg.value - campaigns[campaignId].targetAmount);
             campaigns[campaignId].status = Status.LimitReached;
-            removingCampign(campaignId);
+            removingRaisingCampign(campaignId);
             emit CampaignLimitReached(campaignId,"Campaign is Over Target");
             isReached = false;
         }
@@ -137,7 +142,7 @@ contract HandChainrity is ERC721Enumerable, Ownable {
         uint256 fundAmount = AgencyFeeDeduct(campaigns[campaignId].currentAmount);
         campaigns[campaignId].beneficiary.transfer(fundAmount);
 
-        removingCampign(campaignId);
+        removingRaisingCampign(campaignId);
         campaigns[campaignId].status = Status.Completed;
         delete childId[campaignId];
         emit CampaignFinalized(campaignId);
@@ -156,7 +161,7 @@ contract HandChainrity is ERC721Enumerable, Ownable {
             payable(participants[campaignId][i]).transfer(refundAmount);
         }
         campaigns[campaignId].status = Status.Revoked;
-        removingCampign(campaignId);
+        removingRaisingCampign(campaignId);
         delete participants[campaignId];
         delete childId[campaignId];
         delete participantCampaigns[msg.sender][campaignId];
@@ -168,12 +173,23 @@ contract HandChainrity is ERC721Enumerable, Ownable {
     }
 
     // 从筹款中活动列表删除某个活动
-    function removingCampign(uint256 campaignId) internal {
+    function removingRaisingCampign(uint256 campaignId) internal {
         for(uint256 i = 0;i < raisingCampaigns.length;i++)
         {
             if( raisingCampaigns[i] == campaignId){
                 raisingCampaigns[i] = raisingCampaigns[raisingCampaigns.length-1];
                 raisingCampaigns.pop();
+                return;
+            }
+        }
+    }
+
+    function removingLaunchedCampign(uint256 campaignId) internal {
+        for(uint256 i = 0;i < launchedCampaigns.length;i++)
+        {
+            if( launchedCampaigns[i] == campaignId){
+                launchedCampaigns[i] = launchedCampaigns[launchedCampaigns.length-1];
+                launchedCampaigns.pop();
                 return;
             }
         }
@@ -188,6 +204,11 @@ contract HandChainrity is ERC721Enumerable, Ownable {
     // 获取正在筹款中的手链筹单元列表id
     function getActiveCampaignIdList() public view returns (uint256[] memory) {
         return raisingCampaigns;
+    }
+
+    // 获取已发起的手链筹单元列表id
+    function getLaunchedCampaignIdList() public view returns (uint256[] memory) {
+        return launchedCampaigns;
     }
 
     //获取对应账户的NFT列表: 这个先搁置一下 等一下再说
@@ -217,9 +238,5 @@ contract HandChainrity is ERC721Enumerable, Ownable {
 
     function AgencyFeeDeduct(uint256 amount) internal pure returns(uint256){
         return amount * 9995 / 10000; // 0.05%的手续费
-    }
-
-    function getFundraisingCampaigns() public view returns (uint256[] memory) {
-        return raisingCampaigns;
     }
 }
