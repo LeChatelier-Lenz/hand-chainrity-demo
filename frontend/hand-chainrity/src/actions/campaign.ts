@@ -87,7 +87,8 @@ export const fetchFundraisingCampaigns = async(setState:any) => {
         // console.log(campaignCount);
         console.log(campaignId);
         if(campaignId.length === 0){
-          alert('还没有任何活动正在筹款中！');
+          // alert('还没有任何活动正在筹款中！');
+          console.log('还没有任何活动正在筹款中！')
           return;
         }
         for (let i = 0; i < campaignId.length; i++) {

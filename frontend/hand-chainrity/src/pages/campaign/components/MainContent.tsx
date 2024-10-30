@@ -16,7 +16,7 @@ import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { fetchCampaigns } from '../../../actions/campaign';
+import { fetchCampaigns, fetchFundraisingCampaigns } from '../../../actions/campaign';
 import { CampaignType } from '../../../types/interfaces';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -146,7 +146,7 @@ export default function MainContent() {
 
   // 模拟 fetchCampaigns 的数据获取
   useEffect(() => {
-    fetchCampaigns((fetchedCampaigns: CampaignType[]) => {
+    fetchFundraisingCampaigns((fetchedCampaigns: CampaignType[]) => {
       // 给每个 campaign 添加一个默认 tag
       const taggedCampaigns = fetchedCampaigns.map((campaign) => ({
         ...campaign,
