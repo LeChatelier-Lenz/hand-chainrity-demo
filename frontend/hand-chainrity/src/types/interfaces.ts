@@ -24,6 +24,19 @@ export interface CampaignType {
     [key: string]: any; // 允许其他属性，值的类型可以是任意
 }
 
+export interface ApplicationProps {
+  id: number;
+  address: string;
+  name: string;
+  idCard: string;
+  phone: string;
+  description: string;
+  details: string;
+  createdAt: Date;
+  status: string;
+  [key: string]: any; // 允许其他属性，值的类型可以是任意
+}
+
 // enum Status {
 //     Launched,
 //     Fundraising,
