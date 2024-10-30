@@ -60,6 +60,7 @@ export default function AppAppBar() {
             if (accounts && accounts.length) {
                 setAccount(accounts[0])
                 setIsConnected(true)
+                localStorage.setItem('account', accounts[0]);
             }
         }
     }
