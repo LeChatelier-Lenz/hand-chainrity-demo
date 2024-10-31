@@ -149,7 +149,7 @@ export default function Launch() {
   
     switch (step) {
       case 0:
-        return <FillSheet onHandleAddress={setRootFormData} rootFormData={rootFormData} />;
+        return <FillSheet onHandleAddress={setRootFormData} rootFormData={rootFormData}  setState={setBeneficiaryCheck}/>;
       case 1:
         return <Check beneficiary={rootFormData.beneficiary} setState={setBeneficiaryCheck} />;
       case 2:
