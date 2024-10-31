@@ -24,7 +24,8 @@ class User(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # 关联 Campaign 表，一对多关系
-    campaigns = relationship("Campaign", back_populates="owner", cascade="all, delete-orphan")
+    owned_campaigns = relationship("Campaign", back_populates="owner", foreign_keys="[Campaign.owner_address]", cascade="all, delete-orphan")
+    beneficiary_campaigns = relationship("Campaign", back_populates="beneficiary", foreign_keys="[Campaign.beneficiary_address]", cascade="all, delete-orphan")
     applications = relationship("Application", back_populates="user",cascade="all, delete-orphan")
     def __init__(self, address, email, password , name= '', image='', location='火星', gender='保密', role='user'):
         self.address = address
@@ -56,12 +57,13 @@ class Campaign(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String(100), nullable=False)
     description = Column(Text, nullable=False)
-    address = Column(String(42), ForeignKey('users.address'))  # 外键关联 User 表
+    owner_address = Column(String(42), ForeignKey('users.address'))  # 外键关联 User 表
+    beneficiary_address = Column(String(42), ForeignKey('users.address'))
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    # 关联 User 表，多对一关系
-    owner = relationship("User", back_populates="campaigns")
-
+    # 关联 User 表，多对一关系，指定 foreign_keys
+    owner = relationship("User", back_populates="owned_campaigns", foreign_keys=[owner_address])
+    beneficiary = relationship("User", back_populates="beneficiary_campaigns", foreign_keys=[beneficiary_address])
 
 class Application(Base):
     __tablename__ = 'applications'

@@ -8,6 +8,7 @@ import Check from './Check';
 import Footer from '../campaign/components/Footer';
 import FillSheet from './FillSheet';
 import Review from './Review';
+import axios from 'axios';
 
 function Copyright() {
   return (
@@ -69,6 +70,10 @@ const steps = ['填写筹款活动信息', '验证受益人身份', '最终确�
 export default function Launch() {
   const [beneficiaryCheck, setBeneficiaryCheck] = React.useState(false);
   const { account } = useOutletContext<OutletContext>();
+  const axiosInstance = axios.create({
+    baseURL: 'http://localhost:8888', // 设置基础 URL
+    timeout: 10000,                    // 可选：请求超时时间
+  });
   const [rootFormData, setRootFormData] = useState({
     id: 0,
     title: "",
@@ -84,6 +89,34 @@ export default function Launch() {
   });
 
   const handleSubmit = async () => {
+    try{
+      const config = {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userInfo') || '{}').token
+        },
+      };
+      const res = await axiosInstance.post(
+        '/api/campaign',
+        {
+          id: rootFormData.id,
+          title: rootFormData.title,
+          details: rootFormData.details,
+          description: rootFormData.description,
+          target: rootFormData.target,
+          current: rootFormData.current,
+          createdAt: rootFormData.createdAt,
+          deadline: rootFormData.deadline,
+          beneficiary: rootFormData.beneficiary,
+          launcher: rootFormData.launcher,
+          status: rootFormData.status
+        },
+        config
+      );
+    }
+    catch(err){
+      console.log(err);
+    }
     try {
       const targetValue = web3.utils.toWei(rootFormData.target.toString(), "ether");
       const ddlTimestamp = Math.floor(rootFormData.deadline.getTime() / 1000);
@@ -196,7 +229,7 @@ export default function Launch() {
                         color="success"
                         onClick={handleNext}
                         className={classes.button}
-                        disabled={(activeStep === 0 && rootFormData.beneficiary.length === 0 )}
+                        disabled={(activeStep === 0 && rootFormData.beneficiary.length === 0 )||(activeStep ===1 && beneficiaryCheck === false)}
                           // ||(activeStep ===1 && beneficiaryCheck === false)}
                       >
                         {activeStep === steps.length - 1 ? '确认申请' : '下一步'}

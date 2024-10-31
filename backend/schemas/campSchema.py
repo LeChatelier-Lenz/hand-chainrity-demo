@@ -6,8 +6,9 @@ from datetime import datetime
 class CampaignBase(BaseModel):
     id: int = None  # 自增主键
     title: str = Field(..., max_length=100, description="活动标题")
-    description: str = Field(..., description="活动描述")
-    address: str = Field(..., max_length=42, description="活动地址（与用户地址关联）")
+    details: str = Field(..., description="活动描述")
+    owner_address: str = Field(..., max_length=42, description="发起人地址（与用户地址关联）")
+    beneficiary_address: str = Field(..., max_length=42, description="受益人地址（与用户地址关联）")
     created_at: Optional[datetime] = None  # 活动创建时间
 
     class Config:
