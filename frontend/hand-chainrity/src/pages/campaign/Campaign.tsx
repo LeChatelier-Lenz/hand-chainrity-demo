@@ -16,7 +16,6 @@ export default function Campaign() {
           <MainContent />
           <Latest />
         </Container>
-        <Footer />
       </div>
   );
 }

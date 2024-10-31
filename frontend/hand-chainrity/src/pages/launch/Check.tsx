@@ -3,17 +3,46 @@ import { Typography,Grid ,TextField,FormControlLabel ,Checkbox, Button, List, Li
 import { toBeEnabled } from '@testing-library/jest-dom/matchers';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import ErrorIcon from '@mui/icons-material/Error';
+import axios from 'axios';
 
 export default function Check({beneficiary,setState}:{beneficiary:string,setState:any}) {  
   const [beneficiaryCheck, setBeneficiaryCheck] = React.useState(false);
   const [isClick, setIsClick] = React.useState(false);
+  const axiosInstance = axios.create({
+    baseURL: 'http://localhost:8888', // 设置基础 URL
+    timeout: 10000,                    // 可选：请求超时时间
+  });
 
   const handleCheck = async () => {
     setIsClick(true);
     if(beneficiary.length === 0)
     {
-        alert("受益人地址未填写");
-        return;
+       alert("请填写受益人地址"); 
+    }
+    else{
+      try{
+        const config = {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userInfo') || '{}').token
+          },
+        };
+        const res = await axiosInstance.get(
+          '/api/users/'+beneficiary,
+          config
+        );
+        if (res.data === 'beneficiary') {
+          setBeneficiaryCheck(true);
+          setState(true);
+        } else {
+          setBeneficiaryCheck(false);
+          setState(false);
+        }
+    }
+    catch(err){
+        setBeneficiaryCheck(false);
+        //setState(false);
+    }
     }
     //调用后端接口验证受益人身份
 
