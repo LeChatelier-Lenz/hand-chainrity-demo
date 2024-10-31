@@ -2,6 +2,9 @@ import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
+import Button from '@mui/material/Button';
+import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -66,8 +69,7 @@ const formatLauncherName = (name: string) => {
 };
 
 function Author({ authors }: { authors: { name: string; avatar: string; date: Date }[] }) {
-  console.log("截止时间：",authors[0].date.toISOString().split("T")[0]);
-  
+  // console.log("截止时间：",authors[0].date.toISOString().split("T")[0]);
   return (
     <Box
       sx={{
@@ -124,6 +126,20 @@ export function Search() {
 
 
 export default function MainContent() {
+    const [open, setOpen] = React.useState(false);
+
+    const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason,
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+
   const [campaigns, setCampaigns] = useState<CampaignType[]>([{// 用于存储筛选后的 campaign
     id: 0,
     title: "默认",
@@ -136,7 +152,8 @@ export default function MainContent() {
     beneficiary: "默认",
     launcher: "默认",
     status: "默认",
-    tag:"Donation-based Crowdfunding"
+    tag:"Donation-based Crowdfunding",
+    field:"公益众筹"
   }]); // Campaign[] is an array of Campaign objects
   
 
@@ -145,10 +162,9 @@ export default function MainContent() {
   const [load, setLoad] = React.useState(true);
   const navigate = useNavigate(); // 初始化导航钩子
 
-
-  // 模拟 fetchCampaigns 的数据获取
   useEffect(() => {
-    fetchFundraisingCampaigns((fetchedCampaigns: CampaignType[]) => {
+    try{
+          fetchFundraisingCampaigns((fetchedCampaigns: CampaignType[]) => {
       // 给每个 campaign 添加一个默认 tag
       const taggedCampaigns = fetchedCampaigns.map((campaign) => ({
         ...campaign,
@@ -157,12 +173,17 @@ export default function MainContent() {
       // 设置获取到的所有 campaign 和默认显示的 campaign
       setAllCampaigns(taggedCampaigns);
       setCampaigns(taggedCampaigns);
-      // 延迟 700 毫秒再执行 setLoad(false)
+      });
+    }catch (err: any) {
+      console.error("查看错误", err);
+    } finally {
+      // 无论成功与否，延迟 700 毫秒再执行 setLoad(false)
       setTimeout(() => {
         setLoad(false);
-      }, 1000);
-      });
+      }, 700); // 延迟 700 毫秒
+    }
   }, []);
+
 
 
   const [focusedCardIndex, setFocusedCardIndex] = React.useState<number | null>(
@@ -194,6 +215,16 @@ export default function MainContent() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert
+          onClose={handleClose}
+          severity="warning"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          The current list is empty. Please check if you have connected your wallet.
+        </Alert>
+      </Snackbar>
       <Backdrop
         sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
         open={load}

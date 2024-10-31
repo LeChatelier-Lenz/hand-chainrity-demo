@@ -16,7 +16,7 @@ def auth_user(db: Session, form_data: OAuth2PasswordRequestForm):
         token = create_access_token(data={"user_address": user.address})
         return {
             "address": user.address,
-            "name": user.name,
+            "username": user.username,
             "email": user.email,
             "role": user.role,
             "image": user.image,
@@ -29,6 +29,7 @@ def auth_user(db: Session, form_data: OAuth2PasswordRequestForm):
 def get_user_profile(db: Session, current_user: User = Depends(get_current_user)):
     return {
         "address": current_user.address,
+        "username": current_user.username,
         "name": current_user.name,
         "email": current_user.email,
         "role": current_user.role,
@@ -36,15 +37,39 @@ def get_user_profile(db: Session, current_user: User = Depends(get_current_user)
     }
 
 # 通过用户 ID 获取用户信息
-def get_user_by_address(user_address: str, db: Session):
+def check_user_by_address(user_address: str, db: Session):
     user = db.query(User).filter(User.address == user_address).first()
     if not user:
         raise HTTPException(status_code=404, detail="用户不存在")
     return user.role
 
+def get_user_by_address(user_address: str, db: Session):
+    user = db.query(User).filter(User.address == user_address).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    return {
+            "name": user.name,
+            "address": user.address,
+            "email": user.email,
+            "phone": user.phone,
+            "role": user.role,
+        }
+
+def admin_get_user_by_address(user_address: str, db: Session,current_user: User = Depends(get_current_user)):
+    try:
+        admin = db.query(User).filter(User.address == current_user.address).first()
+        if admin.role != 'admin':
+            raise HTTPException(status_code=400, detail="权限不足")
+        user = db.query(User).filter(User.address == user_address).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="用户不存在")
+        return user
+    except Exception as e:
+        return {"error": str(e)}
+
 # 更新用户个人资料
 def update_user_profile(user_update: UserUpdate, db: Session, current_user: User = Depends(get_current_user)):
-    current_user.name = user_update.name or current_user.name
+    current_user.username = user_update.username or current_user.username
     current_user.email = user_update.email or current_user.email
     db.commit()
     db.refresh(current_user)
@@ -62,10 +87,12 @@ def register_user(user: UserCreate, db: Session):
         db.refresh(new_user)
         token = create_access_token(data={"user_address": new_user.address})
         return {
-            "name": new_user.name,
+            "username": new_user.username,
             "address": new_user.address,
             "email": new_user.email,
-            "token": token
+            "token": token,
+            "role": user.role,
+
         }
     except Exception as e:
         return {"error": str(e)}

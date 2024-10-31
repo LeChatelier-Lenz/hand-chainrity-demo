@@ -6,6 +6,7 @@ import { Card, CardContent, Typography, Box ,Container, CssBaseline, Divider, Li
 import Grid from '@mui/material/Grid2';
 import '../styles/user.css';  // 确保路径正确
 import Application from '../component/application';
+import Applications from '../component/applications';
 
 
 const SyledCard = styled(Card)(({ theme }) => ({
@@ -82,9 +83,11 @@ export default function User() {
   const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
   const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
-  
+  const [selectedIndex, setSelectedIndex] = useState("我参加的募捐");
+  const [btnlist, setBtnlist] = useState(userInfo.role === 'admin' ? ["我参加的募捐", "我发起的募捐", '管理申请'] : ['我参加的募捐', '我发起的募捐',  "申请成为受益人"]);
+  // if (userInfo.role === 'admin') {
+  //   setButlist(['我参加的募捐', '我发起的募捐',  '管理申请']);
+  // }
 
  
 
@@ -96,9 +99,7 @@ export default function User() {
     null,
   );
 
-  const fetchCampaigns = async () => {
-    fetchUserCampaigns(userInfo.address, setCampaigns);
-  }
+  
 
   const handleFocus = (index: number) => {
     setFocusedCardIndex(index);
@@ -191,9 +192,9 @@ export default function User() {
         <Divider />
         <nav aria-label="secondary mailbox folders">
         <List>
-                {['我参加的募捐', '我发起的募捐', '申请成为受益人'].map((text, index) => (
+                {btnlist.map((text, index) => (
                   <ListItem disablePadding key={text}>
-                    <ListItemButton onClick={() => setSelectedIndex(index)}>
+                    <ListItemButton onClick={() => setSelectedIndex(text)}>
                       <ListItemText primary={text} />
                     </ListItemButton>
                   </ListItem>
@@ -221,7 +222,7 @@ export default function User() {
                 </li>
               ))}
             </ul> */}
-            {selectedIndex === 0 || selectedIndex === 1 ? (
+            {selectedIndex === "我参加的募捐" || selectedIndex === "我发起的募捐" ? (
             
             <Grid container spacing={2} columns={12}>
             <div className='blank'></div>
@@ -290,9 +291,9 @@ export default function User() {
               </SyledCard>
             </Grid>
             
-            </Grid>) :
-             (<Application/>)
-             }
+            </Grid>) : (
+              selectedIndex === "申请成为受益人" ? (<Application />) : (<Applications />)
+            )}
             
           </CardContent>
         </Card>
