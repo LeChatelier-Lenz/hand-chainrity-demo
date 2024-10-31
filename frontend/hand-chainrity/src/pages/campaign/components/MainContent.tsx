@@ -165,8 +165,8 @@ export default function MainContent() {
 
   useEffect(() => {
     try{
-          // fetchFundraisingCampaigns((fetchedCampaigns: CampaignType[]) => {
-          fetchCampaigns((fetchedCampaigns: CampaignType[]) => {
+          fetchFundraisingCampaigns((fetchedCampaigns: CampaignType[]) => {
+          // fetchCampaigns((fetchedCampaigns: CampaignType[]) => {
       // 给每个 campaign 添加一个默认 tag
       const taggedCampaigns = fetchedCampaigns.map((campaign) => ({
         ...campaign,
