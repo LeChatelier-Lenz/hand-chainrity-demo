@@ -1,4 +1,4 @@
-import { Button, Container, CssBaseline, Link, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
+import { Button, Container, CssBaseline, Divider, Link, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
@@ -216,10 +216,14 @@ export default function Launch() {
             sx={{ display: 'flex', flexDirection: 'column', my: 16, gap: 4 }}
           >
         <div>
-          <Typography variant="h1" gutterBottom>
-            Start a Raising Campaign
+          <Typography variant="h2" gutterBottom>
+            New <b style={{color:"#ff914d"}}>HandChainrity</b> Campaign
+            <br /> | 发起手链筹
           </Typography>
-          <Typography>Fill the Sheet Below Now!</Typography>
+          <Divider />
+          <Typography>Fill the Sheet Below Now!
+          <br />填写表格，发起新的筹款活动！
+          </Typography>
         </div>
         <Container sx={{ py: 2 }} maxWidth="md">
           <CssBaseline />

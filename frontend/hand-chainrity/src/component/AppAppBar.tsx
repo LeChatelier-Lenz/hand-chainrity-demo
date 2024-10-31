@@ -13,7 +13,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import HandChainrityIcon from './HandChainrityIcon';
 import { useNavigate } from 'react-router-dom';
-import { Typography } from '@mui/material';
+import { Tooltip, Typography } from '@mui/material';
 // import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import {  Menu } from '@mui/material';
 import userImage from '../img/user.png';
@@ -124,9 +124,11 @@ export default function AppAppBar() {
     const start = text.slice(0, length);
     const end = text.slice(-length);
     return (
+      <Tooltip title={text}>
         <Typography variant="body1" >
             {start}...{end}
         </Typography>
+      </Tooltip>
     );
 };
 
@@ -170,13 +172,13 @@ export default function AppAppBar() {
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
             <HandChainrityIcon />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" size="small" onClick={() => { navigate("/root/campaign") }}>
+              <Button variant="text"  onClick={() => { navigate("/root/campaign") }}>
                 筹款活动
               </Button>
-              <Button variant="text"  size="small" onClick={() => { navigate("/root/launch") }}>
+              <Button variant="text"  onClick={() => { navigate("/root/launch") }}>
                 发起筹款
               </Button>
-              <Button variant="text"  size="small" onClick={() => { navigate("/root/about") }}>
+              <Button variant="text"  onClick={() => { navigate("/root/about") }}>
                 关于我们
               </Button>
               {/* <Button variant="text" color="info" size="small">
