@@ -43,6 +43,9 @@ def approve_application(application_id: int, db: Session, current_user: User = D
         application.status = 'approved'
         application_user = db.query(User).filter(User.address == application.address).first()
         application_user.role = 'beneficiary'
+        application_user.name = application.name
+        application_user.phone = application.phone
+        application_user.idCard = application.idCard
         db.commit()
         db.refresh(application)
         db.refresh(application_user)

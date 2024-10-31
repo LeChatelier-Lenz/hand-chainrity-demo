@@ -9,6 +9,7 @@ import Footer from '../campaign/components/Footer';
 import FillSheet from './FillSheet';
 import Review from './Review';
 import axios from 'axios';
+import { create } from 'domain';
 
 function Copyright() {
   return (
@@ -89,34 +90,7 @@ export default function Launch() {
   });
 
   const handleSubmit = async () => {
-    try{
-      const config = {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userInfo') || '{}').token
-        },
-      };
-      const res = await axiosInstance.post(
-        '/api/campaign',
-        {
-          id: rootFormData.id,
-          title: rootFormData.title,
-          details: rootFormData.details,
-          description: rootFormData.description,
-          target: rootFormData.target,
-          current: rootFormData.current,
-          createdAt: rootFormData.createdAt,
-          deadline: rootFormData.deadline,
-          beneficiary: rootFormData.beneficiary,
-          launcher: rootFormData.launcher,
-          status: rootFormData.status
-        },
-        config
-      );
-    }
-    catch(err){
-      console.log(err);
-    }
+    
     try {
       const targetValue = web3.utils.toWei(rootFormData.target.toString(), "ether");
       const ddlTimestamp = Math.floor(rootFormData.deadline.getTime() / 1000);
@@ -124,8 +98,32 @@ export default function Launch() {
       await HandChainrityContract.methods
         .createCampaign(rootFormData.description, targetValue, ddlTimestamp, rootFormData.beneficiary)
         .send({ from: account });
-
+        try{
+          const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+          const config = {
+            headers: {
+              'Content-Type': 'application/json',
+              'authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userInfo') || '{}').token
+            },
+          };
+          const res = await axiosInstance.post(
+            '/api/campaign',
+            {
+              id: rootFormData.id,
+              title: rootFormData.title,
+              details: rootFormData.details,
+              owner_address: userInfo.address,
+              beneficiary_address: rootFormData.beneficiary,
+              created_at: rootFormData.createdAt,
+            },
+            config
+          );
+        }
+        catch(err){
+          console.log(err);
+        }
       alert("提交成功！");
+
       setRootFormData({
         id: 0,
         title: "",
