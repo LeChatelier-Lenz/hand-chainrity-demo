@@ -2,7 +2,7 @@ import { Button, Container, CssBaseline, Link, Paper, Step, StepLabel, Stepper, 
 import { makeStyles } from '@mui/styles';
 import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { OutletContext } from '../../types/interfaces';
+import { OutletContext, Status } from '../../types/interfaces';
 import { HandChainrityContract, web3 } from '../../utils/contracts';
 import Check from './Check';
 import Footer from '../campaign/components/Footer';
@@ -10,6 +10,7 @@ import FillSheet from './FillSheet';
 import Review from './Review';
 import axios from 'axios';
 import { create } from 'domain';
+import Campaign from '../campaign/Campaign';
 
 function Copyright() {
   return (
@@ -69,8 +70,11 @@ const steps = ['填写筹款活动信息', '验证受益人身份', '最终确�
 
 
 export default function Launch() {
+  const [CampaignId, setCampaignId] = useState(0);
   const [beneficiaryCheck, setBeneficiaryCheck] = React.useState(false);
   const { account } = useOutletContext<OutletContext>();
+  const [success, setSuccess] = useState(false);
+
   const axiosInstance = axios.create({
     baseURL: 'http://localhost:8888', // 设置基础 URL
     timeout: 10000,                    // 可选：请求超时时间
@@ -106,7 +110,20 @@ export default function Launch() {
           if(events){
             const campaignId = Number(events.CampaignCreated.returnValues[0]);
             console.log('Campaign ID:', campaignId);
+            setCampaignId(campaignId);
+            setRootFormData({
+              ...rootFormData,
+              id: campaignId,
+              status: Status[0]
+            });
+            console.log(activeStep);
+            setSuccess(true);
+            // console.log("这个时候应该是成功的");
+            console.log(success);
+            let newStep = activeStep + 1;
+            setActiveStep(newStep);
           }
+
         })
         .catch((error) => {
           console.error('Error sending transaction:', error);
@@ -136,6 +153,7 @@ export default function Launch() {
           console.log(err);
         }
       alert("提交成功！");
+      
 
       setRootFormData({
         id: 0,
@@ -177,7 +195,8 @@ export default function Launch() {
 
   const handleNext = ( )=> {
     if(activeStep < 2){
-      setActiveStep(activeStep + 1);
+      let newStep = activeStep + 1;
+      setActiveStep(newStep);
       return;
     }else{
       handleSubmit();
@@ -185,7 +204,8 @@ export default function Launch() {
   };
 
   const handleBack = () => {
-    setActiveStep(activeStep - 1);
+    let newStep = activeStep - 1;
+    setActiveStep(newStep);
   };
 
   return (
@@ -222,8 +242,8 @@ export default function Launch() {
                       感谢你为善心出力！
                     </Typography>
                     <Typography variant="subtitle1">
-                      Your order number is #2001539. We have emailed your order confirmation, and will
-                      send you an update when your order has shipped.
+                      你的筹款活动已经成功提交，第三方公证机关会尽快审核并发布。
+                      你的筹款活动ID是：{CampaignId}，可以点击<Link href={"root/details/:"+CampaignId}>这里</Link>查看。
                     </Typography>
                   </React.Fragment>
                 ) : (
