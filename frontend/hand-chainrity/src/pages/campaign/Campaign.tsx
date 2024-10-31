@@ -3,6 +3,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Footer from './components/Footer';
 import Latest from './components/Latest';
 import MainContent from './components/MainContent';
+import { Button, Typography } from '@mui/material';
 
 export default function Campaign() {
   return (

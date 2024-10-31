@@ -101,8 +101,8 @@ export const getDesignTokens = (mode: PaletteMode) => {
     palette: {
       mode,
       primary: {
-        light: brand[200],
-        main: brand[400],
+        light: "#ff914d",
+        main: "#ff914d",
         dark: brand[700],
         contrastText: brand[50],
         ...(mode === 'dark' && {
@@ -164,7 +164,7 @@ export const getDesignTokens = (mode: PaletteMode) => {
         ...(mode === 'dark' && { default: gray[900], paper: 'hsl(220, 30%, 7%)' }),
       },
       text: {
-        primary: gray[800],
+        primary:"#ff914d",
         secondary: gray[600],
         warning: orange[400],
         ...(mode === 'dark' && { primary: 'hsl(0, 0%, 100%)', secondary: gray[400] }),
