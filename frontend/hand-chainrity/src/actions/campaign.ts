@@ -303,3 +303,24 @@ export const checkCampaign = async(campaignId:number, checkResult:boolean, accou
   }
 
 
+/**
+ * 获取对应筹款活动的参与人数
+ * @param campaignId 活动id
+ * @return 返回参与人数
+ */
+export const getParticipantCount = async(campaignId:number) => {
+  if(HandChainrityContract){
+      try{
+        const participants:[] = await HandChainrityContract.methods.getParticipants(campaignId).call();
+        console.log(participants.length);
+        return participants.length;
+      }catch(e:any){
+        console.error(`获取参与人数失败:${e.message}`);
+        // alert(`获取参与人数失败:${e.message}`);
+      }
+    }else{
+        alert('合约未部署');
+    }
+}
+
+

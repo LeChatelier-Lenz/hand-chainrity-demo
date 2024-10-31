@@ -23,6 +23,7 @@ export default function About() {
                     </Typography>
                     <Typography variant="body1" gutterBottom>
                         HandCharity is a decentralized charity platform that is based on blockchain technology. It aims to provide a transparent and efficient charity platform for charity organizations and donors. HandCharity is a decentralized charity platform that is based on blockchain technology. It aims to provide a transparent and efficient charity platform for charity organizations and donors.
+                        <br/>HandChainrity: 手链筹——基于区块链，实现透明、高效、可追溯的公益筹款，手牵手，心链心。
                     </Typography>
                     <Typography variant="h6" gutterBottom>
                         Features
