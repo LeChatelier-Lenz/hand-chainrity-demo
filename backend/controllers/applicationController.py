@@ -54,6 +54,23 @@ def approve_application(application_id: int, db: Session, current_user: User = D
         return {"error": str(e)}
 
 
+def reject_application(application_id: int, db: Session, current_user: User = Depends(get_current_user)):
+    try:
+        application = db.query(Application).filter(Application.id == application_id).first()
+        if not application:
+            raise HTTPException(status_code=404, detail="申请不存在")
+        if application.status == 'approved':
+            raise HTTPException(status_code=400, detail="申请已批准")
+        if current_user.role != 'admin':
+            raise HTTPException(status_code=400, detail="权限不足")
+        application.status = 'rejected'
+        db.commit()
+        db.refresh(application)
+        return application
+    except Exception as e:
+        return {"error": str(e)}
+
+
 def list_application(page_num: int, db: Session, current_user: User = Depends(get_current_user)):
     try:
         if current_user.role != 'admin':
