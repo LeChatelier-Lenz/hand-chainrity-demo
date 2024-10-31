@@ -25,6 +25,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchCampaigns, fetchFundraisingCampaigns } from '../../../actions/campaign';
 import { CampaignType } from '../../../types/interfaces';
 import { log } from 'console';
+import { Divider } from '@mui/material';
 
 
 const SyledCard = styled(Card)(({ theme }) => ({
@@ -236,10 +237,14 @@ export default function MainContent() {
         <CircularProgress color="inherit" />
       </Backdrop>
       <div>
-        <Typography variant="h1" gutterBottom>
-          Hostest Crowdfunding
+        <Typography variant="h2" gutterBottom>
+          Hotest <b style={{color:"#ff914d"}}>HandChainrity</b> Crowdfunding
+          <br/> | 最新手链筹
         </Typography>
-        <Typography>Take a look at the latest crowdfunding</Typography>
+        <Divider />
+        <Typography>Take a look at the latest crowdfunding
+          <br/>浏览最新的众筹活动
+        </Typography>
       </div>
       <Box
         sx={{
@@ -274,11 +279,11 @@ export default function MainContent() {
             overflow: 'auto',
           }}
         >
-          <Chip onClick={handleClick} size="medium" label="All categories" />
+          <Chip onClick={handleClick} size="medium" label="All | 所有类别" />
           <Chip
             onClick={handleClick}
             size="medium"
-            label="Reward-based Crowdfundin"
+            label="Reward-based | 奖励众筹"
             sx={{
               backgroundColor: 'transparent',
               border: 'none',
@@ -287,7 +292,7 @@ export default function MainContent() {
           <Chip
             onClick={handleClick}
             size="medium"
-            label="Equity-based Crowdfunding"
+            label="Equity-based | 股权众筹"
             sx={{
               backgroundColor: 'transparent',
               border: 'none',
@@ -296,7 +301,7 @@ export default function MainContent() {
           <Chip
             onClick={handleClick}
             size="medium"
-            label="Debt-based Crowdfunding"
+            label="Debt-based | 债权众筹"
             sx={{
               backgroundColor: 'transparent',
               border: 'none',
@@ -305,7 +310,7 @@ export default function MainContent() {
           <Chip
             onClick={handleClick}
             size="medium"
-            label="Donation-based Crowdfunding"
+            label="Donation-based | 捐赠众筹"
             sx={{
               backgroundColor: 'transparent',
               border: 'none',

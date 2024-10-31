@@ -152,12 +152,12 @@ export default function Latest() {
   return (
     <div>
       <Typography variant="h2" gutterBottom>
-        Latest
+        Latest | 最新
       </Typography>
       <Grid container spacing={8} columns={12} sx={{ my: 4 }}>
         {campaigns.length < 1 && "There have not been any crowdfunding projects in this category"}
         {campaigns.length >= 1 && campaigns.map((campaign, index) => (
-          <Grid key={index} size={{ xs: 12, sm: 6 }} onClick={() => {navigate("/root/details/" + campaigns[focusedCardIndex!].id)}}>
+          <Grid key={index} size={{ xs: 12, sm: 6 }} onClick={() => {navigate("/root/details/" + campaigns[index].id)}}>
             <Box
               sx={{
                 display: 'flex',

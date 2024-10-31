@@ -1,5 +1,16 @@
 import * as React from 'react';
 import SvgIcon from '@mui/material/SvgIcon';
+import { ReactComponent as MySvg } from '../../asset/HandChainrity.svg';
+import { Box } from '@mui/material';
+
+export function HandChainrityIcon() {
+  return (
+    <Box style={{ height: 60, width: 200, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      <MySvg style={{ height: 60, width: 300 }} />
+    </Box>
+  )
+
+}
 
 export function SitemarkIcon() {
   return (

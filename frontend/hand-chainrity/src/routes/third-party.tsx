@@ -103,7 +103,7 @@ export default function ThirdParty() {
         <Typography variant="h4">HandChainrity第三方审核平台</Typography>
         
         
-      <Box style={{display:"flex",flexDirection:"row",width:"100%",height:"100%"}} sx={{ my:2,gap:2 }} >
+      <Box style={{display:"flex",flexDirection:"row",width:"100%",height:"100%" ,alignItems: "flex-start",justifyContent: "center"}} sx={{ my:2,gap:2 }} >
         
         <Paper className="launched-list" style={{width:"70%",alignItems: "center",justifyContent: "center",display:"flex",flexDirection:"column"}} >
           <Typography sx={{my:1}} variant="h6">待审核筹款活动</Typography>
@@ -133,7 +133,8 @@ export default function ThirdParty() {
           </List>
         </Paper>
       
-        <Box sx={{display: "flex", flexDirection: "column", gap: 2 ,alignItems: "center",justifyContent: "center",}}>
+        <Box sx={{width:"70%",display: "flex", flexDirection: "column", gap: 2 ,alignItems: "center",justifyContent: "center",}}>
+          <Box style={{width:"100%",height:"100%",display: "flex", flexDirection: "column", gap: 2 ,alignItems: "center",justifyContent: "center",position:"fixed",top:7}}>
           <Paper sx={{ p: 4, width: "100%", maxWidth: 400, display: "flex", flexDirection: "column", gap: 2 ,alignItems: "center",justifyContent: "center",}}>  
           <Button onClick={onClickConnectWallet} variant="contained" color="primary" size="small">
             连接有效账户地址
@@ -170,6 +171,7 @@ export default function ThirdParty() {
               </Box>
             </form>
           </Paper>
+        </Box>
         </Box>
       </Box>
         

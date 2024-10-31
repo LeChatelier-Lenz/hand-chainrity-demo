@@ -102,7 +102,10 @@ export default function User() {
   
   React.useEffect(() => {
     if(selectedIndex === "我参加的筹款活动") {
-      fetchUserCampaigns(userInfo.address, setCampaigns);
+      if(userInfo && userInfo.address)
+      {
+        fetchUserCampaigns(userInfo.address, setCampaigns);
+      }
     } else if(selectedIndex === "我发起的筹款活动") {
       // fetchUserCampaigns(userInfo.address, setCampaigns, true);
       // 补充发起的筹款活动列表获取

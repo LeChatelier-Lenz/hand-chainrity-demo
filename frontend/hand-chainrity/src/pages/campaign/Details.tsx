@@ -3,19 +3,18 @@ import Box from "@mui/material/Box";
 import Paper from '@mui/material/Paper';
 import React, { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
-import { donateToCampaign, fetchCampaignById, fetchFundraisingCampaigns } from "../../actions/campaign";
+import { donateToCampaign, fetchCampaignById, fetchFundraisingCampaigns, getParticipantCount } from "../../actions/campaign";
 import { CampaignType } from "../../types/interfaces";
 import { GanacheTestChainId, GanacheTestChainName, GanacheTestChainRpcUrl } from '../../utils/ganache';
 
 export default function MainContent() {
   const [account, setAccount] = React.useState<string | null>(null);
+  const [count, setCount] = React.useState<number>(0);
   const [donate, setDonate] = React.useState<string | null>("");
   const [isConnected, setIsConnected] = React.useState<boolean>(false);
   const onClickDonateFunding = async () => {
-    if(!account)
-    {
-      alert('请先连接您的Metamask账户');
-            // @ts-ignore
+    if (!account) {
+      // @ts-ignore
       const { ethereum } = window;
       if (!Boolean(ethereum && ethereum.isMetaMask)) {
         alert('MetaMask is not installed!');
@@ -57,14 +56,14 @@ export default function MainContent() {
         alert(error.message)
       }
     }
-    else
-    {
-      if(donate)
-      await donateToCampaign(campaign.id,parseFloat(donate),account)
-    else
-    {
-      alert("Please enter the amount of Ethereum you would like to contribute!")
-    }
+    if (account)
+      alert('请先连接您的Metamask账户');
+    else {
+      if (donate)
+        await donateToCampaign(campaign.id, parseFloat(donate), account!)
+      else {
+        alert("Please enter the amount of Ethereum you would like to contribute!")
+      }
     }
   }
 
@@ -87,28 +86,36 @@ export default function MainContent() {
 
 
   let { id } = useParams(); // 获取路径中的 id 参数
-  if(!id)
-  {
+  if (!id) {
     id = "1";
   }
   const campaign_id = parseInt(id!)
 
   useEffect(() => {
-    try{
-          fetchCampaignById(campaign_id,setCampaign)
-    }catch (err: any) {
+    try {
+      fetchCampaignById(campaign_id, (fetchedCampaign: CampaignType) => {
+        // Set fetched campaign data with default tag, field, and stage
+        setCampaign({
+          ...fetchedCampaign,
+          tag: fetchedCampaign.tag || "Donation-based Crowdfunding",
+          field: fetchedCampaign.field || "公益众筹",
+          stage: fetchedCampaign.stage || "公益筹集第一轮",
+        });
+      });
+      getParticipantCount(campaign_id, setCount);
+    } catch (err: any) {
       console.error("查看错误", err);
     }
-  }, []);
+  }, [campaign_id]);
 
-  
+
 
   return (
     <Box sx={{ width: '100%', mx: 'auto', mt: 10 }}>
       {campaign ? (<Card sx={{ display: 'flex', width: '100%' }}>
         <CardMedia
           component="img"
-          sx={{ width: '55%', objectFit: 'cover' }}
+          sx={{ width: '750px', height: '630px', objectFit: 'cover', ml: 2 }}
           image={require("../../img/img2.jpg")} // Replace with your image URL
           alt="Sleep medicine"
         />
@@ -149,39 +156,39 @@ export default function MainContent() {
 
           {/* Details */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, mb: 5 }}>
-            <Typography variant="body2">0 名支持者</Typography>
+            <Typography variant="body2">{count} 名支持者</Typography>
             <Typography variant="body2">{Math.ceil((campaign.deadline.getTime() - campaign.createdAt.getTime()) / (1000 * 60 * 60 * 24))} 天剩余</Typography>
-            <Typography variant="body2">0 人看好</Typography>
+            {/* <Typography variant="body2">0 人看好</Typography> */}
           </Box>
 
-            {/* Action Button */}
-            <Box sx={{ mt: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', mr: 2 }}>Donate</Typography>
-                <TextField
-                  helperText="Please enter the amount of Ethereum you would like to contribute"
-                  size="medium"
-                  margin='normal'
-                  value={donate}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setDonate(event.target.value);
-                  }}
-                  slotProps={{
-                    inputLabel: {
-                      shrink: true,
-                    },
-                  }}
-                
-                  label="Price"
-                  variant="standard"
-                />
-                <Typography variant="h6" sx={{ fontWeight: 'bold', ml: 2 }}>ETH Now!</Typography>
-              </Box>
-              
-              <Button variant="contained" sx={{ width: '100%' }} onClick={onClickDonateFunding}>
-                立即支持
-              </Button>
+          {/* Action Button */}
+          <Box sx={{ mt: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', mr: 2 }}>Donate</Typography>
+              <TextField
+                helperText="Please enter the amount of Ethereum you would like to contribute"
+                size="medium"
+                margin='normal'
+                value={donate}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setDonate(event.target.value);
+                }}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
+
+                label="Price"
+                variant="standard"
+              />
+              <Typography variant="h6" sx={{ fontWeight: 'bold', ml: 2 }}>ETH Now!</Typography>
             </Box>
+
+            <Button variant="contained" sx={{ width: '100%' }} onClick={onClickDonateFunding}>
+              立即支持
+            </Button>
+          </Box>
 
 
           {/* Project Date Info */}
@@ -190,9 +197,9 @@ export default function MainContent() {
           </Typography>
         </CardContent>
       </Card>) : (
-      <Typography variant="h6" align="center" sx={{ mt: 5 }}>
-        Loading campaign details...
-      </Typography>
+        <Typography variant="h6" align="center" sx={{ mt: 5 }}>
+          Loading campaign details...
+        </Typography>
       )}
 
       {/* Divider */}
@@ -204,6 +211,7 @@ export default function MainContent() {
           <Box sx={{ flex: 3, pr: 2 }}>
             <Typography variant="h6">项目详情</Typography>
             <Typography variant="body2" sx={{ mt: 1, lineHeight: 1.8 }}>
+              项目详情 : {campaign.details}<br /><br />
               该团队成员位于中国大陆和新加坡，在医药保健品行业做研发设计超过5年，专注于失眠、健忘、精神衰弱治疗，
               并有相关产品，经过测试后效果良好。<span style={{ color: 'red' }}>众筹网的人员也亲身测试了药品，效果良好。</span>
               融资目标：100万元人民币，或者20万新币。
@@ -225,11 +233,11 @@ export default function MainContent() {
           <Box sx={{ flex: 2, pl: 2 }}>
             <Typography variant="h4" sx={{ mt: 1, lineHeight: 1.8, color: "red", fontWeight: "bold" }}>风险提示</Typography>
             <Typography variant="body2" sx={{ mt: 1, lineHeight: 1.8 }}>
-              1. 点击“提交订单”，即表明您已阅读并同意《支持者协议》及《隐私政策》，并自愿承担由众筹相风险。
+              1. 点击“立即支持”，即表明您已阅读并同意《支持者协议》及《隐私政策》，并自愿承担由众筹相风险。
               <br /><br />
-              2. 您参与众筹是支持将创意变为现实的过程，而不是直接的商品交易，因此存在一定风险。请根据自己的判断谨慎选择。
+              2. 您参与众筹是支持将创意变为现实,将爱心广泛传播的过程，而不是直接的商品交易，请根据自己的判断谨慎选择。
               <br /><br />
-              3. 众筹项目的回报将放及其他后续服务事项，众筹发起人无法发起回报或。
+              3. 众筹项目的回报将放及其他后续服务事项，请您根据自己的判断选择、支持众筹项目。
             </Typography>
           </Box>
         </Box>

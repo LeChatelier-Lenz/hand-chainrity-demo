@@ -18,8 +18,8 @@ function Copyright() {
   return (
     <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
       {'Copyright © '}
-      <Link color="text.secondary" href="https://mui.com/">
-        Sitemark
+      <Link color="text.secondary" href="/root/campaign">
+        HandChainrity - 手链筹
       </Link>
       &nbsp;
       {new Date().getFullYear()}
@@ -64,12 +64,12 @@ export default function Footer() {
                 gutterBottom
                 sx={{ fontWeight: 600, mt: 2 }}
               >
-                Join the newsletter
+                订阅 HandChainrity
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-                Subscribe for weekly updates. No spams ever!
+                订阅新闻通讯，了解我们的最新消息
               </Typography>
-              <InputLabel htmlFor="email-newsletter">Email</InputLabel>
+              <InputLabel htmlFor="email-newsletter">Email | 邮箱</InputLabel>
               <Stack direction="row" spacing={1} useFlexGap>
                 <TextField
                   id="email-newsletter"
@@ -93,7 +93,7 @@ export default function Footer() {
                   size="small"
                   sx={{ flexShrink: 0 }}
                 >
-                  Subscribe
+                  订 阅
                 </Button>
               </Stack>
             </Box>
@@ -106,22 +106,22 @@ export default function Footer() {
             }}
           >
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-              Product
+              Product | 产品
             </Typography>
             <Link color="text.secondary" variant="body2" href="#">
-              Features
+              Features | 敬请期待
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
-              Testimonials
+              Testimonials | 敬请期待
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
-              Highlights
+              Highlights | 敬请期待
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
-              Pricing
+              Pricing | 敬请期待
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
-              FAQs
+              FAQs | 敬请期待
             </Link>
           </Box>
           <Box
@@ -132,17 +132,17 @@ export default function Footer() {
             }}
           >
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-              Company
+              Corperation | 组织
             </Typography>
-            <Link color="text.secondary" variant="body2" href="#">
+            <Link color="text.secondary" variant="body2" href="/root/about">
               About us
             </Link>
-            <Link color="text.secondary" variant="body2" href="#">
+            {/* <Link color="text.secondary" variant="body2" href="#">
               Careers
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
               Press
-            </Link>
+            </Link> */}
           </Box>
           <Box
             sx={{
@@ -152,16 +152,16 @@ export default function Footer() {
             }}
           >
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-              Legal
+              Legal | 网站政策
             </Typography>
             <Link color="text.secondary" variant="body2" href="#">
-              Terms
+              Terms | 条款
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
-              Privacy
+              Privacy | 隐私
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
-              Contact
+              Contact | 联系
             </Link>
           </Box>
         </Box>
@@ -177,13 +177,13 @@ export default function Footer() {
         >
           <div>
             <Link color="text.secondary" variant="body2" href="#">
-              Privacy Policy
+              Privacy Policy | 隐私政策
             </Link>
             <Typography sx={{ display: 'inline', mx: 0.5, opacity: 0.5 }}>
               &nbsp;•&nbsp;
             </Typography>
             <Link color="text.secondary" variant="body2" href="#">
-              Terms of Service
+              Terms of Service | 服务条款
             </Link>
             <Copyright />
           </div>
@@ -196,7 +196,7 @@ export default function Footer() {
             <IconButton
               color="inherit"
               size="small"
-              href="https://github.com/mui"
+              href="https://github.com/LeChatelier-Lenz/hand-chainrity-demo"
               aria-label="GitHub"
               sx={{ alignSelf: 'center' }}
             >
