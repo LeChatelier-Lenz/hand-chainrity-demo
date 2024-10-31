@@ -54,9 +54,24 @@ export default function Applications() {
     };
 
     const handleReject = async (id: number) => {
-        // 处理拒绝申请的逻辑
-        console.log(`Rejected application with ID: ${id}`);
-        // 这里可以添加 API 调用来更新申请状态
+        try {
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userInfo') || '{}').token
+                },
+            };
+
+            const res = await axiosInstance.get(`/api/application/reject/${id}`, config);
+            
+        } catch (error: unknown) {
+            const err = error as AxiosError<{ message: string }>;
+            const errorMessage: string =
+                err.response && err.response.data.message
+                    ? err.response.data.message
+                    : err.message;
+            console.error(errorMessage);
+        }
     };
 
     useEffect(() => {
