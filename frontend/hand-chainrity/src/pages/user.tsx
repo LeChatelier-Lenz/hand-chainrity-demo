@@ -2,7 +2,7 @@ import AppAppBar from '../component/AppAppBar';
 import React, { useState } from 'react';
 import { CampaignType } from '../types/interfaces';
 import { fetchUserCampaigns } from '../actions/campaign';
-import { Card, CardContent, Typography, Box ,Container, CssBaseline, Divider, List, ListItem, ListItemButton, ListItemText, CardMedia,  styled, Avatar, AvatarGroup, Button, Paper, TextField} from '@mui/material';
+import { Card, CardContent, Typography, Box ,Container, CssBaseline, Divider, List, ListItem, ListItemButton, ListItemText, CardMedia,  styled, Avatar, AvatarGroup, Button, Paper, TextField, Tooltip, AppBar} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import '../styles/user.css';  // 确保路径正确
 import Application from '../component/application';
@@ -83,10 +83,10 @@ export default function User() {
   const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
   const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
 
-  const [selectedIndex, setSelectedIndex] = useState("我参加的募捐");
-  const [btnlist, setBtnlist] = useState(userInfo.role === 'admin' ? ["我参加的募捐", "我发起的募捐", '管理申请'] :(userInfo.role === 'beneficiary' ? ['我参加的募捐', '我发起的募捐']:['我参加的募捐', '我发起的募捐',  "申请成为受益人"]) );
+  const [selectedIndex, setSelectedIndex] = useState("我参加的筹款活动");
+  const [btnlist, setBtnlist] = useState(userInfo.role === 'admin' ? ["我参加的筹款活动", "我发起的筹款活动", '管理申请'] :(userInfo.role === 'beneficiary' ? ['我参加的筹款活动', '我发起的筹款活动']:['我参加的筹款活动', '我发起的筹款活动',  "申请成为受益人"]) );
   // if (userInfo.role === 'admin') {
-  //   setButlist(['我参加的募捐', '我发起的募捐',  '管理申请']);
+  //   setButlist(['我参加的筹款活动', '我发起的筹款活动',  '管理申请']);
   // }
 
  
@@ -100,6 +100,15 @@ export default function User() {
   );
 
   
+  React.useEffect(() => {
+    if(selectedIndex === "我参加的筹款活动") {
+      fetchUserCampaigns(userInfo.address, setCampaigns);
+    } else if(selectedIndex === "我发起的筹款活动") {
+      // fetchUserCampaigns(userInfo.address, setCampaigns, true);
+      // 补充发起的筹款活动列表获取
+      setCampaigns([]);
+    }
+  }, [userInfo, selectedIndex]);
 
   const handleFocus = (index: number) => {
     setFocusedCardIndex(index);
@@ -171,136 +180,152 @@ export default function User() {
   ];
 
   return (
-    <div>
+    <Container
+    maxWidth="lg"
+    component="main"
+    sx={{ display: 'flex', flexDirection: 'column', my: 16, gap: 4 }}
+  >
     <CssBaseline enableColorScheme />
-    {/* <Container
-          maxWidth="lg"
-          component="main"
-          
-          sx={{ display: 'fixed', flexDirection: 'column', my: 16, gap: 4 }}
-        > */}
-          
-    <div id="user">
-    
-      <div className="user-info">
-      <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-        
-        <h1>User Profile</h1>
-        <p><strong>区块链地址:</strong> {userInfo.address}</p>
-        <p><strong>姓名:</strong> {userInfo.username}</p>
-        <p><strong>邮箱:</strong> {userInfo.email}</p>
-        <Divider />
-        <nav aria-label="secondary mailbox folders">
-        <List>
-                {btnlist.map((text, index) => (
-                  <ListItem disablePadding key={text}>
-                    <ListItemButton onClick={() => setSelectedIndex(text)}>
-                      <ListItemText primary={text} />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4 ,overflow:"auto",position:"relative"}}>
+        <Box sx={{ display: 'flex', flexDirection: 'column' ,width:"30%",top:0}} position="sticky">
+          <Paper sx={{ display: 'flex', flexDirection: 'column', gap: 4 ,p:4,justifySelf:"start",maxWidth:"300px"}}>
+            
+            {/* <h1>User Profile</h1>
+            <p><strong>区块链地址:</strong><br/> {userInfo.address}</p>
+            <p><strong>姓名:</strong> {userInfo.username}</p>
+            <p><strong>邮箱:</strong> {userInfo.email}</p> */}
+            <Typography variant="h6">用户信息</Typography>
+              <Tooltip title={userInfo.address} placement="top">
+            <Typography sx={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}><strong>区块链地址 : </strong>{userInfo.address}</Typography>
+              </Tooltip>
+            <Typography><strong>姓名 : </strong> {userInfo.username}</Typography>
+              <Tooltip title={userInfo.email} placement="top">
+            <Typography
+              sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            ><strong>邮箱 : </strong> {userInfo.email}</Typography>
+            </Tooltip>
+            <Divider />
+            <nav aria-label="secondary mailbox folders">
+                  <List>
+                    {btnlist.map((text, index) => (
+                      <ListItem disablePadding key={text}>
+                        <ListItemButton onClick={() => setSelectedIndex(text)}>
+                          <ListItemText primary={text} />
+                        </ListItemButton>
+                      </ListItem>
+                    ))}
+                  </List>
+            </nav>
+          </Paper>
+        </Box>
+
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, width:"70%" ,justifySelf:"start",alignItems:"center"}}>
+          <Card variant="outlined">
+            <CardContent>
+              {selectedIndex === "我参加的筹款活动" || selectedIndex === "我发起的筹款活动" ? (
+              
+              <Grid container columns={12} size={{xs:12,md:12}} >
+                { campaigns.length === 0 ? (
+                  <Typography variant="h6">您的列表目前为空</Typography>
+                ) : (
+              <List sx={{ width: '100%',  bgcolor: 'background.paper' }}>
+              <Grid container spacing={2} columns={12}>
+                  {campaigns.map((item, index) => (
+                      <Grid size={{ xs: 12, md: 6 }} key={index}>
+                        <SyledCard
+                          variant="outlined"
+                          onFocus={() => handleFocus(0)}
+                          onBlur={handleBlur}
+                          tabIndex={0}
+                          className={focusedCardIndex === 0 ? 'Mui-focused' : ''}
+                        >
+                          <CardMedia
+                            component="img"
+                            alt="green iguana"
+                            image={"https://picsum.photos/800/450?random=6"}
+                            aspect-ratio="16 / 9"
+                            sx={{
+                              borderBottom: '1px solid',
+                              borderColor: 'divider',
+                            }}
+                          />
+                          <SyledCardContent>
+
+                            <Typography gutterBottom variant="h6" component="div">
+                              {campaigns[index].title}
+                            </Typography>
+                            <Typography gutterBottom variant="caption" component="div">
+                            {campaigns[index].description}
+                          </Typography>
+                            <StyledTypography variant="body2" color="text.secondary" gutterBottom>
+                              {campaigns[index].details}
+                            </StyledTypography>
+                          </SyledCardContent>
+                          <Author authors={
+                            [
+                              {
+                                name:campaigns[index].beneficiary,
+                                avatar:"/static/images/avatar/2.jpg"}
+                            ]} />
+                        </SyledCard>
+                      </Grid>
+
+                  ))}
+              </Grid>
               </List>
-        </nav>
+                )}
+              {/* <Grid size={{ xs: 12, md: 6 }}>
+                <SyledCard
+                  variant="outlined"
+                  onFocus={() => handleFocus(0)}
+                  onBlur={handleBlur}
+                  tabIndex={0}
+                  className={focusedCardIndex === 0 ? 'Mui-focused' : ''}
+                >
+                  <CardMedia
+                    component="img"
+                    alt="green iguana"
+                    image={cardData[0].img}
+                    aspect-ratio="16 / 9"
+                    sx={{
+                      borderBottom: '1px solid',
+                      borderColor: 'divider',
+                    }}
+                  />
+                  <SyledCardContent>
+                    <Typography gutterBottom variant="caption" component="div">
+                      {cardData[0].tag}
+                    </Typography>
+                    <Typography gutterBottom variant="h6" component="div">
+                      {cardData[0].title}
+                    </Typography>
+                    <StyledTypography variant="body2" color="text.secondary" gutterBottom>
+                      {cardData[0].description}
+                    </StyledTypography>
+                  </SyledCardContent>
+                  <Author authors={cardData[0].authors} />
+                </SyledCard>
+              </Grid> */}
+              
+              </Grid>
+
+              ) : (
+                selectedIndex === "申请成为受益人" ? (<Application />) : (<Applications />)
+              )}
+            </CardContent>
+          </Card>
+        </Box>
+        
       </Box>
-      </div>
-      <div className="card" >
-        <Card variant="outlined">
-          <CardContent>
-            
-            {/* <ul>
-              {campaigns.map((campaign) => (
-                <li key={campaign.id}>
-                  <h2>{campaign.title}</h2>
-                  <p>{campaign.description}</p>
-                  <p>{campaign.details}</p>
-                  <p><strong>Target:</strong> {campaign.target} ETH</p>
-                  <p><strong>Current:</strong> {campaign.current} ETH</p>
-                  <p><strong>Deadline:</strong> {new Date(campaign.deadline).toLocaleDateString()}</p>
-                  <p><strong>Beneficiary:</strong> {campaign.beneficiary}</p>
-                  <p><strong>Launcher:</strong> {campaign.launcher}</p>
-                  <p><strong>Status:</strong> {campaign.status}</p>
-                </li>
-              ))}
-            </ul> */}
-            {selectedIndex === "我参加的募捐" || selectedIndex === "我发起的募捐" ? (
-            
-            <Grid container spacing={2} columns={12}>
-            <div className='blank'></div>
-            <Grid  size={{ xs: 12, md: 6 }}>
-              <SyledCard
-                variant="outlined"
-                onFocus={() => handleFocus(0)}
-                onBlur={handleBlur}
-                tabIndex={0}
-                className={focusedCardIndex === 0 ? 'Mui-focused' : ''}
-              >
-                <CardMedia
-                  component="img"
-                  alt="green iguana"
-                  image={cardData[0].img}
-                  aspect-ratio="16 / 9"
-                  sx={{
-                    borderBottom: '1px solid',
-                    borderColor: 'divider',
-                  }}
-                />
-                <SyledCardContent>
-                  <Typography gutterBottom variant="caption" component="div">
-                    {cardData[0].tag}
-                  </Typography>
-                  <Typography gutterBottom variant="h6" component="div">
-                    {cardData[0].title}
-                  </Typography>
-                  <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                    {cardData[0].description}
-                  </StyledTypography>
-                </SyledCardContent>
-                <Author authors={cardData[0].authors} />
-              </SyledCard>
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <SyledCard
-                variant="outlined"
-                onFocus={() => handleFocus(0)}
-                onBlur={handleBlur}
-                tabIndex={0}
-                className={focusedCardIndex === 0 ? 'Mui-focused' : ''}
-              >
-                <CardMedia
-                  component="img"
-                  alt="green iguana"
-                  image={cardData[0].img}
-                  aspect-ratio="16 / 9"
-                  sx={{
-                    borderBottom: '1px solid',
-                    borderColor: 'divider',
-                  }}
-                />
-                <SyledCardContent>
-                  <Typography gutterBottom variant="caption" component="div">
-                    {cardData[0].tag}
-                  </Typography>
-                  <Typography gutterBottom variant="h6" component="div">
-                    {cardData[0].title}
-                  </Typography>
-                  <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                    {cardData[0].description}
-                  </StyledTypography>
-                </SyledCardContent>
-                <Author authors={cardData[0].authors} />
-              </SyledCard>
-            </Grid>
-            
-            </Grid>) : (
-              selectedIndex === "申请成为受益人" ? (<Application />) : (<Applications />)
-            )}
-            
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-    {/* </Container> */}
-    </div>
+    </Container>
   );
 }
 function setFocusedCardIndex(arg0: null) {

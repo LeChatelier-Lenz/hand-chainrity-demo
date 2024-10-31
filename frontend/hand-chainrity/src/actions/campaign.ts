@@ -247,7 +247,8 @@ export const fetchUserCampaigns = async(account:string,setState:any) => {
           // console.log(campaignCount);
           console.log(campaignId);
           if(campaignId.length === 0){
-            alert('您还没有参与任何活动！');
+            // alert('您还没有参与任何活动！');
+            console.log('您还没有参与任何活动！');
             return;
           }
           for (let i = 0; i < campaignId.length ; i++) {
