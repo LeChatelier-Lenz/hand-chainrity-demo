@@ -8,13 +8,13 @@ export default function FillSheet({onHandleAddress,rootFormData}:{onHandleAddres
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // console.log("当前的change:",e);
     const { name, value } = e.target;
-    // console.log("name和value:",name,value);
-    console.log("formData:",formData);
+    console.log("name和value:",name,value);
 
-    setFormData((prevData) => ({      
-      ...prevData,
-      [name]: name === "deadline" ? new Date(value) : value,
-    }));
+    const new_formData = {      ...formData,
+      [name]: name === "deadline" ? new Date(value) : value,}
+    console.log("new_formData:",formData);
+
+    setFormData(new_formData);
     onHandleAddress(formData);
   };
 

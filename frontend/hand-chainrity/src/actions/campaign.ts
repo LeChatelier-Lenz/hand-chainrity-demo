@@ -85,11 +85,11 @@ export const fetchFundraisingCampaigns = async(setState:any) => {
         const newCampaigns:CampaignType[] = [];
         const campaignId:number[] = await HandChainrityContract.methods.getActiveCampaignIdList().call();
         // console.log(campaignCount);
-        console.log(campaignId);
+        // console.log(campaignId);
         if(campaignId.length === 0){
           // alert('还没有任何活动正在筹款中！');
           console.log('还没有任何活动正在筹款中！')
-          return;
+          return 401;
         }
         for (let i = 0; i < campaignId.length; i++) {
           const new_campaign:any = await HandChainrityContract.methods.campaigns(Number(campaignId[i])).call();
