@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography , List , ListItem, ListItemText,Grid} from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import axios from 'axios';
 
 const products = [
   { name: 'Product 1', desc: 'A nice thing', price: '$9.99' },
@@ -32,6 +33,38 @@ const useStyles = makeStyles((theme:any) => ({
 export default function Review({rootFormData,account}:{rootFormData:any,account:any}) {
   const [formData, setFormData] = React.useState(rootFormData);
   const classes = useStyles();
+  const [beneficiaryName,setBeneficiaryName] = React.useState("");
+  const [beneficiaryEmail,setBeneficiaryEmail] = React.useState("");
+  const [beneficiaryPhone,setBeneficiaryPhone] = React.useState("");
+  const axiosInstance = axios.create({
+    baseURL: 'http://localhost:8888', // 设置基础 URL
+    timeout: 10000,                    // 可选：请求超时时间
+  });
+  const fetchData = async () => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userInfo') || '{}').token
+      },
+    };
+    try {
+      const res = await axiosInstance.get(
+        '/api/users/'+formData.beneficiary,
+        config
+      );
+      setBeneficiaryName(res.data.name);
+      setBeneficiaryEmail(res.data.email);
+      setBeneficiaryPhone(res.data.phone);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  React.useEffect(() => {
+    if (formData.beneficiary) {
+      fetchData();
+    }
+  }, [formData.beneficiary]);
 
   return (
     <React.Fragment>
@@ -65,8 +98,9 @@ export default function Review({rootFormData,account}:{rootFormData:any,account:
           <Typography variant="h6" gutterBottom className={classes.title}>
             受益人信息
           </Typography>
-          <Typography gutterBottom>John Smith</Typography>
-          <Typography gutterBottom>{addresses.join(', ')}</Typography>
+          <Typography gutterBottom>{"姓名: "+beneficiaryName}</Typography>
+          <Typography gutterBottom>{"电话: "+beneficiaryPhone}</Typography>
+          <Typography gutterBottom>{"邮箱: "+beneficiaryEmail}</Typography>
         </Grid>
         <Grid item container direction="column" xs={12} sm={6}>
           <Typography variant="h6" gutterBottom className={classes.title}>

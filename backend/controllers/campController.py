@@ -9,18 +9,21 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 
 def add_campaign(campaign: CampaignBase, db: Session):
-    campaign_exists = db.query(Campaign).filter(Campaign.id == campaign.id).first()
-    if campaign_exists:
-        raise HTTPException(status_code=400, detail="活动已存在")
-    new_campaign = Campaign(**campaign.dict())
-    db.add(new_campaign)
-    db.commit()
-    db.refresh(new_campaign)
-    return {
-        "id": new_campaign.id,
-        "title": new_campaign.title,
-        "description": new_campaign.description,
-        "owner_address": new_campaign.owner_address,
-        "beneficiary_address": new_campaign.beneficiary_address,
-        "created_at": new_campaign.created_at
-    }
+    try:
+        # campaign_exists = db.query(Campaign).filter(Campaign.id == campaign.id).first()
+        # if campaign_exists:
+        #     raise HTTPException(status_code=400, detail="活动已存在")
+        new_campaign = Campaign(**campaign.dict())
+        db.add(new_campaign)
+        db.commit()
+        db.refresh(new_campaign)
+        return {
+            "id": new_campaign.id,
+            "title": new_campaign.title,
+            "details": new_campaign.details,
+            "owner_address": new_campaign.owner_address,
+            "beneficiary_address": new_campaign.beneficiary_address,
+            "created_at": new_campaign.created_at
+        }
+    except Exception as e:
+        return {"error": str(e)}
