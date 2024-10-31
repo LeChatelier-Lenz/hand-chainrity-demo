@@ -1,5 +1,11 @@
 import { web3, HandChainrityContract } from '../utils/contracts';
 import { CampaignType, Status } from '../types/interfaces';
+import axios , { AxiosError, AxiosResponse }  from 'axios';
+import { useNavigate } from 'react-router-dom';
+const axiosInstance = axios.create({
+  baseURL: 'http://localhost:8888', // 设置基础 URL
+  timeout: 10000,                    // 可选：请求超时时间
+});
 
 
 /**
@@ -11,10 +17,8 @@ export const fetchCampaigns = async(setState:any) => {
         try{
           const newCampaigns:CampaignType[] = [];
           const campaignCount:number = await HandChainrityContract.methods.campaignCount().call();
-          // console.log(campaignCount)
           for (let i = 1; i <= Number(campaignCount); i++) {
             const new_campaign:any = await HandChainrityContract.methods.campaigns(i).call();
-            // console.log(new_campaign);
             newCampaigns.push({
               id: Number(new_campaign.hcuId),
               title: "Need To Load from Backend",
@@ -309,12 +313,12 @@ export const checkCampaign = async(campaignId:number, checkResult:boolean, accou
  * @param campaignId 活动id
  * @return 返回参与人数
  */
-export const getParticipantCount = async(campaignId:number) => {
+export const getParticipantCount = async(campaignId:number,setState:any) => {
   if(HandChainrityContract){
       try{
         const participants:[] = await HandChainrityContract.methods.getParticipants(campaignId).call();
         console.log(participants.length);
-        return participants.length;
+        setState(participants.length)
       }catch(e:any){
         console.error(`获取参与人数失败:${e.message}`);
         // alert(`获取参与人数失败:${e.message}`);
