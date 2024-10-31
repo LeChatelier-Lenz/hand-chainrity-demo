@@ -56,7 +56,7 @@ export default function MainContent() {
         alert(error.message)
       }
     }
-    if (account)
+    if (!account)
       alert('请先连接您的Metamask账户');
     else {
       if (donate)
@@ -116,7 +116,7 @@ export default function MainContent() {
         <CardMedia
           component="img"
           sx={{ width: '750px', height: '630px', objectFit: 'cover', ml: 2 }}
-          image={require("../../img/img2.jpg")} // Replace with your image URL
+          image={require("../../img/img4.jpg")} // Replace with your image URL
           alt="Sleep medicine"
         />
 
@@ -208,7 +208,7 @@ export default function MainContent() {
       {/* Project Details and Risk Information Section */}
       <Paper sx={{ p: 3 }}>
         <Box sx={{ display: 'flex' }}>
-          <Box sx={{ flex: 3, pr: 2 }}>
+          {campaign.id !== 0 && <Box sx={{ flex: 3, pr: 2 }}>
             <Typography variant="h6">项目详情</Typography>
             <Typography variant="body2" sx={{ mt: 1, lineHeight: 1.8 }}>
               项目详情 : {campaign.details}<br /><br />
@@ -226,7 +226,7 @@ export default function MainContent() {
               <br />
               在期间产品运营期间会持续研发。
             </Typography>
-          </Box>
+          </Box>}
 
           <Divider orientation="vertical" flexItem sx={{ mx: 2, borderStyle: 'dashed' }} />
 
