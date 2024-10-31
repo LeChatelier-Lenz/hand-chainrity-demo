@@ -11,11 +11,14 @@ export default function FillSheet({onHandleAddress,rootFormData}:{onHandleAddres
     // console.log("name和value:",name,value);
     console.log("formData:",formData);
 
-    setFormData((prevData) => ({      
+    setFormData((prevData) => {   
+      const updatedData = {   
       ...prevData,
       [name]: name === "deadline" ? new Date(value) : value,
-    }));
-    onHandleAddress(formData);
+      };
+      onHandleAddress(updatedData);
+      return updatedData;
+    });
   };
 
 
