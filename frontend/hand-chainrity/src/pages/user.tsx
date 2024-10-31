@@ -84,7 +84,7 @@ export default function User() {
   const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
 
   const [selectedIndex, setSelectedIndex] = useState("我参加的募捐");
-  const [btnlist, setBtnlist] = useState(userInfo.role === 'admin' ? ["我参加的募捐", "我发起的募捐", '管理申请'] : ['我参加的募捐', '我发起的募捐',  "申请成为受益人"]);
+  const [btnlist, setBtnlist] = useState(userInfo.role === 'admin' ? ["我参加的募捐", "我发起的募捐", '管理申请'] :(userInfo.role === 'beneficiary' ? ['我参加的募捐', '我发起的募捐']:['我参加的募捐', '我发起的募捐',  "申请成为受益人"]) );
   // if (userInfo.role === 'admin') {
   //   setButlist(['我参加的募捐', '我发起的募捐',  '管理申请']);
   // }
@@ -184,10 +184,10 @@ export default function User() {
     
       <div className="user-info">
       <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-        <AppAppBar />
+        
         <h1>User Profile</h1>
         <p><strong>区块链地址:</strong> {userInfo.address}</p>
-        <p><strong>姓名:</strong> {userInfo.name}</p>
+        <p><strong>姓名:</strong> {userInfo.username}</p>
         <p><strong>邮箱:</strong> {userInfo.email}</p>
         <Divider />
         <nav aria-label="secondary mailbox folders">

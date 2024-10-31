@@ -91,7 +91,6 @@ def register_user(user: UserCreate, db: Session):
             "address": new_user.address,
             "email": new_user.email,
             "token": token,
-            "role": user.role,
 
         }
     except Exception as e:

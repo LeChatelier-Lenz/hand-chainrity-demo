@@ -11,7 +11,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import Sitemark from './SitemarkIcon';
+import HandChainrityIcon from './HandChainrityIcon';
 import { useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
 // import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -118,13 +118,13 @@ export default function AppAppBar() {
 
   const EllipsisMiddleTypography = ({ text="", length = 8 }) => {
     if (text.length <= length * 2) {
-        return <Typography variant="body1" color='darkblue'>{text}</Typography>;
+        return <Typography variant="body1">{text}</Typography>;
     }
 
     const start = text.slice(0, length);
     const end = text.slice(-length);
     return (
-        <Typography variant="body1" color='darkblue'>
+        <Typography variant="body1" >
             {start}...{end}
         </Typography>
     );
@@ -168,15 +168,15 @@ export default function AppAppBar() {
       <Container maxWidth="lg">
         <StyledToolbar variant="dense" disableGutters>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
-            <Sitemark />
+            <HandChainrityIcon />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" color="info" size="small" onClick={() => { navigate("/root/campaign") }}>
+              <Button variant="text" size="small" onClick={() => { navigate("/root/campaign") }}>
                 筹款活动
               </Button>
-              <Button variant="text" color="info" size="small" onClick={() => { navigate("/root/launch") }}>
+              <Button variant="text"  size="small" onClick={() => { navigate("/root/launch") }}>
                 发起筹款
               </Button>
-              <Button variant="text" color="info" size="small" onClick={() => { navigate("/root/about") }}>
+              <Button variant="text"  size="small" onClick={() => { navigate("/root/about") }}>
                 关于我们
               </Button>
               {/* <Button variant="text" color="info" size="small">
@@ -202,7 +202,7 @@ export default function AppAppBar() {
             </>
           ) : (
             <Button onClick={onClickConnectWallet} size="small" >
-              <Typography variant="body1" sx={{ color: 'darkblue' }}>
+              <Typography variant="body1" >
                 连接钱包
               </Typography>
             </Button>
@@ -213,7 +213,7 @@ export default function AppAppBar() {
                 <img src={userImage} alt="描述文字" style={{ width: '30px', height: 'auto' }} />
                 <Button onClick={handleMenuOpen} size="small" >
                   
-                  <Typography variant="body1" sx={{ color: 'darkblue' }}>
+                  <Typography variant="body1" >
                     {userInfo.username || '未填写姓名'}
                   </Typography>
                   
