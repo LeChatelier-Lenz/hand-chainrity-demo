@@ -1,3 +1,4 @@
 .DS_Store
 ./contracts/hardhat.config.ts
 ./frontend/hand-chainrity/src/utils/contract-addresses.json
+/hardhat.config.ts

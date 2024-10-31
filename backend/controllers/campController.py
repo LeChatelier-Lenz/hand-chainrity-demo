@@ -27,3 +27,19 @@ def add_campaign(campaign: CampaignBase, db: Session):
         }
     except Exception as e:
         return {"error": str(e)}
+
+def get_campaign(campaignId: int, db: Session):
+    try:
+        campaign = db.query(Campaign).filter(Campaign.id == campaignId).first()
+        if not campaign:
+            raise HTTPException(status_code=404, detail="活动不存在")
+        return {
+            "id": campaign.id,
+            "title": campaign.title,
+            "details": campaign.details,
+            "owner_address": campaign.owner_address,
+            "beneficiary_address": campaign.beneficiary_address,
+            "created_at": campaign.created_at
+        }
+    except Exception as e:
+        return {"error": str(e)}
