@@ -33,7 +33,7 @@ export const fetchCampaigns = async(setState:any) => {
           // console.log(newCampaigns);
         }catch(e:any){
           console.error(e.message);
-          alert(`活动列表获取失败:${e.message}`);
+          // alert(`活动列表获取失败:${e.message}`);
         } 
     }else{
         alert('合约未部署');
@@ -111,7 +111,7 @@ export const fetchFundraisingCampaigns = async(setState:any) => {
         // console.log(newCampaigns);
       }catch(e:any){
         console.error(e.message);
-        alert(`活动列表获取失败:${e.message}`);
+        // alert(`活动列表获取失败:${e.message}`);
       } 
   }else{
       alert('合约未部署');

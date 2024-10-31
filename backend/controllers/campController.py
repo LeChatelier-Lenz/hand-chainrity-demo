@@ -20,6 +20,7 @@ def add_campaign(campaign: CampaignBase, db: Session):
         "id": new_campaign.id,
         "title": new_campaign.title,
         "description": new_campaign.description,
-        "address": new_campaign.address,
+        "owner_address": new_campaign.owner_address,
+        "beneficiary_address": new_campaign.beneficiary_address,
         "created_at": new_campaign.created_at
     }
