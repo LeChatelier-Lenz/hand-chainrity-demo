@@ -211,6 +211,7 @@ export default function MainContent() {
           <Box sx={{ flex: 3, pr: 2 }}>
             <Typography variant="h6">项目详情</Typography>
             <Typography variant="body2" sx={{ mt: 1, lineHeight: 1.8 }}>
+              项目详情 : {campaign.details}<br /><br />
               该团队成员位于中国大陆和新加坡，在医药保健品行业做研发设计超过5年，专注于失眠、健忘、精神衰弱治疗，
               并有相关产品，经过测试后效果良好。<span style={{ color: 'red' }}>众筹网的人员也亲身测试了药品，效果良好。</span>
               融资目标：100万元人民币，或者20万新币。
