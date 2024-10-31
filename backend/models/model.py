@@ -20,6 +20,7 @@ class User(Base):
     location = Column(String(100), default='火星')
     gender = Column(String(10), default='保密')
     role = Column(String(20), default='user')
+    idCard = Column(String(18), nullable=True)
     reset_password_token = Column(String(255), nullable=True)
     reset_password_expire = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)

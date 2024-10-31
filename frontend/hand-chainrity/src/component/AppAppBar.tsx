@@ -41,7 +41,7 @@ export default function AppAppBar() {
   const navigate = useNavigate(); // 初始化导航钩子
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
-  const isLoggedIn = Boolean(userInfo.name); // 检查是否登录
+  const isLoggedIn = Boolean(userInfo.username); // 检查是否登录
   const [account, setAccount] = React.useState<string | null>(null);
   const [isConnected, setIsConnected] = React.useState<boolean>(false);
 
@@ -214,7 +214,7 @@ export default function AppAppBar() {
                 <Button onClick={handleMenuOpen} size="small" >
                   
                   <Typography variant="body1" sx={{ color: 'darkblue' }}>
-                    {userInfo.name || '未填写姓名'}
+                    {userInfo.username || '未填写姓名'}
                   </Typography>
                   
                 </Button>

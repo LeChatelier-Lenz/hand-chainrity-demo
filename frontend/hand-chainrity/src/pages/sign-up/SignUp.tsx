@@ -185,7 +185,7 @@ export default function SignUp() {
   
       // 直接创建 JSON 对象
       const requestData = {
-        name: name,
+        username: name,
         address: address,
         email: email,
         password: password,
