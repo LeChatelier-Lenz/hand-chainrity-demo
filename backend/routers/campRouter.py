@@ -12,3 +12,7 @@ router = APIRouter()
 @router.post("/api/campaign")
 def add_campaign(campaign: CampaignBase, db: Session = Depends(get_db)):
     return campController.add_campaign(campaign, db)
+
+@router.get("/api/campaign/{campaignId}")
+def add_campaign(campaignId: int, db: Session = Depends(get_db)):
+    return campController.get_campaign(campaignId, db)

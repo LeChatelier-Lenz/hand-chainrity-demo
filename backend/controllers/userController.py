@@ -91,6 +91,7 @@ def register_user(user: UserCreate, db: Session):
             "address": new_user.address,
             "email": new_user.email,
             "token": token,
+            "role": "user",
 
         }
     except Exception as e:
@@ -119,3 +120,23 @@ def unfollow_user(target_user_id: int, db: Session, current_user: User = Depends
         current_user.followings.remove(target_user.id)
         db.commit()
     return {"message": "取消关注成功"}
+
+
+def get_owned_campaigns(db: Session, current_user: User = Depends(get_current_user)):
+    try:
+        user = db.query(User).filter(User.address == current_user.address).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="用户不存在")
+        return user.owned_campaigns
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def get_beneficiary_campaigns(db: Session, current_user: User = Depends(get_current_user)):
+    try:
+        user = db.query(User).filter(User.address == current_user.address).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="用户不存在")
+        return user.beneficiary_campaigns
+    except Exception as e:
+        return {"error": str(e)}

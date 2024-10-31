@@ -30,10 +30,14 @@ def get_profile(db: Session = Depends(get_db), current_user: User = Depends(get_
 def update_profile(user_update: UserUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return userController.update_user_profile(user_update, db, current_user)
 
-# 获取用户信息
-@router.get("/api/users/{user_address}")
-def get_user(user_address: str, db: Session = Depends(get_db)):
-    return userController.get_user_by_address(user_address, db)
+@router.get("/api/users/ownedcampaign")
+def check_user( db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return userController.get_owned_campaigns(db, current_user)
+
+@router.get("/api/users/beneficiarycampaign")
+def check_user( db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return userController.get_beneficiary_campaigns(db, current_user)
+
 
 # 获取用户信息
 @router.get("/api/users/admin/{user_address}")
@@ -44,4 +48,13 @@ def get_user(user_address: str, db: Session = Depends(get_db), current_user: Use
 @router.get("/api/users/check/{user_address}")
 def check_user(user_address: str, db: Session = Depends(get_db)):
     return userController.check_user_by_address(user_address, db)
+
+# 获取用户信息
+
+@router.get("/api/users/{user_address}")
+def get_user(user_address: str, db: Session = Depends(get_db)):
+    return userController.get_user_by_address(user_address, db)
+
+
+
 
