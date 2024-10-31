@@ -20,6 +20,7 @@ import Campaign from './pages/campaign/Campaign';
 import Details from './pages/campaign/Details';
 import Root from './routes/root';
 import Launch from './pages/launch/launch';
+import About from './pages/about/About';
 
 
 const router = createBrowserRouter(
@@ -41,6 +42,10 @@ const router = createBrowserRouter(
         {
           path: '/root/user',
           element: <User />,
+        },
+        {
+          path:'/root/about',
+          element: <About/>
         },
         {
           path: '/root/details/:id',

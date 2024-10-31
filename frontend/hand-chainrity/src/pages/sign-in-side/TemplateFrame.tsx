@@ -16,6 +16,7 @@ import Toolbar from '@mui/material/Toolbar';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ToggleColorMode from './ToggleColorMode';
 import getSignInSideTheme from './theme/getSignInSideTheme';
+import { useNavigate } from 'react-router-dom';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   position: 'relative',
@@ -51,6 +52,7 @@ export default function TemplateFrame({
     toggleCustomTheme(event.target.value === 'custom');
   };
   const signInSideTheme = createTheme(getSignInSideTheme(mode));
+  const navigate = useNavigate(); // 初始化导航钩子
 
   return (
     <ThemeProvider theme={signInSideTheme}>
@@ -72,10 +74,10 @@ export default function TemplateFrame({
               aria-label="Back to templates"
               startIcon={<ArrowBackRoundedIcon />}
               component="a"
-              href="/material-ui/getting-started/templates/"
+              onClick={() => { navigate("/root/about");}}
               sx={{ display: { xs: 'none', sm: 'flex' } }}
             >
-              Back to templates
+              返 回
             </Button>
             <IconButton
               size="small"
