@@ -8,8 +8,9 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { fetchCampaigns } from '../../../actions/campaign';
+import { fetchCampaigns, fetchFundraisingCampaigns } from '../../../actions/campaign';
 import { CampaignType } from '../../../types/interfaces';
+import { useNavigate } from 'react-router-dom';
 
 const StyledTypography = styled(Typography)({
   display: '-webkit-box',
@@ -99,6 +100,7 @@ export default function Latest() {
   const [focusedCardIndex, setFocusedCardIndex] = React.useState<number | null>(
     null,
   );
+  const navigate = useNavigate(); // 初始化导航钩子
 
   const [campaigns, setCampaigns] = useState<CampaignType[]>([{// 用于存储筛选后的 campaign
     id: 0,
@@ -119,9 +121,10 @@ export default function Latest() {
   // 原始 campaigns 数据状态
   const [allCampaigns, setAllCampaigns] = useState<CampaignType[]>([]); // 用于存储所有的 campaign
 
-  // 模拟 fetchCampaigns 的数据获取
   useEffect(() => {
-    fetchCampaigns((fetchedCampaigns: CampaignType[]) => {
+    try{
+          fetchFundraisingCampaigns((fetchedCampaigns: CampaignType[]) => {
+          // fetchCampaigns((fetchedCampaigns: CampaignType[]) => {
       // 给每个 campaign 添加一个默认 tag
       const taggedCampaigns = fetchedCampaigns.map((campaign) => ({
         ...campaign,
@@ -130,7 +133,12 @@ export default function Latest() {
       // 设置获取到的所有 campaign 和默认显示的 campaign
       setAllCampaigns(taggedCampaigns);
       setCampaigns(taggedCampaigns);
-    });
+      console.log(taggedCampaigns);
+      
+      });
+    }catch (err: any) {
+      console.error("查看错误", err);
+    }
   }, []);
 
   const handleFocus = (index: number) => {
@@ -147,8 +155,9 @@ export default function Latest() {
         Latest
       </Typography>
       <Grid container spacing={8} columns={12} sx={{ my: 4 }}>
-        {campaigns.map((campaign, index) => (
-          <Grid key={index} size={{ xs: 12, sm: 6 }}>
+        {campaigns.length < 1 && "There have not been any crowdfunding projects in this category"}
+        {campaigns.length >= 1 && campaigns.map((campaign, index) => (
+          <Grid key={index} size={{ xs: 12, sm: 6 }} onClick={() => {navigate("/root/details/" + campaigns[focusedCardIndex!].id)}}>
             <Box
               sx={{
                 display: 'flex',

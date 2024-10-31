@@ -1,80 +1,74 @@
-import { Button, Card, CardContent, CardMedia, Chip, Divider, LinearProgress, Typography } from '@mui/material';
+import { Button, Card, CardContent, CardMedia, Chip, Divider, LinearProgress, TextField, Typography } from '@mui/material';
 import Box from "@mui/material/Box";
 import Paper from '@mui/material/Paper';
 import React, { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
-import { fetchFundraisingCampaigns } from "../../actions/campaign";
+import { donateToCampaign, fetchCampaignById, fetchFundraisingCampaigns } from "../../actions/campaign";
 import { CampaignType } from "../../types/interfaces";
 import { GanacheTestChainId, GanacheTestChainName, GanacheTestChainRpcUrl } from '../../utils/ganache';
 
 export default function MainContent() {
   const [account, setAccount] = React.useState<string | null>(null);
+  const [donate, setDonate] = React.useState<string | null>("");
   const [isConnected, setIsConnected] = React.useState<boolean>(false);
   const onClickDonateFunding = async () => {
     if(!account)
     {
       alert('请先连接您的Metamask账户');
-          // @ts-ignore
-    const { ethereum } = window;
-    if (!Boolean(ethereum && ethereum.isMetaMask)) {
-      alert('MetaMask is not installed!');
-      return
-    }
-    try {
-      // 如果当前小狐狸不在本地链上，切换Metamask到本地测试链
-      if (ethereum.chainId !== GanacheTestChainId) {
-        const chain = {
-          chainId: GanacheTestChainId, // Chain-ID
-          chainName: GanacheTestChainName, // Chain-Name
-          rpcUrls: [GanacheTestChainRpcUrl], // RPC-URL
-        };
+            // @ts-ignore
+      const { ethereum } = window;
+      if (!Boolean(ethereum && ethereum.isMetaMask)) {
+        alert('MetaMask is not installed!');
+        return
+      }
+      try {
+        // 如果当前小狐狸不在本地链上，切换Metamask到本地测试链
+        if (ethereum.chainId !== GanacheTestChainId) {
+          const chain = {
+            chainId: GanacheTestChainId, // Chain-ID
+            chainName: GanacheTestChainName, // Chain-Name
+            rpcUrls: [GanacheTestChainRpcUrl], // RPC-URL
+          };
 
-        try {
-          // 尝试切换到本地网络
-          await ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: chain.chainId }] })
-        } catch (switchError: any) {
-          // 如果本地网络没有添加到Metamask中，添加该网络
-          if (switchError.code === 4902) {
-            await ethereum.request({
-              method: 'wallet_addEthereumChain', params: [chain]
-            });
+          try {
+            // 尝试切换到本地网络
+            await ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: chain.chainId }] })
+          } catch (switchError: any) {
+            // 如果本地网络没有添加到Metamask中，添加该网络
+            if (switchError.code === 4902) {
+              await ethereum.request({
+                method: 'wallet_addEthereumChain', params: [chain]
+              });
+            }
           }
         }
+        // 小狐狸成功切换网络了，接下来让小狐狸请求用户的授权
+        await ethereum.request({ method: 'eth_requestAccounts' });
+        // 获取小狐狸拿到的授权用户列表
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+        // 如果用户存在，展示其account，否则显示错误信息
+        console.log(accounts[0]);
+        if (accounts && accounts.length) {
+          localStorage.setItem('account', accounts[0]);
+          setIsConnected(true);
+        }
+        setAccount(accounts[0] || 'Not able to get accounts');
+      } catch (error: any) {
+        alert(error.message)
       }
-      // 小狐狸成功切换网络了，接下来让小狐狸请求用户的授权
-      await ethereum.request({ method: 'eth_requestAccounts' });
-      // 获取小狐狸拿到的授权用户列表
-      const accounts = await ethereum.request({ method: 'eth_accounts' });
-      // 如果用户存在，展示其account，否则显示错误信息
-      console.log(accounts[0]);
-      if (accounts && accounts.length) {
-        localStorage.setItem('account', accounts[0]);
-        setIsConnected(true);
-      }
-      setAccount(accounts[0] || 'Not able to get accounts');
-    } catch (error: any) {
-      alert(error.message)
+    }
+    else
+    {
+      if(donate)
+      await donateToCampaign(campaign.id,parseFloat(donate),account)
+    else
+    {
+      alert("Please enter the amount of Ethereum you would like to contribute!")
     }
     }
   }
-  const [campaigns, setCampaigns] = useState<CampaignType[]>([{// 用于存储筛选后的 campaign
-    id: 0,
-    title: "治疗失眠医药公司天使轮",
-    description: "帮陈其鹏买避孕套",
-    details: "默认",
-    target: 1000000,
-    current: 100000,
-    createdAt: new Date(),
-    deadline: new Date(),
-    beneficiary: "文豪",
-    launcher: "陈其鹏",
-    status: "默认",
-    tag: "Donation-based Crowdfunding",
-    field: "医药医疗",
-    stage: "某医药公司天使轮"
-  }]); // Campaign[] is an array of Campaign objects
 
-  const [cur_campaign, setCur_campaign] = useState<CampaignType>({// 用于存储筛选后的 campaign
+  const [campaign, setCampaign] = useState<CampaignType>({// 用于存储筛选后的 campaign
     id: 0,
     title: "治疗失眠医药公司天使轮",
     description: "帮陈其鹏买避孕套",
@@ -92,36 +86,26 @@ export default function MainContent() {
   }); // Campaign[] is an array of Campaign objects
 
 
-  useEffect(() => {
-    try{
-          fetchFundraisingCampaigns((fetchedCampaigns: CampaignType[]) => {
-      // 给每个 campaign 添加一个默认 tag
-      const taggedCampaigns = fetchedCampaigns.map((campaign) => ({
-        ...campaign,
-        tag: "Donation-based Crowdfunding",
-      }));
-      // 设置获取到的所有 campaign 和默认显示的 campaign
-      setCampaigns(taggedCampaigns);
-      });
-    }catch (err: any) {
-      console.error("查看错误", err);
-    }
-  }, []);
-
   let { id } = useParams(); // 获取路径中的 id 参数
   if(!id)
   {
     id = "1";
   }
   const campaign_id = parseInt(id!)
-  console.log("campaign_id",campaign_id);
-  console.log(campaigns);
-  console.log(campaigns[campaign_id - 1]);
+
+  useEffect(() => {
+    try{
+          fetchCampaignById(campaign_id,setCampaign)
+    }catch (err: any) {
+      console.error("查看错误", err);
+    }
+  }, []);
+
   
 
   return (
     <Box sx={{ width: '100%', mx: 'auto', mt: 10 }}>
-      <Card sx={{ display: 'flex', width: '100%' }}>
+      {campaign ? (<Card sx={{ display: 'flex', width: '100%' }}>
         <CardMedia
           component="img"
           sx={{ width: '55%', objectFit: 'cover' }}
@@ -132,60 +116,84 @@ export default function MainContent() {
         {/* Right Content Section */}
         <CardContent sx={{ width: '45%' }}>
           <Typography variant="h4" sx={{ color: 'green', fontWeight: 'bold' }}>
-            {campaigns[campaign_id - 1].field}          <Chip label={campaigns[campaign_id - 1].tag} sx={{ fontWeight: 'bold' }} />
+            {campaign.field}          <Chip label={campaign.tag} sx={{ fontWeight: 'bold' }} />
           </Typography>
           <Typography variant="h3" sx={{ fontWeight: 'bold', mt: 1 }}>
-            {campaigns[campaign_id - 1].title}
+            {campaign.title}
           </Typography>
           <Typography variant="subtitle1" sx={{ mt: 1, color: 'gray' }}>
-            {campaigns[campaign_id - 1].stage}
+            {campaign.stage}
           </Typography>
 
           <Typography variant="subtitle1" sx={{ mt: 2, fontWeight: 'bold' }}>
-            发起者：<Chip label={campaigns[campaign_id - 1].launcher} color="primary" variant="outlined" />
+            发起者：<Chip label={campaign.launcher} color="primary" variant="outlined" />
           </Typography>
           <Typography variant="subtitle1" sx={{ mt: 1, fontWeight: 'bold' }}>
-            最终受益人：<Chip label={campaigns[campaign_id - 1].beneficiary} color="primary" variant="outlined" />
+            最终受益人：<Chip label={campaign.beneficiary} color="primary" variant="outlined" />
           </Typography>
           <Typography variant="subtitle1" sx={{ mt: 1, fontWeight: 'bold' }}>
-            项目概述：{campaigns[campaign_id - 1].description}
+            项目概述：{campaign.description}
           </Typography>
 
           {/* Progress Bar */}
           <Box sx={{ mt: 5 }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              已筹 {campaigns[campaign_id - 1].current} ETH
+              已筹 {campaign.current} ETH
             </Typography>
-            <LinearProgress variant="determinate" value={campaigns[campaign_id - 1].current * 100 / campaigns[campaign_id - 1].target} sx={{ height: 15, mt: 1 }} />
+            <LinearProgress variant="determinate" value={campaign.current * 100 / campaign.target} sx={{ height: 15, mt: 1 }} />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-              <Typography variant="caption">目标金额 {campaigns[campaign_id - 1].target} ETH</Typography>
-              <Typography variant="caption">{campaigns[campaign_id - 1].current * 100 / campaigns[campaign_id - 1].target} %</Typography>
+              <Typography variant="caption">目标金额 {campaign.target} ETH</Typography>
+              <Typography variant="caption">{campaign.current * 100 / campaign.target} %</Typography>
             </Box>
           </Box>
 
           {/* Details */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, mb: 5 }}>
             <Typography variant="body2">0 名支持者</Typography>
-            <Typography variant="body2">{Math.ceil((campaigns[campaign_id - 1].deadline.getTime() - campaigns[campaign_id - 1].createdAt.getTime()) / (1000 * 60 * 60 * 24))} 天剩余</Typography>
+            <Typography variant="body2">{Math.ceil((campaign.deadline.getTime() - campaign.createdAt.getTime()) / (1000 * 60 * 60 * 24))} 天剩余</Typography>
             <Typography variant="body2">0 人看好</Typography>
           </Box>
 
-          {/* Action Button */}
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              {campaigns[campaign_id - 1].target} ETH
-            </Typography>
-            <Button variant="contained" sx={{ mt: 1, width: '100%' }} onClick={onClickDonateFunding}>
-              立即支持
-            </Button>
-          </Box>
+            {/* Action Button */}
+            <Box sx={{ mt: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mr: 2 }}>Donate</Typography>
+                <TextField
+                  helperText="Please enter the amount of Ethereum you would like to contribute"
+                  size="medium"
+                  margin='normal'
+                  value={donate}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setDonate(event.target.value);
+                  }}
+                  slotProps={{
+                    inputLabel: {
+                      shrink: true,
+                    },
+                  }}
+                
+                  label="Price"
+                  variant="standard"
+                />
+                <Typography variant="h6" sx={{ fontWeight: 'bold', ml: 2 }}>ETH Now!</Typography>
+              </Box>
+              
+              <Button variant="contained" sx={{ width: '100%' }} onClick={onClickDonateFunding}>
+                立即支持
+              </Button>
+            </Box>
+
 
           {/* Project Date Info */}
           <Typography variant="caption" sx={{ mt: 1, color: 'gray' }}>
-            此项目自 {campaigns[campaign_id - 1].createdAt.toISOString().split("T")[0]} 开始，需在 {campaigns[campaign_id - 1].deadline.toISOString().split("T")[0]} 前达到 {campaigns[campaign_id - 1].target} ETH 的目标才可成功
+            此项目自 {campaign.createdAt.toISOString().split("T")[0]} 开始，需在 {campaign.deadline.toISOString().split("T")[0]} 前达到 {campaign.target} ETH 的目标才可成功
           </Typography>
         </CardContent>
-      </Card>
+      </Card>) : (
+      <Typography variant="h6" align="center" sx={{ mt: 5 }}>
+        Loading campaign details...
+      </Typography>
+      )}
 
       {/* Divider */}
       <Divider sx={{ my: 4, borderStyle: 'dashed' }} />
