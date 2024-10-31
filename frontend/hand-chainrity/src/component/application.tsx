@@ -2,9 +2,26 @@ import { CssBaseline, Typography, Paper, TextField, Button, List, ListItem, List
 import { Container, Box } from "@mui/system";
 import { useState } from "react";
 import { ApplicationProps } from "../types/interfaces";
+import axios, { AxiosError } from "axios";
+
+const axiosInstance = axios.create({
+    baseURL: 'http://localhost:8888', // 设置基础 URL
+    timeout: 10000,                    // 可选：请求超时时间
+  });
 
 export default function Application() {
-    const [formData, setFormData] = useState<ApplicationProps>({
+    // const [formData, setFormData] = useState<ApplicationProps>({
+    //     id: 0,
+    //     address: "",
+    //     name: "",
+    //     idCard: "",
+    //     phone: "",
+    //     description: "",
+    //     details: "",
+    //     createdAt: new Date(),
+    //     status: ""
+    // });
+    const [application, setApplication] = useState<ApplicationProps>({
         id: 0,
         address: "",
         name: "",
@@ -14,15 +31,45 @@ export default function Application() {
         details: "",
         createdAt: new Date(),
         status: ""
-    });
-    const [applications, setApplications] = useState<ApplicationProps[]>([]);
+    }
+
+    );
 
     const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
-    };
-    
-    const getCampaigns = async () => {
+        try {
+            const config = {
+              headers: {
+                'Content-Type': 'application/json', // 修改为 JSON 格式
+                'authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userInfo') || '{}').token
+              },
+            };
         
+            // 直接创建 JSON 对象
+            const requestData = {
+                name: application.name,
+                address: application.address,
+                idCard: application.idCard,
+                phone: application.phone,
+                description: application.description,
+                details: application.details,
+                createdAt: new Date(),
+            };
+        
+            const res = await axiosInstance.post('/api/application', requestData, config);
+            console.log(res.data); // 确保只打印数据部分
+            
+        
+          } catch (error: unknown) {
+            const err = error as AxiosError<{ message: string }>;
+            const errorMessage: string =
+              err.response && err.response.data.message
+                ? err.response.data.message
+                : err.message;
+        
+            // 处理错误消息
+            console.error(errorMessage);
+          }
     };
 
 
@@ -30,9 +77,9 @@ export default function Application() {
         // console.log("当前的change:",e);
         const { name, value } = e.target;
         // console.log("name和value:",name,value);
-        console.log("formData:",formData);
+        console.log("application:",application);
     
-        setFormData((prevData) => ({      
+        setApplication((prevData) => ({      
           ...prevData,
           [name]: name === "deadline" ? new Date(value) : value,
         }));
@@ -66,7 +113,7 @@ export default function Application() {
                         label="真实姓名"
                         name="name"
                         variant="standard"
-                        value={formData.name}
+                        value={application.name}
                         onChange={handleChange}
                         fullWidth
                       />
@@ -74,7 +121,7 @@ export default function Application() {
                         label="身份证"
                         name="idCard"
                         variant="standard"
-                        value={formData.idCard}
+                        value={application.idCard}
                         onChange={handleChange}
                         fullWidth
                       />
@@ -82,7 +129,7 @@ export default function Application() {
                         label="电话号码"
                         name="phone"
                         variant="standard"
-                        value={formData.phone}
+                        value={application.phone}
                         onChange={handleChange}
                         fullWidth
                       />
@@ -90,7 +137,7 @@ export default function Application() {
                         label="描述"
                         name="description"
                         variant="standard"
-                        value={formData.description}
+                        value={application.description}
                         onChange={handleChange}
                         fullWidth
                       />
@@ -98,7 +145,7 @@ export default function Application() {
                         label="详情"
                         name="details"
                         variant="standard"
-                        value={formData.details}
+                        value={application.details}
                         onChange={handleChange}
                         fullWidth
                       />
@@ -112,30 +159,7 @@ export default function Application() {
           
                 
           
-                <List sx={{ width: "100%", maxWidth: 600 }}>
-                  {applications.map((application) => (
-                    <Paper key={application.id} sx={{ mb: 2, p: 2 }}>
-                      <ListItem>
-                        <ListItemText
-                          primary={`ID: ${application.id} - ${application.title}`}
-                          secondary={
-                            <>
-                              <p>Description: {application.description}</p>
-                              <p>Details: {application.details}</p>
-                              <p>Target: {application.target} ETH</p>
-                              <p>Current: {application.current} ETH</p>
-                              <p>CreatedAt: {application.createdAt.toISOString().split("T")[0]}</p>
-                              <p>Deadline: {application.deadline.toISOString().split("T")[0]}</p>
-                              <p>Beneficiary: {application.beneficiary}</p>
-                              <p>Launcher: {application.launcher}</p>
-                              <p>Status: {application.status}</p>
-                            </>
-                          }
-                        />
-                      </ListItem>
-                    </Paper>
-                  ))}
-                </List>
+                
               </Box>
               </Container>
               </div>

@@ -51,7 +51,8 @@ def get_user_by_address(user_address: str, db: Session):
             "name": user.name,
             "address": user.address,
             "email": user.email,
-            "phone": user.phone
+            "phone": user.phone,
+            "role": user.role,
         }
 
 def admin_get_user_by_address(user_address: str, db: Session,current_user: User = Depends(get_current_user)):
@@ -89,7 +90,9 @@ def register_user(user: UserCreate, db: Session):
             "username": new_user.username,
             "address": new_user.address,
             "email": new_user.email,
-            "token": token
+            "token": token,
+            "role": user.role,
+
         }
     except Exception as e:
         return {"error": str(e)}
