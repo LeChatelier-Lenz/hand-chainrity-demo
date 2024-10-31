@@ -19,6 +19,10 @@ def add_application(application: ApplicationCreate, db: Session = Depends(get_db
 def add_application(application_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return applicationController.approve_application(application_id, db, current_user)
 
+@router.get("/api/application/reject/{application_id}")
+def add_application(application_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return applicationController.reject_application(application_id, db, current_user)
+
 
 @router.get("/api/application/list/{page_num}")
 def add_application(page_num:int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):

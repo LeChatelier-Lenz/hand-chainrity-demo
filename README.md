@@ -72,6 +72,20 @@ npm start
 
 3. **访问应用**：在浏览器中打开 `http://localhost:3000`
 
+### 后端部分
+1. **进入后端文件夹并安装依赖**
+    ```bash
+    cd backend
+    pip install -r requirement.txt
+    ```
+2. 运行`server.py`:
+
+    在确保依赖项安装完成后，可以通过运行以下命令启动后端服务器：
+    ```bash
+    python server.py
+    ```
+
+
 ## 合约接口
 
 - 用户管理合约和手链筹合约的接口文档详见 `contracts` 文件夹中的README.md
@@ -84,7 +98,4 @@ npm start
 
 本项目采用MIT许可证，详细信息请参见 LICENSE 文件。
 
-### 说明
 
-- 该README简要介绍了项目、结构、安装与使用步骤以及合约接口文档的位置。
-- 可根据需要调整GitHub链接、许可证信息等内容。
