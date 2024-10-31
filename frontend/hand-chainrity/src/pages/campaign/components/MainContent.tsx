@@ -428,11 +428,11 @@ export default function MainContent() {
             <Author authors={[{ name: campaigns[2].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[2].deadline }]} />
           </SyledCard>
         </Grid>}
-        {campaigns.length >= 5 && <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Box
             sx={{ display: 'flex', flexDirection: 'column', gap: 2, height: '100%' }}
           >
-            <SyledCard
+            {campaigns.length >= 4 &&<SyledCard
               variant="outlined"
               onFocus={() => handleFocus(3)}
               onBlur={handleBlur}
@@ -466,8 +466,8 @@ export default function MainContent() {
                 </div>
               </SyledCardContent>
               <Author authors={[{ name: campaigns[3].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[3].deadline }]} />
-            </SyledCard>
-            <SyledCard
+            </SyledCard>}
+            {campaigns.length >= 5 &&<SyledCard
               variant="outlined"
               onFocus={() => handleFocus(4)}
               onBlur={handleBlur}
@@ -501,9 +501,9 @@ export default function MainContent() {
                 </div>
               </SyledCardContent>
               <Author authors={[{ name: campaigns[4].launcher, avatar: '/static/images/avatar/1.jpg', date: campaigns[4].deadline }]} />
-            </SyledCard>
+            </SyledCard>}
           </Box>
-        </Grid>}
+        </Grid>
         {campaigns.length >= 6 && <Grid size={{ xs: 12, md: 4 }}>
           <SyledCard
             variant="outlined"
