@@ -210,7 +210,6 @@ export default function Launch() {
         </Container>
           
       </Container>
-      <Footer />
     </>
   );
 }
