@@ -97,7 +97,20 @@ export default function Launch() {
 
       await HandChainrityContract.methods
         .createCampaign(rootFormData.description, targetValue, ddlTimestamp, rootFormData.beneficiary)
-        .send({ from: account });
+        .send({ from: account })
+        .then((receipt) => {
+          // 这里可以获取收据中的信息，例如：
+          const events = receipt.events;
+          console.log('Events:', events);
+          console.log('Block number:', receipt.blockNumber);
+          if(events){
+            const campaignId = Number(events.CampaignCreated.returnValues[0]);
+            console.log('Campaign ID:', campaignId);
+          }
+        })
+        .catch((error) => {
+          console.error('Error sending transaction:', error);
+        });
         try{
           const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
           const config = {
