@@ -210,7 +210,7 @@ export default function AppAppBar() {
           }
             {isLoggedIn ? (
               <>
-                <img src={userImage} alt="描述文字" style={{ width: '80%', height: 'auto' }} />
+                <img src={userImage} alt="描述文字" style={{ width: '30px', height: 'auto' }} />
                 <Button onClick={handleMenuOpen} size="small" >
                   
                   <Typography variant="body1" sx={{ color: 'darkblue' }}>

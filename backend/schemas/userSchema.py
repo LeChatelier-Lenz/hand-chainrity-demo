@@ -18,8 +18,6 @@ class UserUpdate(UserBase):
 
 class User(UserBase):
     id: int
-    followers: List[str] = Field(default_factory=list)
-    followings: List[str] = Field(default_factory=list)
     reset_password_token: Optional[str]
     reset_password_expire: Optional[str]
     created_at: str
