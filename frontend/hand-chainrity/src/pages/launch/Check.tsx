@@ -28,7 +28,7 @@ export default function Check({beneficiary,setState}:{beneficiary:string,setStat
           },
         };
         const res = await axiosInstance.get(
-          '/api/users/'+beneficiary,
+          '/api/users/check/'+beneficiary,
           config
         );
         if (res.data === 'beneficiary') {

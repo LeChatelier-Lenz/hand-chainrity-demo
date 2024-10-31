@@ -12,8 +12,10 @@ class User(Base):
 
     address = Column(String(42), primary_key=True, default='0x0000000000000000000000000000000000000000')
     name = Column(String(100), nullable=False)
+    username = Column(String(100), nullable=False)
     image = Column(String(255), default='/images/airpods.jpg')
     email = Column(String(100), nullable=False, unique=True)
+    phone = Column(String(11), nullable=True)
     password = Column(String(255), nullable=False)
     location = Column(String(100), default='火星')
     gender = Column(String(10), default='保密')
@@ -27,10 +29,12 @@ class User(Base):
     owned_campaigns = relationship("Campaign", back_populates="owner", foreign_keys="[Campaign.owner_address]", cascade="all, delete-orphan")
     beneficiary_campaigns = relationship("Campaign", back_populates="beneficiary", foreign_keys="[Campaign.beneficiary_address]", cascade="all, delete-orphan")
     applications = relationship("Application", back_populates="user",cascade="all, delete-orphan")
-    def __init__(self, address, email, password , name= '', image='', location='火星', gender='保密', role='user'):
+    def __init__(self, address, username, email, password ,phone='', name= '', image='', location='火星', gender='保密', role='user'):
         self.address = address
+        self.username = username
         self.name = name
         self.email = email
+        self.phone = phone
         self.set_password(password)
         self.image = image
         self.location = location
@@ -56,7 +60,7 @@ class Campaign(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String(100), nullable=False)
-    description = Column(Text, nullable=False)
+    details = Column(Text, nullable=False)
     owner_address = Column(String(42), ForeignKey('users.address'))  # 外键关联 User 表
     beneficiary_address = Column(String(42), ForeignKey('users.address'))
     created_at = Column(DateTime, default=datetime.utcnow)
