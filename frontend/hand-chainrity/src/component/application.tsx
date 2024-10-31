@@ -59,7 +59,6 @@ export default function Application() {
             const res = await axiosInstance.post('/api/application', requestData, config);
             console.log(res.data); // 确保只打印数据部分
             
-<<<<<<< HEAD
             // 清空表单数据
             setApplication({
                 id: 0,
@@ -72,8 +71,6 @@ export default function Application() {
                 createdAt: new Date(),
                 status: ""
             });
-=======
->>>>>>> bd43373f4fd8e9d940cecbc905448c3069e8d71a
         
           } catch (error: unknown) {
             const err = error as AxiosError<{ message: string }>;
