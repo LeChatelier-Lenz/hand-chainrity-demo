@@ -28,7 +28,7 @@ def auth_user(db: Session, form_data: OAuth2PasswordRequestForm):
 # 获取当前登录用户的个人资料
 def get_user_profile(db: Session, current_user: User = Depends(get_current_user)):
     return {
-        "id": current_user.id,
+        "address": current_user.address,
         "name": current_user.name,
         "email": current_user.email,
         "role": current_user.role,
@@ -40,7 +40,7 @@ def get_user_by_address(user_address: str, db: Session):
     user = db.query(User).filter(User.address == user_address).first()
     if not user:
         raise HTTPException(status_code=404, detail="用户不存在")
-    return user
+    return user.role
 
 # 更新用户个人资料
 def update_user_profile(user_update: UserUpdate, db: Session, current_user: User = Depends(get_current_user)):

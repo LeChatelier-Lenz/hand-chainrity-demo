@@ -2,20 +2,26 @@ import { Checkbox, FormControlLabel, TextField, Grid,Typography, InputAdornment 
 import React, { useState } from 'react';
 import { CampaignType } from '../../types/interfaces';
 
-export default function FillSheet({onHandleAddress,rootFormData}:{onHandleAddress:any,rootFormData:CampaignType}) { 
+export default function FillSheet({onHandleAddress,rootFormData,setState}:{onHandleAddress:any,rootFormData:CampaignType,setState:any}) { 
   const [formData, setFormData] = useState(rootFormData);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // console.log("当前的change:",e);
     const { name, value } = e.target;
-    console.log("name和value:",name,value);
+    // console.log("name和value:",name,value);
+    // console.log("formData:",formData);
+    if(name === "beneficiary"){
+      setState(false);
+    }
 
-    const new_formData = {      ...formData,
-      [name]: name === "deadline" ? new Date(value) : value,}
-    console.log("new_formData:",formData);
-
-    setFormData(new_formData);
-    onHandleAddress(formData);
+    setFormData((prevData) => {   
+      const updatedData = {   
+      ...prevData,
+      [name]: name === "deadline" ? new Date(value) : value,
+      };
+      onHandleAddress(updatedData);
+      return updatedData;
+    });
   };
 
 

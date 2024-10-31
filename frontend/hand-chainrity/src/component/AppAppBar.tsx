@@ -176,7 +176,7 @@ export default function AppAppBar() {
               <Button variant="text" color="info" size="small" onClick={() => { navigate("/root/launch") }}>
                 发起筹款
               </Button>
-              <Button variant="text" color="info" size="small" onClick={() => { navigate("/root/campaign") }}>
+              <Button variant="text" color="info" size="small" onClick={() => { navigate("/root/about") }}>
                 关于我们
               </Button>
               {/* <Button variant="text" color="info" size="small">
@@ -210,7 +210,7 @@ export default function AppAppBar() {
           }
             {isLoggedIn ? (
               <>
-                <img src={userImage} alt="描述文字" style={{ width: '80%', height: 'auto' }} />
+                <img src={userImage} alt="描述文字" style={{ width: '30px', height: 'auto' }} />
                 <Button onClick={handleMenuOpen} size="small" >
                   
                   <Typography variant="body1" sx={{ color: 'darkblue' }}>

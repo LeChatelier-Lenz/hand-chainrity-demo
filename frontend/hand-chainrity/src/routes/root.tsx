@@ -5,6 +5,7 @@ import { web3 } from "../utils/contracts";
 import { createTheme, ThemeProvider, PaletteMode } from '@mui/material/styles';
 import getBlogTheme from '../theme/getBlogTheme';
 import React from "react";
+import Footer from "../pages/campaign/components/Footer";
 
 
 
@@ -23,6 +24,7 @@ export default function Root(){
             <div>
                 <Outlet context={{account:account}} />
             </div>
+            <Footer />
         </ThemeProvider>
     )
 }
