@@ -59,6 +59,18 @@ export default function Application() {
             const res = await axiosInstance.post('/api/application', requestData, config);
             console.log(res.data); // 确保只打印数据部分
             
+            // 清空表单数据
+            setApplication({
+                id: 0,
+                address: "",
+                name: "",
+                idCard: "",
+                phone: "",
+                description: "",
+                details: "",
+                createdAt: new Date(),
+                status: ""
+            });
         
           } catch (error: unknown) {
             const err = error as AxiosError<{ message: string }>;
