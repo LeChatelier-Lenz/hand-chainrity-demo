@@ -79,8 +79,8 @@ export default function SignInCard() {
       //dispatch({ type: "USER_LOGIN_SUCCESS", payload: data });
       localStorage.setItem('userInfo', JSON.stringify(res.data));
       console.log("res:", res.data);
-      console.log("res.data:", JSON.parse(localStorage.getItem('userInfo') || '{}').name );
-      if (JSON.parse(localStorage.getItem('userInfo') || '{}').name){
+      console.log("res.data:", JSON.parse(localStorage.getItem('userInfo') || '{}').username );
+      if (JSON.parse(localStorage.getItem('userInfo') || '{}').username){
         navigate('/root/campaign'); 
       }
       else {

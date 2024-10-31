@@ -20,6 +20,7 @@ class User(UserBase):
     id: int
     name: str
     phone: str
+    idCard: str
     reset_password_token: Optional[str]
     reset_password_expire: Optional[str]
     created_at: str
