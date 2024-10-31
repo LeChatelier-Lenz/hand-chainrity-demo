@@ -23,6 +23,7 @@ import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
 import TemplateFrame from './TemplateFrame';
 import axios , { AxiosError, AxiosResponse }  from 'axios';
 import { useNavigate } from 'react-router-dom';
+import HandChainrityIcon from '../../component/HandChainrityIcon';
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:8888', // 设置基础 URL
@@ -229,7 +230,7 @@ export default function SignUp() {
             }}
           >
             <Card variant="outlined">
-              <SitemarkIcon />
+              <HandChainrityIcon />
               <Typography
                 component="h1"
                 variant="h4"
@@ -319,7 +320,7 @@ export default function SignUp() {
                 </FormControl>
                 <FormControlLabel
                   control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive updates via email."
+                  label="我同意 HandChainrity 的服务条款和隐私政策"
                 />
                 <Button
                   type="submit"
@@ -327,17 +328,17 @@ export default function SignUp() {
                   variant="contained"
                   onClick={validateInputs}
                 >
-                  Sign up
+                  Sign up | 注册
                 </Button>
                 <Typography sx={{ textAlign: 'center' }}>
-                  Already have an account?{' '}
+                  已经拥有HandCharity用户?{' '}
                   <span>
                     <Link
                       href="signIn"
                       variant="body2"
                       sx={{ alignSelf: 'center' }}
                     >
-                      Sign in
+                      Sign in | 登录
                     </Link>
                   </span>
                 </Typography>

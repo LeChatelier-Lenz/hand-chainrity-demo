@@ -25,13 +25,12 @@ export default function ForgotPassword({ open, handleClose }: ForgotPasswordProp
         },
       }}
     >
-      <DialogTitle>Reset password</DialogTitle>
+      <DialogTitle>重置密码</DialogTitle>
       <DialogContent
         sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}
       >
         <DialogContentText>
-          Enter your account&apos;s email address, and we&apos;ll send you a link to
-          reset your password.
+          输入您的电子邮件地址，我们将向您发送重置密码的链接。
         </DialogContentText>
         <OutlinedInput
           autoFocus
@@ -46,9 +45,9 @@ export default function ForgotPassword({ open, handleClose }: ForgotPasswordProp
         />
       </DialogContent>
       <DialogActions sx={{ pb: 3, px: 3 }}>
-        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={handleClose}>取消</Button>
         <Button variant="contained" type="submit">
-          Continue
+          发送邮件
         </Button>
       </DialogActions>
     </Dialog>

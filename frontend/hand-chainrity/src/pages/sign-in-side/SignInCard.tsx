@@ -139,9 +139,10 @@ export default function SignInCard() {
       <Typography
         component="h1"
         variant="h4"
-        sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+        sx={{ width: '100%' }}
       >
-        Sign in
+        Sign in to <b style={{color:"#ff914d"}}>HandChainrity</b>
+        <br /> | 登录手链筹
       </Typography>
       <Box
         component="form"
@@ -150,7 +151,7 @@ export default function SignInCard() {
         sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}
       >
         <FormControl>
-          <FormLabel htmlFor="email">Email</FormLabel>
+          <FormLabel htmlFor="email">邮箱</FormLabel>
           <TextField
             error={emailError}
             helperText={emailErrorMessage}
@@ -169,14 +170,14 @@ export default function SignInCard() {
         </FormControl>
         <FormControl>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <FormLabel htmlFor="password">Password</FormLabel>
+            <FormLabel htmlFor="password">密码</FormLabel>
             <Link
               component="button"
               onClick={handleClickOpen}
               variant="body2"
               sx={{ alignSelf: 'baseline' }}
             >
-              Forgot your password?
+              忘记密码？
             </Link>
           </Box>
           <TextField
@@ -196,26 +197,26 @@ export default function SignInCard() {
         </FormControl>
         <FormControlLabel
           control={<Checkbox value="remember" color="primary" />}
-          label="Remember me"
+          label="记住密码"
         />
         <ForgotPassword open={open} handleClose={handleClose} />
         <Button type="submit" fullWidth variant="contained" onClick={validateInputs}>
-          Sign in
+          Sign in | 登录
         </Button>
         <Typography sx={{ textAlign: 'center' }}>
-          Don&apos;t have an account?{' '}
+          还没有账户?{' '}
           <span>
             <Link
               href="signUp"
               variant="body2"
               sx={{ alignSelf: 'center' }}
             >
-              Sign up
+              Sign up | 注册
             </Link>
           </span>
         </Typography>
       </Box>
-      <Divider>or</Divider>
+      <Divider>或者选择以下登陆方式</Divider>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Button
           type="submit"
@@ -224,7 +225,7 @@ export default function SignInCard() {
           onClick={() => alert('Sign in with Google')}
           startIcon={<GoogleIcon />}
         >
-          Sign in with Google
+          Sign in with Google | 使用 Google 登录
         </Button>
         <Button
           type="submit"
@@ -233,7 +234,7 @@ export default function SignInCard() {
           onClick={() => alert('Sign in with Facebook')}
           startIcon={<FacebookIcon />}
         >
-          Sign in with Facebook
+          Sign in with Facebook | 使用 Facebook 登录
         </Button>
       </Box>
     </Card>

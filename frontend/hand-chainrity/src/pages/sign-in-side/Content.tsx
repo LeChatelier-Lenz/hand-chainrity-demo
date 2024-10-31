@@ -7,33 +7,34 @@ import AutoFixHighRoundedIcon from '@mui/icons-material/AutoFixHighRounded';
 import ConstructionRoundedIcon from '@mui/icons-material/ConstructionRounded';
 import SettingsSuggestRoundedIcon from '@mui/icons-material/SettingsSuggestRounded';
 import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
+import { HandChainrityIcon } from './CustomIcons';
 
-import { SitemarkIcon } from './CustomIcons';
+
 
 const items = [
   {
     icon: <SettingsSuggestRoundedIcon sx={{ color: 'text.secondary' }} />,
-    title: 'Adaptable performance',
+    title: "发起善举",
     description:
-      'Our product effortlessly adjusts to your needs, boosting efficiency and simplifying your tasks.',
-  },
+      "通过我们的平台，您可以发起您的善举项目，让更多人看到。",
+    },
   {
     icon: <ConstructionRoundedIcon sx={{ color: 'text.secondary' }} />,
-    title: 'Built to last',
+    title: '安全可靠',
     description:
-      'Experience unmatched durability that goes above and beyond with lasting investment.',
+      '我们的平台采用最新的技术，确保您的信息安全。',
   },
   {
     icon: <ThumbUpAltRoundedIcon sx={{ color: 'text.secondary' }} />,
-    title: 'Great user experience',
+    title: '用户体验',
     description:
-      'Integrate our product into your routine with an intuitive and easy-to-use interface.',
+      '我们的平台提供良好用户体验，让您的善举之旅更加愉快。',
   },
   {
     icon: <AutoFixHighRoundedIcon sx={{ color: 'text.secondary' }} />,
-    title: 'Innovative functionality',
+    title: '持续更新',
     description:
-      'Stay ahead with features that set new standards, addressing your evolving needs better than the rest.',
+      '我们的团队会持续更新平台，为您提供更好的服务。',
   },
 ];
 
@@ -43,7 +44,7 @@ export default function Content() {
       sx={{ flexDirection: 'column', alignSelf: 'center', gap: 4, maxWidth: 450 }}
     >
       <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-        <SitemarkIcon />
+        <HandChainrityIcon />
       </Box>
       {items.map((item, index) => (
         <Stack key={index} direction="row" sx={{ gap: 2 }}>
