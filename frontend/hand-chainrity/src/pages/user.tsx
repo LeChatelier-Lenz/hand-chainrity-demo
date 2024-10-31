@@ -184,10 +184,10 @@ export default function User() {
     
       <div className="user-info">
       <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-        <AppAppBar />
+        
         <h1>User Profile</h1>
         <p><strong>区块链地址:</strong> {userInfo.address}</p>
-        <p><strong>姓名:</strong> {userInfo.name}</p>
+        <p><strong>姓名:</strong> {userInfo.username}</p>
         <p><strong>邮箱:</strong> {userInfo.email}</p>
         <Divider />
         <nav aria-label="secondary mailbox folders">

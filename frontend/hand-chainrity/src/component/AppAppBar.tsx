@@ -214,7 +214,7 @@ export default function AppAppBar() {
                 <Button onClick={handleMenuOpen} size="small" >
                   
                   <Typography variant="body1" >
-                    {userInfo.name || '未填写姓名'}
+                    {userInfo.username || '未填写姓名'}
                   </Typography>
                   
                 </Button>
