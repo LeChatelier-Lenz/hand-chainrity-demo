@@ -213,8 +213,13 @@ export default function AppAppBar() {
                 <img src={userImage} alt="描述文字" style={{ width: '30px', height: 'auto' }} />
                 <Button onClick={handleMenuOpen} size="small" >
                   
+<<<<<<< HEAD
+                  <Typography variant="body1" sx={{ color: 'darkblue' }}>
+                    {userInfo.username || '未填写姓名'}
+=======
                   <Typography variant="body1" >
                     {userInfo.name || '未填写姓名'}
+>>>>>>> bd43373f4fd8e9d940cecbc905448c3069e8d71a
                   </Typography>
                   
                 </Button>

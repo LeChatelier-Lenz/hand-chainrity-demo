@@ -84,7 +84,11 @@ export default function User() {
   const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
 
   const [selectedIndex, setSelectedIndex] = useState("我参加的募捐");
+<<<<<<< HEAD
+  const [btnlist, setBtnlist] = useState(userInfo.role === 'admin' ? ["我参加的募捐", "我发起的募捐", '管理申请'] :(userInfo.role === 'beneficiary' ? ['我参加的募捐', '我发起的募捐']:['我参加的募捐', '我发起的募捐',  "申请成为受益人"]) );
+=======
   const [btnlist, setBtnlist] = useState(userInfo.role === 'admin' ? ["我参加的募捐", "我发起的募捐", '管理申请'] : ['我参加的募捐', '我发起的募捐',  "申请成为受益人"]);
+>>>>>>> bd43373f4fd8e9d940cecbc905448c3069e8d71a
   // if (userInfo.role === 'admin') {
   //   setButlist(['我参加的募捐', '我发起的募捐',  '管理申请']);
   // }
