@@ -22,8 +22,9 @@ import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchFundraisingCampaigns } from '../../../actions/campaign';
+import { fetchCampaigns, fetchFundraisingCampaigns } from '../../../actions/campaign';
 import { CampaignType } from '../../../types/interfaces';
+import { log } from 'console';
 
 
 const SyledCard = styled(Card)(({ theme }) => ({
@@ -164,7 +165,8 @@ export default function MainContent() {
 
   useEffect(() => {
     try{
-          fetchFundraisingCampaigns((fetchedCampaigns: CampaignType[]) => {
+          // fetchFundraisingCampaigns((fetchedCampaigns: CampaignType[]) => {
+          fetchCampaigns((fetchedCampaigns: CampaignType[]) => {
       // 给每个 campaign 添加一个默认 tag
       const taggedCampaigns = fetchedCampaigns.map((campaign) => ({
         ...campaign,
@@ -173,6 +175,8 @@ export default function MainContent() {
       // 设置获取到的所有 campaign 和默认显示的 campaign
       setAllCampaigns(taggedCampaigns);
       setCampaigns(taggedCampaigns);
+      console.log(taggedCampaigns);
+      
       });
     }catch (err: any) {
       console.error("查看错误", err);
