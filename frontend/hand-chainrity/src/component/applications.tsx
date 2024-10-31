@@ -41,9 +41,8 @@ export default function Applications() {
                 },
             };
 
-            await axiosInstance.post(`/api/application/approve/${id}`, {}, config);
-            // 从申请列表中删除已批准的申请
-            setApplications((prevApps) => prevApps.filter(app => app.id !== id));
+            const res = await axiosInstance.get(`/api/application/approve/${id}`, config);
+            
         } catch (error: unknown) {
             const err = error as AxiosError<{ message: string }>;
             const errorMessage: string =
@@ -55,25 +54,9 @@ export default function Applications() {
     };
 
     const handleReject = async (id: number) => {
-        try {
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userInfo') || '{}').token
-                },
-            };
-
-            await axiosInstance.post(`/api/application/reject/${id}`, {}, config);
-            // 从申请列表中删除已拒绝的申请
-            setApplications((prevApps) => prevApps.filter(app => app.id !== id));
-        } catch (error: unknown) {
-            const err = error as AxiosError<{ message: string }>;
-            const errorMessage: string =
-                err.response && err.response.data.message
-                    ? err.response.data.message
-                    : err.message;
-            console.error(errorMessage);
-        }
+        // 处理拒绝申请的逻辑
+        console.log(`Rejected application with ID: ${id}`);
+        // 这里可以添加 API 调用来更新申请状态
     };
 
     useEffect(() => {
