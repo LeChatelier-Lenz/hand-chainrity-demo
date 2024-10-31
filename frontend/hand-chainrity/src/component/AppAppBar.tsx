@@ -118,14 +118,14 @@ export default function AppAppBar() {
 
   const EllipsisMiddleTypography = ({ text="", length = 8 }) => {
     if (text.length <= length * 2) {
-        return <Typography variant="body1">{text}</Typography>;
+        return <Typography variant="body2">{text}</Typography>;
     }
 
     const start = text.slice(0, length);
     const end = text.slice(-length);
     return (
       <Tooltip title={text}>
-        <Typography variant="body1" >
+        <Typography variant="body2" >
             {start}...{end}
         </Typography>
       </Tooltip>
@@ -248,10 +248,10 @@ export default function AppAppBar() {
             )
       : (
               <>
-                <Button color="primary" variant="text" size="small" onClick={handleSignInClick}>
+                <Button color="primary" variant="text"  onClick={handleSignInClick}>
                   登录
                 </Button>
-                <Button color="primary" variant="contained" size="small" onClick={handleSignUpClick}>
+                <Button color="primary" variant="contained" onClick={handleSignUpClick}>
                   注册
                 </Button>
               </>

@@ -225,7 +225,7 @@ export default function SignInCard() {
           onClick={() => alert('Sign in with Google')}
           startIcon={<GoogleIcon />}
         >
-          Sign in with Google | 使用 Google 登录
+          使用 Google 登录
         </Button>
         <Button
           type="submit"
@@ -234,7 +234,7 @@ export default function SignInCard() {
           onClick={() => alert('Sign in with Facebook')}
           startIcon={<FacebookIcon />}
         >
-          Sign in with Facebook | 使用 Facebook 登录
+          使用 Facebook 登录
         </Button>
       </Box>
     </Card>

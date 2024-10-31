@@ -70,14 +70,13 @@ export default function TemplateFrame({
           >
             <Button
               variant="text"
-              size="small"
               aria-label="Back to templates"
               startIcon={<ArrowBackRoundedIcon />}
               component="a"
               onClick={() => { navigate("/root/about");}}
               sx={{ display: { xs: 'none', sm: 'flex' } }}
             >
-              返 回
+              <b>返 回</b>
             </Button>
             <IconButton
               size="small"

@@ -82,13 +82,15 @@ export default function Home() {
           </p>
         </div> */}
         <h1 className='max-w-4xl text-5xl font-bold md:text-6xl lg:text-7xl'>
-          Donate or start your{' '}
-          <span className='text-blue-600'>crowdfunding</span>{' '}
-          in blockofchain.
+          Start with{' '}
+          <span className='text-orange-600'>HandChainrity</span>{' '}
         </h1>
         <p className='mt-5 max-w-prose text-zinc-700 sm:text-lg'>
-          HandChainrity allows you to start crowdfunding and donate to others in the Block Of Chain.
-          Simply fill up your basic info and start your crowdfunding right away.
+          开始尝试 HandChainrity，通过区块链开始众筹和捐赠。<br/>
+        <b style={{color:"#ff914d"}}>HandChainrity</b> allows you to start crowdfunding and donate to others through blockchain.
+          Simply fill up your info and get started in minutes.
+          {/* 翻译成中文 */}
+
         </p>
 
         <Link
@@ -97,7 +99,7 @@ export default function Home() {
           target='_blank'>
           <div className='mx-auto mb-4 flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full border border-gray-200 bg-white px-7 py-2 shadow-md backdrop-blur transition-all hover:border-gray-300 hover:bg-white/50'>
           <p className='text-lg font-semibold text-gray-700'>
-            Get started{' '}
+            Try HandChainrity{' '}
           </p>
         </div>
         </Link>
