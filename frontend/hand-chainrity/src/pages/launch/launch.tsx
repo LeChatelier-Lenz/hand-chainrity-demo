@@ -11,6 +11,9 @@ import Review from './Review';
 import axios from 'axios';
 import { create } from 'domain';
 import Campaign from '../campaign/Campaign';
+// 返回顶部
+
+import { useEffect } from 'react';
 
 function Copyright() {
   return (
@@ -24,6 +27,10 @@ function Copyright() {
     </Typography>
   );
 }
+
+
+
+
 
 
 
@@ -74,6 +81,9 @@ export default function Launch() {
   const [beneficiaryCheck, setBeneficiaryCheck] = React.useState(false);
   const { account } = useOutletContext<OutletContext>();
   const [success, setSuccess] = useState(false);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const axiosInstance = axios.create({
     baseURL: 'http://localhost:8888', // 设置基础 URL
